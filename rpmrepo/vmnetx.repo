@@ -1,0 +1,20 @@
+[vmnetx]
+name=VMNetX
+failovermethod=priority
+baseurl=http://olivearchive.org/software/!!DIST!!/$releasever/$basearch/
+enabled=1
+gpgcheck=0
+
+[vmnetx-debuginfo]
+name=VMNetX - Debug
+failovermethod=priority
+baseurl=http://olivearchive.org/software/!!DIST!!/$releasever/$basearch/debug/
+enabled=0
+gpgcheck=0
+
+[vmnetx-source]
+name=VMNetX - Source
+failovermethod=priority
+baseurl=http://olivearchive.org/software/!!DIST!!/$releasever/SRPMS/
+enabled=0
+gpgcheck=0
