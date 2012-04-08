@@ -2,13 +2,13 @@
 %global selinux_variants mls targeted minimal
 
 Name:           vmnetx
-Version:        0.1
+Version:        0.2
 Release:        1%{?dist}
 Summary:        Virtual machine network execution
 
 License:        GPLv2
 URL:            https://github.com/vmnetx/vmnetx
-Source0:        %{name}-%{version}.tar.xz
+Source0:        https://github.com/downloads/vmnetx/%{name}/%{name}-%{version}.tar.xz
 
 BuildRequires:  python2-devel
 BuildRequires:  pkgconfig
@@ -105,5 +105,5 @@ fi
 
 
 %changelog
-* Sun Apr 08 2012 Benjamin Gilbert <bgilbert@cs.cmu.edu> - 0.1-1
+* Sun Apr 08 2012 Benjamin Gilbert <bgilbert@cs.cmu.edu> - 0.2-1
 - Initial release
