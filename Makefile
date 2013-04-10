@@ -1,5 +1,5 @@
 OUTDIR = output
-RPM_ROOTS_FEDORA := $(foreach dist,15 16,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
+RPM_ROOTS_FEDORA := $(foreach dist,17 18,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
 RPM_ROOTS_EL := $(foreach dist,6,$(foreach arch,i386 x86_64,epel-$(dist)-$(arch)))
 RPM_ROOTS := $(RPM_ROOTS_FEDORA) $(RPM_ROOTS_EL)
 
@@ -35,5 +35,5 @@ rpm:
 .PHONY: rpmrepo
 rpmrepo:
 	@# Build on a single representative root for each distribution.
-	$(call buildpackage,rpmrepo/vmnetx-release-fedora.spec,fedora-15-i386)
+	$(call buildpackage,rpmrepo/vmnetx-release-fedora.spec,fedora-18-i386)
 	$(call buildpackage,rpmrepo/vmnetx-release-el.spec,epel-6-i386)
