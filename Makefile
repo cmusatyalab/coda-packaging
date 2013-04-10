@@ -17,7 +17,7 @@ buildpackage = @sources=`mktemp -dt vmnetx-sources-XXXXXXXX` && \
 	$(foreach root,$(2), \
 		mock $$sources/*.src.rpm -r "$(root)" -v --resultdir $$rpms && \
 		mv $$rpms/*.rpm $(OUTDIR) && ) \
-	rm -r $$sources $$rpms
+	rm -rf $$sources $$rpms
 
 .PHONY: none
 none:
