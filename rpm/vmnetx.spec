@@ -2,19 +2,20 @@
 %global selinux_variants mls targeted minimal
 
 Name:           vmnetx
-Version:        0.2
+Version:        0.3
 Release:        1%{?dist}
 Summary:        Virtual machine network execution
 
 License:        GPLv2
-URL:            https://github.com/vmnetx/vmnetx
-Source0:        https://github.com/downloads/vmnetx/%{name}/%{name}-%{version}.tar.xz
+URL:            https://github.com/cmusatyalab/vmnetx
+Source0:        https://olivearchive.org/vmnetx/source/%{name}-%{version}.tar.xz
 
 BuildRequires:  python2-devel
 BuildRequires:  pkgconfig
 BuildRequires:  glib2-devel
 BuildRequires:  libcurl-devel
 BuildRequires:  fuse-devel
+BuildRequires:  libxml2-devel
 # For SELinux
 BuildRequires:  selinux-policy-devel
 BuildRequires:  selinux-policy-doc
@@ -24,9 +25,15 @@ BuildRequires:  hardlink
 Requires:       pygtk2
 Requires:       gtk-vnc-python
 Requires:       python-lxml
+Requires:       python-requests
+Requires:       python-dateutil
 Requires:       libvirt
 Requires:       libvirt-python
 Requires:       qemu-kvm
+# For authorizer
+Requires:       dbus-python
+Requires:       dbus
+Requires:       polkit
 # For SELinux
 Requires:       libselinux-python
 Requires:       selinux-policy >= %{selinux_policyver}
@@ -71,15 +78,18 @@ do
 done
 hardlink -cv $RPM_BUILD_ROOT%{_datadir}/selinux
 
- 
+
 %files
 %doc COPYING README.rst
 %{_bindir}/vmnetx
 %{_bindir}/vmnetx-generate
+%{_sysconfdir}/dbus-1/system.d/org.olivearchive.VMNetX.Authorizer.conf
 %{_libexecdir}/%{name}
 %{python_sitelib}/*
 %{_datadir}/applications/vmnetx.desktop
+%{_datadir}/dbus-1/system-services/org.olivearchive.VMNetX.Authorizer.service
 %{_datadir}/mime/packages/vmnetx.xml
+%{_datadir}/polkit-1/actions/org.olivearchive.VMNetX.Authorizer.policy
 %{_datadir}/selinux/*/vmnetx.pp
 
 
@@ -105,5 +115,9 @@ fi
 
 
 %changelog
+* Wed Apr 10 2013 Benjamin Gilbert <bgilbert@cs.cmu.edu> - 0.3-1
+- New release
+- Update package and source URLs
+
 * Sun Apr 08 2012 Benjamin Gilbert <bgilbert@cs.cmu.edu> - 0.2-1
 - Initial release
