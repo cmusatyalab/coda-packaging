@@ -1,6 +1,6 @@
 OUTDIR = output
 RPM_ROOTS_FEDORA := $(foreach dist,17 18,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
-RPM_ROOTS_EL := $(foreach dist,6,$(foreach arch,i386 x86_64,epel-$(dist)-$(arch)))
+RPM_ROOTS_EL := $(foreach dist,6,$(foreach arch,x86_64,epel-$(dist)-$(arch)))
 RPM_ROOTS := $(RPM_ROOTS_FEDORA) $(RPM_ROOTS_EL)
 
 # $1 = specfile
