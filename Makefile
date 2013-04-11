@@ -37,3 +37,13 @@ rpmrepo:
 	@# Build on a single representative root for each distribution.
 	$(call buildpackage,rpmrepo/vmnetx-release-fedora.spec,fedora-18-i386)
 	$(call buildpackage,rpmrepo/vmnetx-release-el.spec,epel-6-i386)
+
+.PHONY: distribute
+distribute:
+	[ -n "$(VMNETX_DISTRIBUTE_HOST)" -a -n "$(VMNETX_DISTRIBUTE_DIR)" ]
+	rpm --define "_gpg_name $$(git config user.signingkey)" \
+		--resign $(OUTDIR)/*.rpm >/dev/null
+	rsync $(OUTDIR)/*.rpm \
+		"$(VMNETX_DISTRIBUTE_HOST):$(VMNETX_DISTRIBUTE_DIR)"
+	ssh "$(VMNETX_DISTRIBUTE_HOST)" \
+		"cd $(VMNETX_DISTRIBUTE_DIR) && ./distribute.pl"
