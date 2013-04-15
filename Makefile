@@ -41,9 +41,10 @@ rpmrepo:
 .PHONY: distribute
 distribute:
 	[ -n "$(VMNETX_DISTRIBUTE_HOST)" -a -n "$(VMNETX_DISTRIBUTE_DIR)" ]
+	[ -n "$(VMNETX_INCOMING_DIR)" ]
 	rpm --define "_gpg_name $$(git config user.signingkey)" \
 		--resign $(OUTDIR)/*.rpm >/dev/null
 	rsync $(OUTDIR)/*.rpm \
-		"$(VMNETX_DISTRIBUTE_HOST):$(VMNETX_DISTRIBUTE_DIR)"
+		"$(VMNETX_DISTRIBUTE_HOST):$(VMNETX_INCOMING_DIR)"
 	ssh "$(VMNETX_DISTRIBUTE_HOST)" \
 		"cd $(VMNETX_DISTRIBUTE_DIR) && ./distribute.pl"
