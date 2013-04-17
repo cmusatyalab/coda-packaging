@@ -119,11 +119,12 @@ rpmrepo:
 distribute:
 	[ -n "$(VMNETX_DISTRIBUTE_HOST)" -a -n "$(VMNETX_DISTRIBUTE_DIR)" ]
 	[ -n "$(VMNETX_INCOMING_DIR)" ]
+	[ -d "$(OUTDIR)" ]
 	if [ -n "`find $(OUTDIR) -name '*.rpm' -print -quit`" ] ; then \
 		rpm --define "_gpg_name $$(git config user.signingkey)" \
-			--resign $(OUTDIR)/*.rpm >/dev/null \
+			--resign $(OUTDIR)/*.rpm >/dev/null; \
 	fi
-	rsync $(OUTDIR)/ \
+	rsync $(OUTDIR)/* \
 		"$(VMNETX_DISTRIBUTE_HOST):$(VMNETX_INCOMING_DIR)"
 	ssh "$(VMNETX_DISTRIBUTE_HOST)" \
 		"cd $(VMNETX_DISTRIBUTE_DIR) && ./distribute.pl"
