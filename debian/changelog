@@ -1,4 +1,4 @@
-vmnetx (0.3-1ubuntu1) precise quantal stable; urgency=low
+vmnetx (0.3-1~DISTVER) DIST; urgency=low
 
   * Initial release
 

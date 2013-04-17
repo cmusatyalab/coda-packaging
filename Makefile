@@ -1,3 +1,5 @@
+SOURCE_URL = https://olivearchive.org/vmnetx/source/vmnetx-VERSION.tar.xz
+
 OUTDIR = output
 # debootstrap < 1.0.47 fails on wheezy, Debian #703146
 DEB_DISTS_DEBIAN = squeeze
@@ -7,6 +9,12 @@ DEB_ARCHES = i386 amd64
 RPM_ROOTS_FEDORA := $(foreach dist,17 18,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
 RPM_ROOTS_EL := $(foreach dist,6,$(foreach arch,x86_64,epel-$(dist)-$(arch)))
 RPM_ROOTS := $(RPM_ROOTS_FEDORA) $(RPM_ROOTS_EL)
+
+squeeze_DISTVER = debian6.0
+wheezy_DISTVER = debian6.1
+precise_DISTVER = ubuntu12.04
+quantal_DISTVER = ubuntu12.10
+raring_DISTVER = ubuntu13.04
 
 DEB_CHROOT_BASE = chroots
 DEBIAN_KEYRING = /usr/share/keyrings/debian-archive-keyring.gpg
@@ -38,7 +46,7 @@ builddebroot = mkdir -p $(DEB_CHROOT_BASE) && \
 
 # $1 = specfile
 # $2 = roots
-buildpackage = @sources=`mktemp -dt vmnetx-sources-XXXXXXXX` && \
+buildrpm = sources=`mktemp -dt vmnetx-sources-XXXXXXXX` && \
 	rpms=`mktemp -dt vmnetx-rpms-XXXXXXXX` && \
 	mkdir -p $(OUTDIR) && \
 	$(foreach file,\
@@ -69,23 +77,53 @@ debroots:
 	@$(foreach dist,$(DEB_DISTS_UBUNTU),$(foreach arch,$(DEB_ARCHES), \
 		$(call builddebroot,$(dist),$(arch),$(UBUNTU_MIRROR),$(UBUNTU_SOURCES),$(UBUNTU_KEYRING)) && )) :
 
+.PHONY: deb
+deb:
+	[ `id -u` = 0 ]
+	mkdir -p $(OUTDIR)
+	@tmp=`mktemp -dt debpkg-XXXXXXXX` && \
+	project=`dpkg-parsechangelog | grep ^Source: | awk '{print $$2}'` && \
+	version=`dpkg-parsechangelog | grep ^Version: | awk 'BEGIN {FS=" +|-"} {print $$2}'` && \
+	source=`echo "$(SOURCE_URL)" | sed "s/VERSION/$$version/"` && \
+	output=`pwd`/$(OUTDIR) && \
+	wget -O $$tmp/$${project}_$${version}.orig.tar.xz $$source && \
+	$(foreach dist,$(DEB_DISTS),$(foreach arch,$(DEB_ARCHES), \
+		echo "====== $(dist) $(arch) ======" && \
+		tar xf $$tmp/$${project}_$${version}.orig.tar.xz -C $$tmp && \
+		cp -a debian $$tmp/$${project}-$${version}/ && \
+		sed -i -e "s/DISTVER/$($(dist)_DISTVER)/g" \
+			-e "s/DIST/$(dist)/g" \
+			$$tmp/$${project}-$${version}/debian/changelog && \
+		( cd $$tmp/$${project}-$${version}/ && \
+		pdebuild --architecture $(arch) \
+			--buildresult $(abspath $(OUTDIR)) \
+			$(if $(filter $(arch), \
+				$(word 1,$(DEB_ARCHES))),,--debbuildopts -B) \
+			--use-pdebuild-internal -- --basetgz \
+			"$(abspath $(DEB_CHROOT_BASE))/$(dist)-$(arch).tgz" \
+		) && \
+		rm -r $$tmp/$$project-$$version/ && )) : \
+	rm -r $$tmp
+
 .PHONY: rpm
 rpm:
-	$(call buildpackage,rpm/vmnetx.spec,$(RPM_ROOTS))
+	@$(call buildrpm,rpm/vmnetx.spec,$(RPM_ROOTS))
 
 .PHONY: rpmrepo
 rpmrepo:
 	@# Build on a single representative root for each distribution.
-	$(call buildpackage,rpmrepo/vmnetx-release-fedora.spec,fedora-18-i386)
-	$(call buildpackage,rpmrepo/vmnetx-release-el.spec,epel-6-i386)
+	@$(call buildrpm,rpmrepo/vmnetx-release-fedora.spec,fedora-18-i386)
+	@$(call buildrpm,rpmrepo/vmnetx-release-el.spec,epel-6-i386)
 
 .PHONY: distribute
 distribute:
 	[ -n "$(VMNETX_DISTRIBUTE_HOST)" -a -n "$(VMNETX_DISTRIBUTE_DIR)" ]
 	[ -n "$(VMNETX_INCOMING_DIR)" ]
-	rpm --define "_gpg_name $$(git config user.signingkey)" \
-		--resign $(OUTDIR)/*.rpm >/dev/null
-	rsync $(OUTDIR)/*.rpm \
+	if [ -n "`find $(OUTDIR) -name '*.rpm' -print -quit`" ] ; then \
+		rpm --define "_gpg_name $$(git config user.signingkey)" \
+			--resign $(OUTDIR)/*.rpm >/dev/null \
+	fi
+	rsync $(OUTDIR)/ \
 		"$(VMNETX_DISTRIBUTE_HOST):$(VMNETX_INCOMING_DIR)"
 	ssh "$(VMNETX_DISTRIBUTE_HOST)" \
 		"cd $(VMNETX_DISTRIBUTE_DIR) && ./distribute.pl"
