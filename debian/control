@@ -1,14 +1,15 @@
 Source: vmnetx
-Section: devel
+Section: net
 Priority: extra
-Maintainer: Daniel Ryan <dfryan@andrew.cmu.edu>
+Maintainer: Benjamin Gilbert <bgilbert@cs.cmu.edu>
 Build-Depends: debhelper (>= 8.0.0), python, dh-autoreconf,
  libcurl4-gnutls-dev, libfuse-dev, libglib2.0-dev,
  pkg-config, autoconf, automake, libtool, libxml2-dev,
  python-dev
 Standards-Version: 3.9.4
 Homepage: https://github.com/cmusatyalab/vmnetx
-Vcs-Git: git://github.com/cmusatyalab/vmnetx.git
+Vcs-Git: git://github.com/cmusatyalab/vmnetx-packaging.git
+Vcs-Browser: https://github.com/cmusatyalab/vmnetx-packaging
 
 Package: vmnetx
 Architecture: i386 amd64
@@ -16,21 +17,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
  ${python:Depends}, qemu-kvm, fuse | fuse-utils,
  libvirt-bin, python-gtk2, python-gtk-vnc,
  python-requests, python-dateutil, python-libvirt,
- python-fuse, python-selinux, python-lxml
-Description: Virtual Machine Network Execution
- VMNetX allows KVM-based virtual machines to be stored on a
- web server and executed on-demand on a client system. The
- entire disk and memory state are not downloaded before
- starting the VM; instead, disk and memory chunks are
- retrieved on demand from the web server and then cached on
- the client.
- .
- VMNetX allows a user to quickly try out some software
- without needing to install it. The software runs on their
- own computer, so performance is better than a thin client.
- Unlike a traditional virtual machine image, the user does
- not need to download gigabytes of data before they can run
- the software.
- .
- VMNetX is licensed under the GNU General Public License,
- version 2.
+ python-selinux, python-lxml
+Description: Virtual machine network execution
+ VMNetX allows you to execute a KVM virtual machine over the Internet
+ without downloading all of its data to your computer in advance.
