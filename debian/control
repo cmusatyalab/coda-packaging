@@ -15,9 +15,9 @@ X-Python-Version: >= 2.6
 Package: vmnetx
 Architecture: i386 amd64
 Depends: ${shlibs:Depends}, ${misc:Depends},
- ${python:Depends}, qemu-kvm, fuse | fuse-utils,
- libvirt-bin, python-gtk2, python-gtk-vnc,
- python-requests, python-dateutil, python-libvirt,
+ ${python:Depends}, qemu-kvm, fuse | fuse-utils, dbus,
+ policykit-1, libvirt-bin, python-gtk2, python-gtk-vnc,
+ python-requests, python-dateutil, python-libvirt, python-dbus,
  python-selinux, python-lxml
 Description: Virtual machine network execution
  VMNetX allows you to execute a KVM virtual machine over the Internet
