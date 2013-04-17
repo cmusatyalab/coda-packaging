@@ -10,6 +10,7 @@ Standards-Version: 3.9.4
 Homepage: https://github.com/cmusatyalab/vmnetx
 Vcs-Git: git://github.com/cmusatyalab/vmnetx-packaging.git
 Vcs-Browser: https://github.com/cmusatyalab/vmnetx-packaging
+X-Python-Version: >= 2.6
 
 Package: vmnetx
 Architecture: i386 amd64
