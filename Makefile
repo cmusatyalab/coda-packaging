@@ -1,5 +1,6 @@
 SOURCE_URL = https://olivearchive.org/vmnetx/source/vmnetx-VERSION.tar.xz
 
+VMNETX_FULL_DISTRIBUTE = yes
 OUTDIR = output
 # debootstrap < 1.0.47 fails on wheezy, Debian #703146
 DEB_DISTS_DEBIAN = squeeze
@@ -126,5 +127,7 @@ distribute:
 	fi
 	rsync $(OUTDIR)/* \
 		"$(VMNETX_DISTRIBUTE_HOST):$(VMNETX_INCOMING_DIR)"
-	ssh "$(VMNETX_DISTRIBUTE_HOST)" \
-		"cd $(VMNETX_DISTRIBUTE_DIR) && ./distribute.pl"
+	if [ "$(VMNETX_FULL_DISTRIBUTE)" = "yes" ] ; then \
+		ssh "$(VMNETX_DISTRIBUTE_HOST)" \
+			"cd $(VMNETX_DISTRIBUTE_DIR) && ./distribute.pl"; \
+	fi
