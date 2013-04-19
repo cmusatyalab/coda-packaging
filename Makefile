@@ -1,6 +1,6 @@
 SOURCE_URL = https://olivearchive.org/vmnetx/source/vmnetx-VERSION.tar.xz
 
-VMNETX_FULL_DISTRIBUTE = yes
+VMNETX_FULL_DISTRIBUTE ?= yes
 OUTDIR = output
 # debootstrap < 1.0.48 fails on wheezy
 DEB_DISTS_DEBIAN = squeeze wheezy
