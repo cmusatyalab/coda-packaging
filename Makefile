@@ -2,8 +2,8 @@ SOURCE_URL = https://olivearchive.org/vmnetx/source/vmnetx-VERSION.tar.xz
 
 VMNETX_FULL_DISTRIBUTE = yes
 OUTDIR = output
-# debootstrap < 1.0.47 fails on wheezy, Debian #703146
-DEB_DISTS_DEBIAN = squeeze
+# debootstrap < 1.0.48 fails on wheezy
+DEB_DISTS_DEBIAN = squeeze wheezy
 DEB_DISTS_UBUNTU = precise quantal raring
 DEB_DISTS = $(DEB_DISTS_DEBIAN) $(DEB_DISTS_UBUNTU)
 DEB_ARCHES = i386 amd64
@@ -12,7 +12,7 @@ RPM_ROOTS_EL := $(foreach dist,6,$(foreach arch,x86_64,epel-$(dist)-$(arch)))
 RPM_ROOTS := $(RPM_ROOTS_FEDORA) $(RPM_ROOTS_EL)
 
 squeeze_DISTVER = debian6.0
-wheezy_DISTVER = debian6.1
+wheezy_DISTVER = debian7.0
 precise_DISTVER = ubuntu12.04
 quantal_DISTVER = ubuntu12.10
 raring_DISTVER = ubuntu13.04
