@@ -119,15 +119,14 @@ rpmrepo:
 .PHONY: distribute
 distribute:
 	[ -n "$(VMNETX_DISTRIBUTE_HOST)" -a -n "$(VMNETX_DISTRIBUTE_DIR)" ]
-	[ -n "$(VMNETX_INCOMING_DIR)" ]
-	[ -d "$(OUTDIR)" ]
-	if [ -n "`find $(OUTDIR) -name '*.rpm' -print -quit`" ] ; then \
-		rpm --define "_gpg_name $$(git config user.signingkey)" \
-			--resign $(OUTDIR)/*.rpm >/dev/null; \
-	fi
-	rsync $(OUTDIR)/* \
+	[ -n "$(VMNETX_INCOMING_DIR)" -a -n "$(SIGNING_SERVER)" ]
+	mkdir -p "$(OUTDIR)"
+	rsync -r "$(OUTDIR)/" \
 		"$(VMNETX_DISTRIBUTE_HOST):$(VMNETX_INCOMING_DIR)"
 	if [ "$(VMNETX_FULL_DISTRIBUTE)" = "yes" ] ; then \
-		ssh "$(VMNETX_DISTRIBUTE_HOST)" \
-			"cd $(VMNETX_DISTRIBUTE_DIR) && ./distribute.pl"; \
+		SIGNING_SERVER_ADDRESS=localhost:5280 \
+			SIGNING_SERVER_KEYID=$$(git config user.signingkey) \
+			$(SIGNING_SERVER) ssh "$(VMNETX_DISTRIBUTE_HOST)" \
+			-R 5280:localhost:5280 \
+			"cd $(VMNETX_DISTRIBUTE_DIR) && SIGNING_SERVER_ADDRESS=localhost:5280 ./distribute.pl"; \
 	fi
