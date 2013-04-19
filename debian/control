@@ -22,3 +22,13 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
 Description: Virtual machine network execution
  VMNetX allows you to execute a KVM virtual machine over the Internet
  without downloading all of its data to your computer in advance.
+
+Package: vmnetx-dbg
+Architecture: i386 amd64
+Section: debug
+Depends: vmnetx (= ${binary:Version}), ${misc:Depends}
+Description: Debugging symbols for VMNetX
+ VMNetX allows you to execute a KVM virtual machine over the Internet
+ without downloading all of its data to your computer in advance.
+ .
+ This package contains the debugging symbols for VMNetX.
