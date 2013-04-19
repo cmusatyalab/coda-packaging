@@ -11,6 +11,11 @@
 %:
 	dh $@ --with autoreconf,python2
 
+.PHONY: override_dh_auto_configure
+override_dh_auto_configure:
+	@# Debian #541458, fixed in debhelper compat 9
+	dh_auto_configure -- --libexecdir=\$${libdir}
+
 .PHONY: override_dh_strip
 override_dh_strip:
 	dh_strip --dbg-package=vmnetx-dbg
