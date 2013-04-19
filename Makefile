@@ -118,8 +118,9 @@ rpmrepo:
 
 .PHONY: distribute
 distribute:
-	[ -n "$(VMNETX_DISTRIBUTE_HOST)" -a -n "$(VMNETX_DISTRIBUTE_DIR)" ]
-	[ -n "$(VMNETX_INCOMING_DIR)" -a -n "$(SIGNING_SERVER)" ]
+	[ -n "$(VMNETX_DISTRIBUTE_HOST)" -a -n "$(VMNETX_INCOMING_DIR)" ]
+	[ "$(VMNETX_FULL_DISTRIBUTE)" != "yes" -o \( \
+		-n "$(VMNETX_DISTRIBUTE_DIR)" -a -n "$(SIGNING_SERVER)" \) ]
 	mkdir -p "$(OUTDIR)"
 	rsync -r "$(OUTDIR)/" \
 		"$(VMNETX_DISTRIBUTE_HOST):$(VMNETX_INCOMING_DIR)"
