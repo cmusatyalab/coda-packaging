@@ -121,10 +121,10 @@ distribute:
 	[ -n "$(VMNETX_DISTRIBUTE_HOST)" -a -n "$(VMNETX_INCOMING_DIR)" ]
 	[ "$(VMNETX_FULL_DISTRIBUTE)" != "yes" -o \( \
 		-n "$(VMNETX_DISTRIBUTE_DIR)" -a -n "$(SIGNING_SERVER)" \) ]
-	mkdir -p "$(OUTDIR)"
-	rsync -r "$(OUTDIR)/" \
+	@mkdir -p "$(OUTDIR)"
+	@rsync -r "$(OUTDIR)/" \
 		"$(VMNETX_DISTRIBUTE_HOST):$(VMNETX_INCOMING_DIR)"
-	if [ "$(VMNETX_FULL_DISTRIBUTE)" = "yes" ] ; then \
+	@if [ "$(VMNETX_FULL_DISTRIBUTE)" = "yes" ] ; then \
 		SIGNING_SERVER_ADDRESS=localhost:5280 \
 			SIGNING_SERVER_KEYID=$$(git config user.signingkey) \
 			$(SIGNING_SERVER) ssh "$(VMNETX_DISTRIBUTE_HOST)" \
