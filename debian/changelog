@@ -1,5 +1,5 @@
-vmnetx (0.3-1~DISTVER) DIST; urgency=low
+vmnetx (0.3.1-1~DISTVER) DIST; urgency=low
 
   * Initial release
 
- -- Daniel Ryan <dfryan@andrew.cmu.edu>  Fri, 12 Apr 2013 18:44:28 -0400
+ -- Benjamin Gilbert <bgilbert@cs.cmu.edu>  Mon, 22 Apr 2013 15:20:18 -0400
