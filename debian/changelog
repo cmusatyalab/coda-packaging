@@ -1,3 +1,10 @@
+vmnetx (0.3.3-1~DISTVER) DIST; urgency=low
+
+  * New release
+  * Downgrade dbus and policykit to Recommends
+
+ -- Benjamin Gilbert <bgilbert@cs.cmu.edu>  Fri, 21 Jun 2013 18:04:17 -0400
+
 vmnetx (0.3.2-1~DISTVER) DIST; urgency=low
 
   * New release
