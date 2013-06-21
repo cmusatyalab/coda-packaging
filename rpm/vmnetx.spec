@@ -2,7 +2,7 @@
 %global selinux_variants mls targeted minimal
 
 Name:           vmnetx
-Version:        0.3.2
+Version:        0.3.3
 Release:        1%{?dist}
 Summary:        Virtual machine network execution
 
@@ -24,6 +24,7 @@ BuildRequires:  hardlink
 
 Requires:       pygtk2
 Requires:       gtk-vnc-python
+Requires:       spice-gtk-python
 Requires:       python-lxml
 Requires:       python-requests
 Requires:       python-dateutil
@@ -35,7 +36,6 @@ Requires:       dbus-python
 Requires:       dbus
 Requires:       polkit
 # For SELinux
-Requires:       libselinux-python
 Requires:       selinux-policy >= %{selinux_policyver}
 Requires(post): /usr/sbin/semodule
 Requires(postun): /usr/sbin/semodule
@@ -88,6 +88,7 @@ hardlink -cv $RPM_BUILD_ROOT%{_datadir}/selinux
 %{python_sitelib}/*
 %{_datadir}/applications/vmnetx.desktop
 %{_datadir}/dbus-1/system-services/org.olivearchive.VMNetX.Authorizer.service
+%{_datadir}/man/man1/*
 %{_datadir}/mime/packages/vmnetx.xml
 %{_datadir}/polkit-1/actions/org.olivearchive.VMNetX.Authorizer.policy
 %{_datadir}/selinux/*/vmnetx.pp
@@ -115,6 +116,9 @@ fi
 
 
 %changelog
+* Fri Jun 21 2013 Benjamin Gilbert <bgilbert@cs.cmu.edu> - 0.3.3-1
+- New release
+
 * Fri Apr 26 2013 Benjamin Gilbert <bgilbert@cs.cmu.edu> - 0.3.2-1
 - New release
 
