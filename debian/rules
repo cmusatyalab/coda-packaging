@@ -20,10 +20,6 @@ override_dh_auto_configure:
 override_dh_strip:
 	dh_strip --dbg-package=vmnetx-dbg
 
-.PHONY: override_dh_auto_install
-override_dh_auto_install:
-	dh_auto_install --destdir=debian/vmnetx
-
 .PHONY: override_dh_installdocs
 override_dh_installdocs:
-	dh_installdocs --link-doc=vmnetx
+	dh_installdocs --link-doc=vmnetx-common

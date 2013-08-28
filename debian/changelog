@@ -1,3 +1,10 @@
+vmnetx (0.4.0-1~DISTVER) DIST; urgency=low
+
+  * New release
+  * Add -common and -server subpackages
+
+ -- Benjamin Gilbert <bgilbert@cs.cmu.edu>  Wed, 28 Aug 2013 19:38:28 -0400
+
 vmnetx (0.3.3-1~DISTVER) DIST; urgency=low
 
   * New release

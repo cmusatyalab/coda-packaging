@@ -12,22 +12,45 @@ Vcs-Git: git://github.com/cmusatyalab/vmnetx-packaging.git
 Vcs-Browser: https://github.com/cmusatyalab/vmnetx-packaging
 X-Python-Version: >= 2.6
 
-Package: vmnetx
+Package: vmnetx-common
 Architecture: i386 amd64
+Replaces: vmnetx (<< 0.4.0-1)
+Breaks: vmnetx (<< 0.4.0-1)
 Depends: ${shlibs:Depends}, ${misc:Depends},
  ${python:Depends}, qemu-kvm, fuse | fuse-utils,
- libvirt-bin, python-gtk2, python-gtk-vnc,
+ libvirt-bin, python-gobject-2 | python-gobject (<< 3),
  python-requests, python-dateutil, python-libvirt, python-dbus,
  python-lxml
-Recommends: dbus, policykit-1, python-spice-client-gtk
+Recommends: dbus, policykit-1
+Description: VMNetX support code
+ VMNetX allows you to execute a KVM virtual machine over the Internet
+ without downloading all of its data to your computer in advance.
+ .
+ This package includes support code for VMNetX.
+
+Package: vmnetx
+Architecture: i386 amd64
+Depends: vmnetx-common (= ${binary:Version}), ${misc:Depends},
+ ${python:Depends}, python-gtk2, python-gtk-vnc
+Recommends: python-spice-client-gtk
 Description: Virtual machine network execution
  VMNetX allows you to execute a KVM virtual machine over the Internet
  without downloading all of its data to your computer in advance.
 
+Package: vmnetx-server
+Architecture: i386 amd64
+Depends: vmnetx-common (= ${binary:Version}), ${misc:Depends},
+ ${python:Depends}, python-flask, msgpack-python, python-yaml
+Description: VMNetX server
+ VMNetX allows you to execute a KVM virtual machine over the Internet
+ without downloading all of its data to your computer in advance.
+ .
+ This package includes the VMNetX remote execution server.
+
 Package: vmnetx-dbg
 Architecture: i386 amd64
 Section: debug
-Depends: vmnetx (= ${binary:Version}), ${misc:Depends}
+Depends: vmnetx-common (= ${binary:Version}), ${misc:Depends}
 Description: Debugging symbols for VMNetX
  VMNetX allows you to execute a KVM virtual machine over the Internet
  without downloading all of its data to your computer in advance.
