@@ -2,11 +2,12 @@
 %global selinux_variants mls targeted minimal
 
 Name:           vmnetx
-Version:        0.3.3
+Version:        0.4.0
 Release:        1%{?dist}
 Summary:        Virtual machine network execution
 
-License:        GPLv2
+# desktop/vmnetx.png is under CC-BY-3.0
+License:        GPLv2 and CC-BY
 URL:            https://github.com/cmusatyalab/vmnetx
 Source0:        https://olivearchive.org/vmnetx/source/%{name}-%{version}.tar.xz
 
@@ -22,9 +23,22 @@ BuildRequires:  selinux-policy-doc
 BuildRequires:  checkpolicy
 BuildRequires:  hardlink
 
+Requires:       %{name}-common%{?_isa} = %{version}-%{release}
 Requires:       pygtk2
 Requires:       gtk-vnc-python
 Requires:       spice-gtk-python
+
+
+%description
+VMNetX allows you to execute a KVM virtual machine over the Internet
+without downloading all of its data to your computer in advance.
+
+
+%package        common
+Summary:        VMNetX support code
+License:        GPLv2
+Conflicts:      vmnetx < 0.4.0
+Requires:       pygobject2
 Requires:       python-lxml
 Requires:       python-requests
 Requires:       python-dateutil
@@ -40,10 +54,20 @@ Requires:       selinux-policy >= %{selinux_policyver}
 Requires(post): /usr/sbin/semodule
 Requires(postun): /usr/sbin/semodule
 
+%description    common
+This package includes support code for VMNetX.
 
-%description
-VMNetX allows you to execute a KVM virtual machine over the Internet
-without downloading all of its data to your computer in advance.
+
+%package        server
+Summary:        VMNetX server
+License:        GPLv2
+Requires:       %{name}-common%{?_isa} = %{version}-%{release}
+Requires:       python-flask
+Requires:       python-msgpack
+Requires:       PyYAML
+
+%description    server
+This package includes the VMNetX remote execution server.
 
 
 %prep
@@ -80,42 +104,71 @@ hardlink -cv $RPM_BUILD_ROOT%{_datadir}/selinux
 
 
 %files
-%doc COPYING README.rst
+%doc desktop/README.icon
 %{_bindir}/vmnetx
 %{_bindir}/vmnetx-generate
+%{_datadir}/applications/vmnetx.desktop
+%{_datadir}/icons/hicolor/256x256/apps/vmnetx.png
+%{_datadir}/man/man1/*
+%{_datadir}/mime/packages/vmnetx.xml
+
+
+%files common
+%doc COPYING README.rst NEWS.md
 %{_sysconfdir}/dbus-1/system.d/org.olivearchive.VMNetX.Authorizer.conf
 %{_libexecdir}/%{name}
 %{python_sitelib}/*
-%{_datadir}/applications/vmnetx.desktop
 %{_datadir}/dbus-1/system-services/org.olivearchive.VMNetX.Authorizer.service
-%{_datadir}/man/man1/*
-%{_datadir}/mime/packages/vmnetx.xml
 %{_datadir}/polkit-1/actions/org.olivearchive.VMNetX.Authorizer.policy
 %{_datadir}/selinux/*/vmnetx.pp
 
 
+%files server
+%{_sbindir}/vmnetx-server
+%{_datadir}/man/man8/*
+
+
 %post
-for selinuxvariant in %{selinux_variants}
-do
-    /usr/sbin/semodule -s ${selinuxvariant} -i \
-        %{_datadir}/selinux/${selinuxvariant}/vmnetx.pp &> /dev/null ||:
-done
+/bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null ||:
 /usr/bin/update-mime-database %{_datadir}/mime &> /dev/null ||:
 /usr/bin/update-desktop-database &> /dev/null ||:
 
 
 %postun
 if [ $1 -eq 0 ] ; then
-    for selinuxvariant in %{selinux_variants}
-    do
-        /usr/sbin/semodule -s ${selinuxvariant} -r vmnetx &> /dev/null ||:
-    done
+    /bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null
+    /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null ||:
     /usr/bin/update-mime-database %{_datadir}/mime &> /dev/null ||:
     /usr/bin/update-desktop-database &> /dev/null ||:
 fi
 
 
+%posttrans
+/usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null ||:
+
+
+%post common
+for selinuxvariant in %{selinux_variants}
+do
+    /usr/sbin/semodule -s ${selinuxvariant} -i \
+        %{_datadir}/selinux/${selinuxvariant}/vmnetx.pp &> /dev/null ||:
+done
+
+
+%postun common
+if [ $1 -eq 0 ] ; then
+    for selinuxvariant in %{selinux_variants}
+    do
+        /usr/sbin/semodule -s ${selinuxvariant} -r vmnetx &> /dev/null ||:
+    done
+fi
+
+
 %changelog
+* Wed Aug 28 2013 Benjamin Gilbert <bgilbert@cs.cmu.edu> - 0.4.0-1
+- New release
+- Add -common and -server subpackages
+
 * Fri Jun 21 2013 Benjamin Gilbert <bgilbert@cs.cmu.edu> - 0.3.3-1
 - New release
 
