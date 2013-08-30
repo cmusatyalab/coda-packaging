@@ -20,7 +20,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
  ${python:Depends}, qemu-kvm, fuse | fuse-utils,
  libvirt-bin, python-gobject-2 | python-gobject (<< 3),
  python-requests, python-dateutil, python-libvirt, python-dbus,
- python-lxml
+ python-lxml, msgpack-python
 Recommends: dbus, policykit-1
 Description: VMNetX support code
  VMNetX allows you to execute a KVM virtual machine over the Internet
@@ -40,7 +40,7 @@ Description: Virtual machine network execution
 Package: vmnetx-server
 Architecture: i386 amd64
 Depends: vmnetx-common (= ${binary:Version}), ${misc:Depends},
- ${python:Depends}, python-flask, msgpack-python, python-yaml
+ ${python:Depends}, python-flask, python-yaml
 Description: VMNetX server
  VMNetX allows you to execute a KVM virtual machine over the Internet
  without downloading all of its data to your computer in advance.
