@@ -3,7 +3,7 @@
 
 Name:           vmnetx
 Version:        0.4.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Virtual machine network execution
 
 # desktop/vmnetx.png is under CC-BY-3.0
@@ -42,6 +42,7 @@ Requires:       pygobject2
 Requires:       python-lxml
 Requires:       python-requests
 Requires:       python-dateutil
+Requires:       python-msgpack
 Requires:       libvirt
 Requires:       libvirt-python
 Requires:       qemu-kvm
@@ -63,7 +64,6 @@ Summary:        VMNetX server
 License:        GPLv2
 Requires:       %{name}-common%{?_isa} = %{version}-%{release}
 Requires:       python-flask
-Requires:       python-msgpack
 Requires:       PyYAML
 
 %description    server
@@ -165,6 +165,9 @@ fi
 
 
 %changelog
+* Fri Aug 30 2013 Benjamin Gilbert <bgilbert@cs.cmu.edu> - 0.4.0-2
+- Move python-msgpack dependency to -common (fixes thin client mode)
+
 * Wed Aug 28 2013 Benjamin Gilbert <bgilbert@cs.cmu.edu> - 0.4.0-1
 - New release
 - Add -common and -server subpackages
