@@ -14,8 +14,8 @@ X-Python-Version: >= 2.6
 
 Package: vmnetx-common
 Architecture: i386 amd64
-Replaces: vmnetx (<< 0.4.0-1)
-Breaks: vmnetx (<< 0.4.0-1)
+Replaces: vmnetx (<< 0.4.0)
+Breaks: vmnetx (<< 0.4.0)
 Depends: ${shlibs:Depends}, ${misc:Depends},
  ${python:Depends}, qemu-kvm, fuse | fuse-utils,
  libvirt-bin, python-gobject-2 | python-gobject (<< 3),

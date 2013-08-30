@@ -1,3 +1,11 @@
+vmnetx (0.4.0-2+DISTVER) DIST; urgency=low
+
+  * Fix upgrades from < 0.4.0
+  * Use + instead of ~ to demarcate distribution version in revision
+    number, since we are not backporting an existing package
+
+ -- Benjamin Gilbert <bgilbert@cs.cmu.edu>  Fri, 30 Aug 2013 15:40:54 -0400
+
 vmnetx (0.4.0-1~DISTVER) DIST; urgency=low
 
   * New release
