@@ -23,8 +23,14 @@ set -eE
 
 packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk gtk celt openssl orc gstreamer gstbase gstgood spicegtk"
 
-# Tool configuration for Cygwin
+# Cygwin non-default packages
 cygtools="wget zip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc-g++ binutils nasm gettext-devel libglib2.0-devel gtk-update-icon-cache libogg libogg-devel autoconf automake libtool flex bison intltool"
+# Python installer
+python_url="http://www.python.org/ftp/python/2.7.5/python-2.7.5.msi"
+# setuptools
+setuptools_url="https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py"
+# pip
+pip_url="https://raw.github.com/pypa/pip/master/contrib/get-pip.py"
 
 # Package display names.  Missing packages are not included in VERSIONS.txt.
 zlib_name="zlib"
@@ -205,8 +211,8 @@ tarpath() {
     fi
 }
 
-setup_cygwin() {
-    # Install necessary tools for Cygwin builds.
+setup_environment() {
+    # Install necessary tools into environment.
     # $1  = path to Cygwin setup.exe
 
     # Install cygwin packages
@@ -214,6 +220,31 @@ setup_cygwin() {
     cp "$1" cygwin.exe
     ./cygwin.exe -q -P "${cygtools// /,}" >/dev/null
     rm cygwin.exe
+
+    # Install native Python
+    if [ ! -d $(cygpath "c:\Python27") ] ; then
+        fetch python
+        msiexec /passive /i $(cygpath -w "$(tarpath python)")
+    fi
+    local python
+    python="cygstart -w c:\Python27\python.exe"
+
+    # Install setuptools
+    if [ ! -e $(cygpath "c:\Python27\Scripts\easy_install.exe") ] ; then
+        fetch setuptools
+        ${python} $(cygpath -w "$(tarpath setuptools)")
+    fi
+
+    # Install pip
+    if [ ! -e $(cygpath "c:\Python27\Scripts\pip.exe") ] ; then
+        fetch pip
+        ${python} $(cygpath -w "$(tarpath pip)")
+    fi
+    local pip
+    pip="cygstart -w c:\Python27\Scripts\pip.exe"
+
+    # Install pure Python dependencies
+    ${pip} install -r $(cygpath -w requirements.txt)
 }
 
 fetch() {
@@ -634,9 +665,9 @@ fail_handler() {
 # Set up error handling
 trap fail_handler ERR
 
-# Cygwin setup bypasses normal startup
+# Environment setup bypasses normal startup
 if [ "$1" = "setup" ] ; then
-    setup_cygwin "$2"
+    setup_environment "$2"
     exit 0
 fi
 
