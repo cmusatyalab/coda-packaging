@@ -24,7 +24,7 @@ set -eE
 packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk gtk celt openssl orc gstreamer gstbase gstgood spicegtk"
 
 # Tool configuration for Cygwin
-cygtools="wget zip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc-g++ binutils nasm gettext-devel libglib2.0-devel"
+cygtools="wget zip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc-g++ binutils nasm gettext-devel libglib2.0-devel gtk-update-icon-cache libogg libogg-devel autoconf automake libtool flex bison intltool"
 
 # Package display names.  Missing packages are not included in VERSIONS.txt.
 zlib_name="zlib"
@@ -403,7 +403,10 @@ build_one() {
     gtk)
         # http://pkgs.fedoraproject.org/cgit/mingw-gtk3.git/commit/?id=82ccf489f4763e375805d848351ac3f8fda8e88b
         sed -i 's/#define INITGUID//' gdk/win32/gdkdnd-win32.c
-        do_configure
+        # Use gdk-pixbuf-csource we just built; the one from Cygwin can't
+        # read PNG
+        PATH="${root}/bin:${PATH}" \
+                do_configure
         make $parallel
         make install
         ;;
@@ -449,8 +452,11 @@ build_one() {
                 -e 's/disable_registry_cache = FALSE/disable_registry_cache = TRUE/' \
                 -e 's/!write_changes/FALSE/' \
                 gst/gstregistry.c
+        # gstreamer confuses POSIX timers with the availability of
+        # clock_gettime()
         do_configure \
-                --disable-loadsave
+                --disable-loadsave \
+                gst_cv_posix_timers=no
         make $parallel
         make install
         mkdir -p "${root}/bin/lib/gstreamer-0.10"
@@ -464,6 +470,7 @@ build_one() {
         ;;
     gstbase)
         do_configure \
+                --disable-vorbis \
                 --disable-examples
         make $parallel
         make install
