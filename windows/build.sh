@@ -622,31 +622,6 @@ probe() {
     cflags="-O2 -g -mms-bitfields -fexceptions"
     cxxflags="${cflags}"
     ldflags="-static-libgcc -Wl,--enable-auto-image-base -Wl,--dynamicbase -Wl,--nxcompat"
-
-    case "$build_system" in
-    *-*-cygwin)
-        # Windows
-        ;;
-    *)
-        # Other
-
-        # Ensure Wine is not run via binfmt_misc, since some packages
-        # attempt to run programs after building them.
-        for hdr in PE MZ
-        do
-            echo $hdr > conftest
-            chmod +x conftest
-            if ./conftest 2>/dev/null ; then
-                # Awkward construct due to "set -e"
-                :
-            elif [ $? = 193 ] ; then
-                rm conftest
-                echo "Wine is enabled in binfmt_misc.  Please disable it."
-                exit 1
-            fi
-            rm conftest
-        done
-    esac
 }
 
 fail_handler() {
