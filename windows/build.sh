@@ -323,6 +323,20 @@ do_configure() {
             "$@"
 }
 
+copy_to_bin() {
+    # Treat artifacts with a "/" in their names as paths relative to ${root}
+    # and copy them into ${root}/bin.
+    # $1 = package shortname
+    local artifact
+    for artifact in $(expand ${1}_artifacts)
+    do
+        if [ "${artifact/\/}" != "${artifact}" ] ; then
+            mkdir -p "${root}/bin/$(dirname ${artifact})"
+            cp -a "${root}/${artifact}" "${root}/bin/${artifact}"
+        fi
+    done
+}
+
 build_one() {
     # Build the specified package and its dependencies if not already built
     # $1  = package shortname
@@ -491,14 +505,6 @@ build_one() {
                 gst_cv_posix_timers=no
         make $parallel
         make install
-        mkdir -p "${root}/bin/lib/gstreamer-0.10"
-        local artifact
-        for artifact in ${gstreamer_artifacts}
-        do
-            if [ "${artifact#lib/}" != "${artifact}" ] ; then
-                cp -a "${root}/${artifact}" "${root}/bin/${artifact}"
-            fi
-        done
         ;;
     gstbase)
         do_configure \
@@ -506,28 +512,12 @@ build_one() {
                 --disable-examples
         make $parallel
         make install
-        mkdir -p "${root}/bin/lib/gstreamer-0.10"
-        local artifact
-        for artifact in ${gstbase_artifacts}
-        do
-            if [ "${artifact#lib/}" != "${artifact}" ] ; then
-                cp -a "${root}/${artifact}" "${root}/bin/${artifact}"
-            fi
-        done
         ;;
     gstgood)
         do_configure \
                 --disable-examples
         make $parallel
         make install
-        mkdir -p "${root}/bin/lib/gstreamer-0.10"
-        local artifact
-        for artifact in ${gstgood_artifacts}
-        do
-            if [ "${artifact#lib/}" != "${artifact}" ] ; then
-                cp -a "${root}/${artifact}" "${root}/bin/${artifact}"
-            fi
-        done
         ;;
     spicegtk)
         # Work around boolean typedef conflict
@@ -542,6 +532,9 @@ build_one() {
         make install
         ;;
     esac
+
+    copy_to_bin "$1"
+
     popd >/dev/null
 }
 
