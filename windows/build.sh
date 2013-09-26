@@ -24,7 +24,7 @@ set -eE
 packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk gtk celt openssl orc gstreamer gstbase gstgood spicegtk"
 
 # Cygwin non-default packages
-cygtools="wget zip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc-g++ binutils nasm gettext-devel libglib2.0-devel gtk-update-icon-cache libogg libogg-devel autoconf automake libtool flex bison intltool"
+cygtools="wget zip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc-g++ binutils nasm gettext-devel libglib2.0-devel gtk-update-icon-cache libogg-devel autoconf automake libtool flex bison intltool"
 # Python installer
 python_url="http://www.python.org/ftp/python/2.7.5/python-2.7.5.msi"
 # setuptools
@@ -448,7 +448,8 @@ build_one() {
         # Don't compile test cases, since they don't build
         sed -i 's/noinst_PROGRAMS/EXTRA_PROGRAMS/' tests/Makefile.am
         autoreconf -i
-        do_configure
+        do_configure \
+                --without-ogg
         make $parallel
         make install
         ;;
