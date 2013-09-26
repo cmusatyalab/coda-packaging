@@ -531,6 +531,7 @@ build_one() {
         ;;
     gstbase)
         do_configure \
+                --disable-ogg \
                 --disable-vorbis \
                 --disable-examples
         make $parallel
