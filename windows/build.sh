@@ -21,7 +21,7 @@
 
 set -eE
 
-packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk gtk celt openssl orc gstreamer gstbase gstgood spicegtk"
+packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk gtk pycairo celt openssl orc gstreamer gstbase gstgood spicegtk"
 
 # Cygwin non-default packages
 cygtools="wget zip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc-g++ binutils nasm gettext-devel libglib2.0-devel gtk-update-icon-cache libogg-devel autoconf automake libtool flex bison intltool"
@@ -46,6 +46,7 @@ cairo_name="cairo"
 pango_name="pango"
 atk_name="atk"
 gtk_name="gtk+"
+pycairo_name="py2cairo"
 celt_name="celt"
 openssl_name="OpenSSL"
 orc_name="orc"
@@ -74,6 +75,7 @@ atk_basever="2.9"
 atk_ver="${atk_basever}.4"
 gtk_basever="2.24"
 gtk_ver="${gtk_basever}.21"
+pycairo_ver="1.10.0"
 celt_ver="0.5.1.3"  # spice-gtk requires 0.5.1.x specifically
 openssl_ver="1.0.1e"
 orc_ver="0.4.18"
@@ -97,6 +99,7 @@ cairo_url="http://cairographics.org/releases/cairo-${cairo_ver}.tar.xz"
 pango_url="http://ftp.gnome.org/pub/gnome/sources/pango/${pango_basever}/pango-${pango_ver}.tar.xz"
 atk_url="http://ftp.gnome.org/pub/gnome/sources/atk/${atk_basever}/atk-${atk_ver}.tar.xz"
 gtk_url="http://ftp.gnome.org/pub/gnome/sources/gtk+/${gtk_basever}/gtk+-${gtk_ver}.tar.xz"
+pycairo_url="http://cairographics.org/releases/py2cairo-${pycairo_ver}.tar.bz2"
 celt_url="http://downloads.xiph.org/releases/celt/celt-${celt_ver}.tar.gz"
 openssl_url="http://www.openssl.org/source/openssl-${openssl_ver}.tar.gz"
 orc_url="http://code.entropywave.com/download/orc/orc-${orc_ver}.tar.gz"
@@ -119,6 +122,7 @@ cairo_build="cairo-${cairo_ver}"
 pango_build="pango-${pango_ver}"
 atk_build="atk-${atk_ver}"
 gtk_build="gtk+-${gtk_ver}"
+pycairo_build="py2cairo-${pycairo_ver}"
 celt_build="celt-${celt_ver}"
 openssl_build="openssl-${openssl_ver}"
 orc_build="orc-${orc_ver}"
@@ -141,6 +145,7 @@ cairo_licenses="COPYING COPYING-LGPL-2.1 COPYING-MPL-1.1"
 pango_licenses="COPYING"
 atk_licenses="COPYING"
 gtk_licenses="COPYING"
+pycairo_licenses="COPYING COPYING-LGPL-2.1 COPYING-MPL-1.1"
 celt_licenses="COPYING"
 openssl_licenses="LICENSE"
 orc_licenses="COPYING"
@@ -163,6 +168,7 @@ cairo_dependencies="zlib png pixman"
 pango_dependencies="glib cairo"
 atk_dependencies="glib"
 gtk_dependencies="glib gdkpixbuf cairo pango atk"
+pycairo_dependencies="cairo"
 celt_dependencies=""
 openssl_dependencies=""
 orc_dependencies=""
@@ -185,6 +191,7 @@ cairo_artifacts="libcairo-2.dll"
 pango_artifacts="libpango-1.0-0.dll libpangocairo-1.0-0.dll libpangowin32-1.0-0.dll"
 atk_artifacts="libatk-1.0-0.dll"
 gtk_artifacts="libgtk-win32-2.0-0.dll libgdk-win32-2.0-0.dll"
+pycairo_artifacts="lib/python/cairo/__init__.py lib/python/cairo/_cairo.pyd"
 celt_artifacts="libcelt051-0.dll"
 openssl_artifacts="libeay32.dll ssleay32.dll"
 orc_artifacts="liborc-0.4-0.dll liborc-test-0.4-0.dll"
@@ -316,10 +323,13 @@ do_configure() {
             PKG_CONFIG_LIBDIR="${root}/lib/pkgconfig" \
             PKG_CONFIG_PATH= \
             CC="${build_host}-gcc -static-libgcc" \
-            CPPFLAGS="${cppflags} -I${root}/include" \
+            CPPFLAGS="${cppflags} -I${root}/include -I${pythondir}/include" \
             CFLAGS="${cflags}" \
             CXXFLAGS="${cxxflags}" \
-            LDFLAGS="${ldflags} -L${root}/lib" \
+            LDFLAGS="${ldflags} -L${root}/lib -L${pythondir}/libs" \
+            PYTHON="${python}" \
+            am_cv_python_pythondir="${root}/share/python" \
+            am_cv_python_pyexecdir="${root}/lib/python" \
             "$@"
 }
 
@@ -454,6 +464,19 @@ build_one() {
                 do_configure
         make $parallel
         make install
+        ;;
+    pycairo)
+        # We need explicit libpython linkage on Windows
+        sed -i 's/-module/-module -no-undefined -lpython27/' src/Makefile.am
+        # Work around broken Autotools config
+        touch ChangeLog
+        # Work around missing install-sh
+        autoreconf -i
+        do_configure
+        make $parallel
+        make install
+        mv ${root}/lib/python/cairo/_cairo.dll \
+                ${root}/lib/python/cairo/_cairo.pyd
         ;;
     celt)
         # libtool needs -no-undefined to build shared libraries on Windows
@@ -640,6 +663,13 @@ probe() {
     fi
     if ! type ${build_host}-gcc >/dev/null 2>&1 ; then
         echo "Couldn't find suitable compiler."
+        exit 1
+    fi
+
+    pythondir="$(cygpath 'c:\Python27')"
+    python="${pythondir}/python.exe"
+    if [ ! -e "${python}" ] ; then
+        echo "Native Python not installed"
         exit 1
     fi
 
