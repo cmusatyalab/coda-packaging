@@ -479,7 +479,7 @@ build_one() {
         # Work around broken Autotools config
         touch ChangeLog
         # Work around missing install-sh
-        autoreconf -i
+        autoreconf -fi
         do_configure
         make $parallel
         make install
@@ -510,7 +510,7 @@ build_one() {
                 libcelt/Makefile.am
         # Don't compile test cases, since they don't build
         sed -i 's/noinst_PROGRAMS/EXTRA_PROGRAMS/' tests/Makefile.am
-        autoreconf -i
+        autoreconf -fi
         do_configure \
                 --without-ogg
         make $parallel
