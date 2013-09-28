@@ -483,8 +483,7 @@ build_one() {
         do_configure
         make $parallel
         make install
-        mv ${root}/lib/python/cairo/_cairo.dll \
-                ${root}/lib/python/cairo/_cairo.pyd
+        rename .dll .pyd ${root}/lib/python/cairo/_cairo.dll
         ;;
     pygobject)
         # We need explicit libpython linkage on Windows
