@@ -21,7 +21,7 @@
 
 set -eE
 
-packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk gtk pycairo celt openssl orc gstreamer gstbase gstgood spicegtk"
+packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk gtk pycairo pygobject celt openssl orc gstreamer gstbase gstgood spicegtk"
 
 # Cygwin non-default packages
 cygtools="wget zip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc-g++ binutils nasm gettext-devel libglib2.0-devel gtk-update-icon-cache libogg-devel autoconf automake libtool flex bison intltool"
@@ -47,6 +47,7 @@ pango_name="pango"
 atk_name="atk"
 gtk_name="gtk+"
 pycairo_name="py2cairo"
+pygobject_name="PyGObject"
 celt_name="celt"
 openssl_name="OpenSSL"
 orc_name="orc"
@@ -76,6 +77,8 @@ atk_ver="${atk_basever}.4"
 gtk_basever="2.24"
 gtk_ver="${gtk_basever}.21"
 pycairo_ver="1.10.0"
+pygobject_basever="2.28"
+pygobject_ver="${pygobject_basever}.6"
 celt_ver="0.5.1.3"  # spice-gtk requires 0.5.1.x specifically
 openssl_ver="1.0.1e"
 orc_ver="0.4.18"
@@ -100,6 +103,7 @@ pango_url="http://ftp.gnome.org/pub/gnome/sources/pango/${pango_basever}/pango-$
 atk_url="http://ftp.gnome.org/pub/gnome/sources/atk/${atk_basever}/atk-${atk_ver}.tar.xz"
 gtk_url="http://ftp.gnome.org/pub/gnome/sources/gtk+/${gtk_basever}/gtk+-${gtk_ver}.tar.xz"
 pycairo_url="http://cairographics.org/releases/py2cairo-${pycairo_ver}.tar.bz2"
+pygobject_url="http://ftp.gnome.org/pub/GNOME/sources/pygobject/${pygobject_basever}/pygobject-${pygobject_ver}.tar.xz"
 celt_url="http://downloads.xiph.org/releases/celt/celt-${celt_ver}.tar.gz"
 openssl_url="http://www.openssl.org/source/openssl-${openssl_ver}.tar.gz"
 orc_url="http://code.entropywave.com/download/orc/orc-${orc_ver}.tar.gz"
@@ -123,6 +127,7 @@ pango_build="pango-${pango_ver}"
 atk_build="atk-${atk_ver}"
 gtk_build="gtk+-${gtk_ver}"
 pycairo_build="py2cairo-${pycairo_ver}"
+pygobject_build="pygobject-${pygobject_ver}"
 celt_build="celt-${celt_ver}"
 openssl_build="openssl-${openssl_ver}"
 orc_build="orc-${orc_ver}"
@@ -146,6 +151,7 @@ pango_licenses="COPYING"
 atk_licenses="COPYING"
 gtk_licenses="COPYING"
 pycairo_licenses="COPYING COPYING-LGPL-2.1 COPYING-MPL-1.1"
+pygobject_licenses="COPYING"
 celt_licenses="COPYING"
 openssl_licenses="LICENSE"
 orc_licenses="COPYING"
@@ -169,6 +175,7 @@ pango_dependencies="glib cairo"
 atk_dependencies="glib"
 gtk_dependencies="glib gdkpixbuf cairo pango atk"
 pycairo_dependencies="cairo"
+pygobject_dependencies="glib"
 celt_dependencies=""
 openssl_dependencies=""
 orc_dependencies=""
@@ -192,6 +199,7 @@ pango_artifacts="libpango-1.0-0.dll libpangocairo-1.0-0.dll libpangowin32-1.0-0.
 atk_artifacts="libatk-1.0-0.dll"
 gtk_artifacts="libgtk-win32-2.0-0.dll libgdk-win32-2.0-0.dll"
 pycairo_artifacts="lib/python/cairo/__init__.py lib/python/cairo/_cairo.pyd"
+pygobject_artifacts="libpyglib-2.0-python.dll lib/python/glib/__init__.py lib/python/glib/option.py lib/python/glib/_glib.pyd lib/python/gobject/__init__.py lib/python/gobject/constants.py lib/python/gobject/propertyhelper.py lib/python/gobject/_gobject.pyd lib/python/gtk-2.0/dsextras.py lib/python/gtk-2.0/gio/__init__.py lib/python/gtk-2.0/gio/_gio.pyd"
 celt_artifacts="libcelt051-0.dll"
 openssl_artifacts="libeay32.dll ssleay32.dll"
 orc_artifacts="liborc-0.4-0.dll liborc-test-0.4-0.dll"
@@ -477,6 +485,24 @@ build_one() {
         make install
         mv ${root}/lib/python/cairo/_cairo.dll \
                 ${root}/lib/python/cairo/_cairo.pyd
+        ;;
+    pygobject)
+        # We need explicit libpython linkage on Windows
+        sed -i 's/-no-undefined/& -lpython27/' {glib,gio,gobject}/Makefile.am
+        # glib convenience library must also be a DLL
+        echo 'AM_LDFLAGS = $(common_ldflags)' >> glib/Makefile.am
+        # Ensure convenience library doesn't have "python.exe" in its name
+        sed -i 's/PYTHON_BASENAME=.*/PYTHON_BASENAME=python/' configure.ac
+        autoreconf -fi
+        do_configure \
+                --disable-introspection
+        make $parallel
+        make install
+        rename .dll .pyd \
+                "${root}/lib/python/glib/_glib.dll" \
+                "${root}/lib/python/gobject/_gobject.dll" \
+                "${root}/lib/python/gtk-2.0/gio/_gio.dll"
+        cp -a "${root}/lib/libpyglib-2.0-python.dll" "${root}/bin/"
         ;;
     celt)
         # libtool needs -no-undefined to build shared libraries on Windows
