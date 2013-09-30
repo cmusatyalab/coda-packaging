@@ -189,7 +189,7 @@ orc_dependencies=""
 gstreamer_dependencies="glib"
 gstbase_dependencies="glib gstreamer orc"
 gstgood_dependencies="zlib png jpeg glib gdkpixbuf cairo gstreamer gstbase orc"
-spicegtk_dependencies="zlib jpeg pixman gtk celt openssl gstreamer gstbase"
+spicegtk_dependencies="zlib jpeg pixman gtk pygtk celt openssl gstreamer gstbase"
 
 # Build artifacts
 zlib_artifacts="zlib1.dll"
@@ -214,7 +214,7 @@ orc_artifacts="liborc-0.4-0.dll liborc-test-0.4-0.dll"
 gstreamer_artifacts="libgstreamer-0.10-0.dll libgstbase-0.10-0.dll lib/gstreamer-0.10/libgstcoreelements.dll lib/gstreamer-0.10/libgstcoreindexers.dll"
 gstbase_artifacts="libgstinterfaces-0.10-0.dll libgstapp-0.10-0.dll libgstaudio-0.10-0.dll libgstpbutils-0.10-0.dll lib/gstreamer-0.10/libgstapp.dll lib/gstreamer-0.10/libgstaudioconvert.dll lib/gstreamer-0.10/libgstaudioresample.dll"
 gstgood_artifacts="lib/gstreamer-0.10/libgstautodetect.dll lib/gstreamer-0.10/libgstdirectsoundsink.dll"
-spicegtk_artifacts="libspice-client-gtk-2.0-4.dll libspice-client-glib-2.0-8.dll spicy.exe"
+spicegtk_artifacts="libspice-client-gtk-2.0-4.dll libspice-client-glib-2.0-8.dll lib/python/SpiceClientGtk.pyd spicy.exe"
 
 
 expand() {
@@ -500,6 +500,9 @@ build_one() {
         echo 'AM_LDFLAGS = $(common_ldflags)' >> glib/Makefile.am
         # Ensure convenience library doesn't have "python.exe" in its name
         sed -i 's/PYTHON_BASENAME=.*/PYTHON_BASENAME=python/' configure.ac
+        # We pass Cygwin paths to the installed pygobject-codegen-2.0 script,
+        # so have it run Cygwin Python
+        sed -i 's/@PYTHON@/python/' codegen/pygobject-codegen-2.0.in
         autoreconf -fi
         do_configure \
                 --disable-introspection
@@ -593,16 +596,28 @@ build_one() {
         make install
         ;;
     spicegtk)
+        # We give codegen Cygwin paths, so run it with Cygwin Python
+        sed -i 's:$(PYTHON) $(CODEGENDIR):python $(CODEGENDIR):' \
+                gtk/Makefile.in
+        # We need explicit libpython linkage on Windows
+        sed -i 's/SpiceClientGtk_la_LDFLAGS =/& -no-undefined -lpython27/' \
+                gtk/Makefile.in
         # Work around boolean typedef conflict
         sed -i 's/#include <jpeglib.h>/typedef int spice_jpeg_boolean;\n#define boolean spice_jpeg_boolean\n#include <jpeglib.h>/' gtk/decode-jpeg.c
         do_configure \
                 --with-sasl=no \
                 --with-gtk=2.0 \
                 --with-audio=gstreamer \
-                --with-python=no \
                 --enable-smartcard=no
-        make $parallel
+        # Ensure make can find pygobject-codegen-2.0, and that CODEGENDIR
+        # is set correctly (spice-gtk runs pkg-config at make time)
+        PATH="${root}/bin:${PATH}" \
+                PKG_CONFIG_LIBDIR="${root}/lib/pkgconfig" \
+                PKG_CONFIG_PATH= \
+                make $parallel
         make install
+        rename .dll .pyd \
+                "${root}/lib/python/SpiceClientGtk.dll"
         ;;
     esac
 
