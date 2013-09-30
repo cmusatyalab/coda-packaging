@@ -88,7 +88,7 @@ orc_ver="0.4.18"
 gstreamer_ver="0.10.36"  # spice-gtk requires 0.10.x
 gstbase_ver="0.10.36"
 gstgood_ver="0.10.31"
-spicegtk_ver="0.20"
+spicegtk_ver="0.21"
 
 # Tarball URLs
 configguess_url="http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=${configguess_ver}"
@@ -114,7 +114,7 @@ orc_url="http://code.entropywave.com/download/orc/orc-${orc_ver}.tar.gz"
 gstreamer_url="http://gstreamer.freedesktop.org/src/gstreamer/gstreamer-${gstreamer_ver}.tar.xz"
 gstbase_url="http://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-${gstbase_ver}.tar.xz"
 gstgood_url="http://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-${gstgood_ver}.tar.xz"
-spicegtk_url="http://spice-space.org/download/gtk/spice-gtk-${spicegtk_ver}.tar.bz2"
+spicegtk_url="http://www.spice-space.org/download/gtk/spice-gtk-${spicegtk_ver}.tar.bz2"
 
 # Unpacked source trees
 zlib_build="zlib-${zlib_ver}"
