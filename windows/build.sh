@@ -205,9 +205,9 @@ cairo_artifacts="libcairo-2.dll"
 pango_artifacts="libpango-1.0-0.dll libpangocairo-1.0-0.dll libpangowin32-1.0-0.dll"
 atk_artifacts="libatk-1.0-0.dll"
 gtk_artifacts="libgtk-win32-2.0-0.dll libgdk-win32-2.0-0.dll"
-pycairo_artifacts="lib/python/cairo/__init__.py lib/python/cairo/_cairo.pyd"
-pygobject_artifacts="libpyglib-2.0-python.dll lib/python/pygtk.py lib/python/pygtk.pth lib/python/glib/__init__.py lib/python/glib/option.py lib/python/glib/_glib.pyd lib/python/gobject/__init__.py lib/python/gobject/constants.py lib/python/gobject/propertyhelper.py lib/python/gobject/_gobject.pyd lib/python/gtk-2.0/dsextras.py lib/python/gtk-2.0/gio/__init__.py lib/python/gtk-2.0/gio/_gio.pyd"
-pygtk_artifacts="lib/python/gtk-2.0/atk.pyd lib/python/gtk-2.0/pango.pyd lib/python/gtk-2.0/pangocairo.pyd lib/python/gtk-2.0/gtk/__init__.py lib/python/gtk-2.0/gtk/_lazyutils.py lib/python/gtk-2.0/gtk/compat.py lib/python/gtk-2.0/gtk/deprecation.py lib/python/gtk-2.0/gtk/keysyms.py lib/python/gtk-2.0/gtk/_gtk.pyd"
+pycairo_artifacts="lib/python/cairo"
+pygobject_artifacts="libpyglib-2.0-python.dll lib/python/pygtk.py lib/python/pygtk.pth lib/python/glib lib/python/gobject lib/python/gtk-2.0/dsextras.py lib/python/gtk-2.0/gio"
+pygtk_artifacts="lib/python/gtk-2.0/atk.pyd lib/python/gtk-2.0/pango.pyd lib/python/gtk-2.0/pangocairo.pyd lib/python/gtk-2.0/gtk"
 celt_artifacts="libcelt051-0.dll"
 openssl_artifacts="libeay32.dll ssleay32.dll"
 orc_artifacts="liborc-0.4-0.dll liborc-test-0.4-0.dll"
@@ -492,6 +492,7 @@ build_one() {
         make $parallel
         make install
         rename .dll .pyd ${root}/lib/python/cairo/_cairo.dll
+        rm ${root}/lib/python/cairo/*.{dll.a,la}
         ;;
     pygobject)
         # We need explicit libpython linkage on Windows
@@ -513,6 +514,7 @@ build_one() {
                 "${root}/lib/python/gobject/_gobject.dll" \
                 "${root}/lib/python/gtk-2.0/gio/_gio.dll"
         cp -a "${root}/lib/libpyglib-2.0-python.dll" "${root}/bin/"
+        rm ${root}/lib/python/{glib,gobject,gtk-2.0/gio}/*.{dll.a,la}
         ;;
     pygtk)
         # We give codegen Cygwin paths, so run it with Cygwin Python
@@ -529,6 +531,7 @@ build_one() {
                 "${root}/lib/python/gtk-2.0/pango.dll" \
                 "${root}/lib/python/gtk-2.0/pangocairo.dll" \
                 "${root}/lib/python/gtk-2.0/gtk/_gtk.dll"
+        rm ${root}/lib/python/gtk-2.0/{,gtk/}*.{dll.a,la}
         ;;
     celt)
         # libtool needs -no-undefined to build shared libraries on Windows
@@ -674,7 +677,7 @@ bdist() {
             if [ "${artifact_parent}" != "." ] ; then
                 mkdir -p "${zipdir}/app/${artifact_parent}"
             fi
-            cp "${root}/bin/${artifact}" "${zipdir}/app/${artifact}"
+            cp -r "${root}/bin/${artifact}" "${zipdir}/app/${artifact}"
         done
         licensedir="${zipdir}/licenses/$(expand ${package}_name)"
         mkdir -p "${licensedir}"
@@ -703,7 +706,7 @@ clean() {
             echo "Cleaning ${package}..."
             for artifact in $(expand ${package}_artifacts)
             do
-                rm -f "${root}/bin/${artifact}"
+                rm -rf "${root}/bin/${artifact}"
             done
         done
     else
