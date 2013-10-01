@@ -1,4 +1,0 @@
-requests==1.2.3
-python-dateutil==2.1
-six==1.4.1
-msgpack-python==0.3.0

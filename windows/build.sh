@@ -29,8 +29,6 @@ cygtools="wget zip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc-g++ b
 python_url="http://www.python.org/ftp/python/2.7.5/python-2.7.5.msi"
 # setuptools
 setuptools_url="https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py"
-# pip
-pip_url="https://raw.github.com/pypa/pip/master/contrib/get-pip.py"
 
 # Package display names.  Missing packages are not included in VERSIONS.txt.
 zlib_name="zlib"
@@ -257,17 +255,6 @@ setup_environment() {
         fetch setuptools
         ${python} $(cygpath -w "$(tarpath setuptools)")
     fi
-
-    # Install pip
-    if [ ! -e $(cygpath "c:\Python27\Scripts\pip.exe") ] ; then
-        fetch pip
-        ${python} $(cygpath -w "$(tarpath pip)")
-    fi
-    local pip
-    pip="cygstart -w c:\Python27\Scripts\pip.exe"
-
-    # Install pure Python dependencies
-    ${pip} install -r $(cygpath -w requirements.txt)
 }
 
 fetch() {
