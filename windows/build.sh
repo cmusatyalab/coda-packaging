@@ -338,7 +338,7 @@ do_configure() {
             CXXFLAGS="${cxxflags}" \
             LDFLAGS="${ldflags} -L${root}/lib -L${pythondir}/libs" \
             PYTHON="${python}" \
-            am_cv_python_pythondir="${root}/share/python" \
+            am_cv_python_pythondir="${root}/lib/python" \
             am_cv_python_pyexecdir="${root}/lib/python" \
             "$@"
 }
@@ -365,15 +365,14 @@ setup_py() {
     sed -i 's/-mno-cygwin//' \
             $(cygpath 'c:\Python27\Lib\distutils\cygwinccompiler.py')
     PATH="$(cygpath -w ${root}/compilers):${PATH}" \
-            PYTHONPATH="$(cygpath -w ${root}/lib/python);$(cygpath -w ${root}/share/python)" \
+            PYTHONPATH="$(cygpath -w ${root}/lib/python)" \
             "${python}" setup.py build \
             --compiler=mingw32 \
             "$@"
-    PYTHONPATH="$(cygpath -w ${root}/lib/python);$(cygpath -w ${root}/share/python)" \
+    PYTHONPATH="$(cygpath -w ${root}/lib/python)" \
             "${python}" setup.py install \
             --prefix="$(cygpath -w ${root})" \
-            --install-purelib="$(cygpath -w ${root}/share/python)" \
-            --install-platlib="$(cygpath -w ${root}/lib/python)" \
+            --install-lib="$(cygpath -w ${root}/lib/python)" \
             --single-version-externally-managed \
             --record="nul" \
             "$@"
