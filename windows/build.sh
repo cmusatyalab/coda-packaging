@@ -21,7 +21,7 @@
 
 set -eE
 
-packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk gtk pycairo pygobject pygtk celt openssl orc gstreamer gstbase gstgood spicegtk"
+packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk gtk pycairo pygobject pygtk celt openssl orc gstreamer gstbase gstgood spicegtk msgpack"
 
 # Cygwin non-default packages
 cygtools="wget zip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc-g++ binutils nasm gettext-devel libglib2.0-devel gtk-update-icon-cache libogg-devel autoconf automake libtool flex bison intltool"
@@ -54,6 +54,7 @@ gstreamer_name="gstreamer"
 gstbase_name="gst-plugins-base"
 gstgood_name="gst-plugins-good"
 spicegtk_name="spice-gtk"
+msgpack_name="msgpack-python"
 
 # Package versions
 configguess_ver="28d244f1"
@@ -87,6 +88,7 @@ gstreamer_ver="0.10.36"  # spice-gtk requires 0.10.x
 gstbase_ver="0.10.36"
 gstgood_ver="0.10.31"
 spicegtk_ver="0.21"
+msgpack_ver="0.3.0"
 
 # Tarball URLs
 configguess_url="http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=${configguess_ver}"
@@ -113,6 +115,7 @@ gstreamer_url="http://gstreamer.freedesktop.org/src/gstreamer/gstreamer-${gstrea
 gstbase_url="http://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-${gstbase_ver}.tar.xz"
 gstgood_url="http://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-${gstgood_ver}.tar.xz"
 spicegtk_url="http://www.spice-space.org/download/gtk/spice-gtk-${spicegtk_ver}.tar.bz2"
+msgpack_url="https://pypi.python.org/packages/source/m/msgpack-python/msgpack-python-${msgpack_ver}.tar.gz"
 
 # Unpacked source trees
 zlib_build="zlib-${zlib_ver}"
@@ -138,6 +141,7 @@ gstreamer_build="gstreamer-${gstreamer_ver}"
 gstbase_build="gst-plugins-base-${gstbase_ver}"
 gstgood_build="gst-plugins-good-${gstgood_ver}"
 spicegtk_build="spice-gtk-${spicegtk_ver}"
+msgpack_build="msgpack-python-${msgpack_ver}"
 
 # Locations of license files within the source tree
 zlib_licenses="README"
@@ -163,6 +167,7 @@ gstreamer_licenses="COPYING"
 gstbase_licenses="COPYING.LIB"
 gstgood_licenses="COPYING"
 spicegtk_licenses="COPYING"
+msgpack_licenses="COPYING"
 
 # Build dependencies
 zlib_dependencies=""
@@ -188,6 +193,7 @@ gstreamer_dependencies="glib"
 gstbase_dependencies="glib gstreamer orc"
 gstgood_dependencies="zlib png jpeg glib gdkpixbuf cairo gstreamer gstbase orc"
 spicegtk_dependencies="zlib jpeg pixman gtk pygtk celt openssl gstreamer gstbase"
+msgpack_dependencies=""
 
 # Build artifacts
 zlib_artifacts="zlib1.dll"
@@ -213,6 +219,7 @@ gstreamer_artifacts="libgstreamer-0.10-0.dll libgstbase-0.10-0.dll lib/gstreamer
 gstbase_artifacts="libgstinterfaces-0.10-0.dll libgstapp-0.10-0.dll libgstaudio-0.10-0.dll libgstpbutils-0.10-0.dll lib/gstreamer-0.10/libgstapp.dll lib/gstreamer-0.10/libgstaudioconvert.dll lib/gstreamer-0.10/libgstaudioresample.dll"
 gstgood_artifacts="lib/gstreamer-0.10/libgstautodetect.dll lib/gstreamer-0.10/libgstdirectsoundsink.dll"
 spicegtk_artifacts="libspice-client-gtk-2.0-4.dll libspice-client-glib-2.0-8.dll lib/python/SpiceClientGtk.pyd spicy.exe"
+msgpack_artifacts="lib/python/msgpack"
 
 
 expand() {
@@ -333,6 +340,42 @@ do_configure() {
             PYTHON="${python}" \
             am_cv_python_pythondir="${root}/share/python" \
             am_cv_python_pyexecdir="${root}/lib/python" \
+            "$@"
+}
+
+setup_py() {
+    # Run setup.py build and install with the appropriate parameters.
+    # Additional parameters can be specified as arguments.
+
+    # --compiler=mingw32 won't allow us to override the compiler executable
+    # for cross-compiling, so place a Windows symlink in ${root}/bin and put
+    # ${root}/bin into the PATH.
+    mkdir -p "${root}/compilers"
+    if [ ! -e "${root}/compilers/gcc.exe" ] ; then
+        cmd /c mklink $(cygpath -w "${root}/compilers/gcc.exe") \
+                $(cygpath -w "/usr/bin/${build_host}-gcc.exe") >/dev/null
+    fi
+    if [ ! -e "${root}/compilers/g++.exe" ] ; then
+        cmd /c mklink $(cygpath -w "${root}/compilers/g++.exe") \
+                $(cygpath -w "/usr/bin/${build_host}-g++.exe") >/dev/null
+    fi
+    # Modify installed distutils package to work around removal of
+    # -mno-cygwin option from current gcc.  No longer necessary in
+    # Python 2.7.6.
+    sed -i 's/-mno-cygwin//' \
+            $(cygpath 'c:\Python27\Lib\distutils\cygwinccompiler.py')
+    PATH="$(cygpath -w ${root}/compilers):${PATH}" \
+            PYTHONPATH="$(cygpath -w ${root}/lib/python);$(cygpath -w ${root}/share/python)" \
+            "${python}" setup.py build \
+            --compiler=mingw32 \
+            "$@"
+    PYTHONPATH="$(cygpath -w ${root}/lib/python);$(cygpath -w ${root}/share/python)" \
+            "${python}" setup.py install \
+            --prefix="$(cygpath -w ${root})" \
+            --install-purelib="$(cygpath -w ${root}/share/python)" \
+            --install-platlib="$(cygpath -w ${root}/lib/python)" \
+            --single-version-externally-managed \
+            --record="nul" \
             "$@"
 }
 
@@ -608,6 +651,9 @@ build_one() {
         make install
         rename .dll .pyd \
                 "${root}/lib/python/SpiceClientGtk.dll"
+        ;;
+    msgpack)
+        setup_py
         ;;
     esac
 
