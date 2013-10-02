@@ -21,7 +21,7 @@
 
 set -eE
 
-packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk gtk pycairo pygobject pygtk celt openssl orc gstreamer gstbase gstgood spicegtk msgpack"
+packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk gtk pycairo pygobject pygtk celt openssl xml orc gstreamer gstbase gstgood spicegtk msgpack"
 
 # Cygwin non-default packages
 cygtools="wget zip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc-g++ binutils nasm gettext-devel libglib2.0-devel gtk-update-icon-cache libogg-devel autoconf automake libtool flex bison intltool"
@@ -49,6 +49,7 @@ pygobject_name="PyGObject"
 pygtk_name="PyGTK"
 celt_name="celt"
 openssl_name="OpenSSL"
+xml_name="libxml2"
 orc_name="orc"
 gstreamer_name="gstreamer"
 gstbase_name="gst-plugins-base"
@@ -83,6 +84,7 @@ pygtk_basever="2.24"
 pygtk_ver="${pygtk_basever}.0"
 celt_ver="0.5.1.3"  # spice-gtk requires 0.5.1.x specifically
 openssl_ver="1.0.1e"
+xml_ver="2.9.1"
 orc_ver="0.4.18"
 gstreamer_ver="0.10.36"  # spice-gtk requires 0.10.x
 gstbase_ver="0.10.36"
@@ -110,6 +112,7 @@ pygobject_url="http://ftp.gnome.org/pub/GNOME/sources/pygobject/${pygobject_base
 pygtk_url="http://ftp.gnome.org/pub/GNOME/sources/pygtk/${pygtk_basever}/pygtk-${pygtk_ver}.tar.bz2"
 celt_url="http://downloads.xiph.org/releases/celt/celt-${celt_ver}.tar.gz"
 openssl_url="http://www.openssl.org/source/openssl-${openssl_ver}.tar.gz"
+xml_url="ftp://xmlsoft.org/libxml2/libxml2-${xml_ver}.tar.gz"
 orc_url="http://code.entropywave.com/download/orc/orc-${orc_ver}.tar.gz"
 gstreamer_url="http://gstreamer.freedesktop.org/src/gstreamer/gstreamer-${gstreamer_ver}.tar.xz"
 gstbase_url="http://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-${gstbase_ver}.tar.xz"
@@ -136,6 +139,7 @@ pygobject_build="pygobject-${pygobject_ver}"
 pygtk_build="pygtk-${pygtk_ver}"
 celt_build="celt-${celt_ver}"
 openssl_build="openssl-${openssl_ver}"
+xml_build="libxml2-${xml_ver}"
 orc_build="orc-${orc_ver}"
 gstreamer_build="gstreamer-${gstreamer_ver}"
 gstbase_build="gst-plugins-base-${gstbase_ver}"
@@ -162,6 +166,7 @@ pygobject_licenses="COPYING"
 pygtk_licenses="COPYING"
 celt_licenses="COPYING"
 openssl_licenses="LICENSE"
+xml_licenses="COPYING"
 orc_licenses="COPYING"
 gstreamer_licenses="COPYING"
 gstbase_licenses="COPYING.LIB"
@@ -188,8 +193,9 @@ pygobject_dependencies="glib"
 pygtk_dependencies="pango atk gtk pycairo pygobject"
 celt_dependencies=""
 openssl_dependencies=""
+xml_dependencies="zlib iconv"
 orc_dependencies=""
-gstreamer_dependencies="glib"
+gstreamer_dependencies="glib xml"
 gstbase_dependencies="glib gstreamer orc"
 gstgood_dependencies="zlib png jpeg glib gdkpixbuf cairo gstreamer gstbase orc"
 spicegtk_dependencies="zlib jpeg pixman gtk pygtk celt openssl gstreamer gstbase"
@@ -214,6 +220,7 @@ pygobject_artifacts="libpyglib-2.0-python.dll lib/python/pygtk.py lib/python/pyg
 pygtk_artifacts="lib/python/gtk-2.0/atk.pyd lib/python/gtk-2.0/pango.pyd lib/python/gtk-2.0/pangocairo.pyd lib/python/gtk-2.0/gtk"
 celt_artifacts="libcelt051-0.dll"
 openssl_artifacts="libeay32.dll ssleay32.dll"
+xml_artifacts="libxml2-2.dll"
 orc_artifacts="liborc-0.4-0.dll liborc-test-0.4-0.dll"
 gstreamer_artifacts="libgstreamer-0.10-0.dll libgstbase-0.10-0.dll lib/gstreamer-0.10/libgstcoreelements.dll lib/gstreamer-0.10/libgstcoreindexers.dll"
 gstbase_artifacts="libgstinterfaces-0.10-0.dll libgstapp-0.10-0.dll libgstaudio-0.10-0.dll libgstpbutils-0.10-0.dll lib/gstreamer-0.10/libgstapp.dll lib/gstreamer-0.10/libgstaudioconvert.dll lib/gstreamer-0.10/libgstaudioresample.dll"
@@ -594,6 +601,12 @@ build_one() {
         make
         make install_sw
         ;;
+    xml)
+        do_configure \
+                --without-python
+        make $parallel
+        make install
+        ;;
     orc)
         do_configure
         make $parallel
@@ -608,7 +621,6 @@ build_one() {
         # gstreamer confuses POSIX timers with the availability of
         # clock_gettime()
         do_configure \
-                --disable-loadsave \
                 gst_cv_posix_timers=no
         make $parallel
         make install
