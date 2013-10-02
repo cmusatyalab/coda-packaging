@@ -21,7 +21,7 @@
 
 set -eE
 
-packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk gtk pycairo pygobject pygtk celt openssl xml orc gstreamer gstbase gstgood spicegtk msgpack"
+packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk gtk pycairo pygobject pygtk celt openssl xml xslt orc gstreamer gstbase gstgood spicegtk msgpack"
 
 # Cygwin non-default packages
 cygtools="wget zip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc-g++ binutils nasm gettext-devel libglib2.0-devel gtk-update-icon-cache libogg-devel autoconf automake libtool flex bison intltool"
@@ -50,6 +50,7 @@ pygtk_name="PyGTK"
 celt_name="celt"
 openssl_name="OpenSSL"
 xml_name="libxml2"
+xslt_name="libxslt"
 orc_name="orc"
 gstreamer_name="gstreamer"
 gstbase_name="gst-plugins-base"
@@ -85,6 +86,7 @@ pygtk_ver="${pygtk_basever}.0"
 celt_ver="0.5.1.3"  # spice-gtk requires 0.5.1.x specifically
 openssl_ver="1.0.1e"
 xml_ver="2.9.1"
+xslt_ver="1.1.28"
 orc_ver="0.4.18"
 gstreamer_ver="0.10.36"  # spice-gtk requires 0.10.x
 gstbase_ver="0.10.36"
@@ -113,6 +115,7 @@ pygtk_url="http://ftp.gnome.org/pub/GNOME/sources/pygtk/${pygtk_basever}/pygtk-$
 celt_url="http://downloads.xiph.org/releases/celt/celt-${celt_ver}.tar.gz"
 openssl_url="http://www.openssl.org/source/openssl-${openssl_ver}.tar.gz"
 xml_url="ftp://xmlsoft.org/libxml2/libxml2-${xml_ver}.tar.gz"
+xslt_url="ftp://xmlsoft.org/libxslt/libxslt-${xslt_ver}.tar.gz"
 orc_url="http://code.entropywave.com/download/orc/orc-${orc_ver}.tar.gz"
 gstreamer_url="http://gstreamer.freedesktop.org/src/gstreamer/gstreamer-${gstreamer_ver}.tar.xz"
 gstbase_url="http://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-${gstbase_ver}.tar.xz"
@@ -140,6 +143,7 @@ pygtk_build="pygtk-${pygtk_ver}"
 celt_build="celt-${celt_ver}"
 openssl_build="openssl-${openssl_ver}"
 xml_build="libxml2-${xml_ver}"
+xslt_build="libxslt-${xslt_ver}"
 orc_build="orc-${orc_ver}"
 gstreamer_build="gstreamer-${gstreamer_ver}"
 gstbase_build="gst-plugins-base-${gstbase_ver}"
@@ -167,6 +171,7 @@ pygtk_licenses="COPYING"
 celt_licenses="COPYING"
 openssl_licenses="LICENSE"
 xml_licenses="COPYING"
+xslt_licenses="COPYING"
 orc_licenses="COPYING"
 gstreamer_licenses="COPYING"
 gstbase_licenses="COPYING.LIB"
@@ -194,6 +199,7 @@ pygtk_dependencies="pango atk gtk pycairo pygobject"
 celt_dependencies=""
 openssl_dependencies=""
 xml_dependencies="zlib iconv"
+xslt_dependencies="xml"
 orc_dependencies=""
 gstreamer_dependencies="glib xml"
 gstbase_dependencies="glib gstreamer orc"
@@ -221,6 +227,7 @@ pygtk_artifacts="lib/python/gtk-2.0/atk.pyd lib/python/gtk-2.0/pango.pyd lib/pyt
 celt_artifacts="libcelt051-0.dll"
 openssl_artifacts="libeay32.dll ssleay32.dll"
 xml_artifacts="libxml2-2.dll"
+xslt_artifacts="libxslt-1.dll"
 orc_artifacts="liborc-0.4-0.dll liborc-test-0.4-0.dll"
 gstreamer_artifacts="libgstreamer-0.10-0.dll libgstbase-0.10-0.dll lib/gstreamer-0.10/libgstcoreelements.dll lib/gstreamer-0.10/libgstcoreindexers.dll"
 gstbase_artifacts="libgstinterfaces-0.10-0.dll libgstapp-0.10-0.dll libgstaudio-0.10-0.dll libgstpbutils-0.10-0.dll lib/gstreamer-0.10/libgstapp.dll lib/gstreamer-0.10/libgstaudioconvert.dll lib/gstreamer-0.10/libgstaudioresample.dll"
@@ -604,6 +611,16 @@ build_one() {
     xml)
         do_configure \
                 --without-python
+        make $parallel
+        make install
+        ;;
+    xslt)
+        # MinGW mkdir() takes only one argument
+        sed -i 's/mkdir(directory, 0755)/mkdir(directory)/' libxslt/security.c
+        do_configure \
+                --with-libxml-prefix="${root}" \
+                --without-python \
+                --without-plugins
         make $parallel
         make install
         ;;
