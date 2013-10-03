@@ -21,7 +21,7 @@
 
 set -eE
 
-packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk gtk pycairo pygobject pygtk celt openssl xml xslt orc gstreamer gstbase gstgood spicegtk msgpack"
+packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk gtk pycairo pygobject pygtk celt openssl xml xslt orc gstreamer gstbase gstgood spicegtk msgpack lxml"
 
 # Cygwin non-default packages
 cygtools="wget zip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc-g++ binutils nasm gettext-devel libglib2.0-devel gtk-update-icon-cache libogg-devel autoconf automake libtool flex bison intltool"
@@ -57,6 +57,7 @@ gstbase_name="gst-plugins-base"
 gstgood_name="gst-plugins-good"
 spicegtk_name="spice-gtk"
 msgpack_name="msgpack-python"
+lxml_name="lxml"
 
 # Package versions
 configguess_ver="28d244f1"
@@ -93,6 +94,7 @@ gstbase_ver="0.10.36"
 gstgood_ver="0.10.31"
 spicegtk_ver="0.21"
 msgpack_ver="0.3.0"
+lxml_ver="3.2.3"
 
 # Tarball URLs
 configguess_url="http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=${configguess_ver}"
@@ -122,6 +124,7 @@ gstbase_url="http://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-b
 gstgood_url="http://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-${gstgood_ver}.tar.xz"
 spicegtk_url="http://www.spice-space.org/download/gtk/spice-gtk-${spicegtk_ver}.tar.bz2"
 msgpack_url="https://pypi.python.org/packages/source/m/msgpack-python/msgpack-python-${msgpack_ver}.tar.gz"
+lxml_url="https://pypi.python.org/packages/source/l/lxml/lxml-${lxml_ver}.tar.gz"
 
 # Unpacked source trees
 zlib_build="zlib-${zlib_ver}"
@@ -150,6 +153,7 @@ gstbase_build="gst-plugins-base-${gstbase_ver}"
 gstgood_build="gst-plugins-good-${gstgood_ver}"
 spicegtk_build="spice-gtk-${spicegtk_ver}"
 msgpack_build="msgpack-python-${msgpack_ver}"
+lxml_build="lxml-${lxml_ver}"
 
 # Locations of license files within the source tree
 zlib_licenses="README"
@@ -178,6 +182,7 @@ gstbase_licenses="COPYING.LIB"
 gstgood_licenses="COPYING"
 spicegtk_licenses="COPYING"
 msgpack_licenses="COPYING"
+lxml_licenses="LICENSES.txt doc/licenses/BSD.txt doc/licenses/elementtree.txt doc/licenses/GPL.txt"
 
 # Build dependencies
 zlib_dependencies=""
@@ -206,6 +211,7 @@ gstbase_dependencies="glib gstreamer orc"
 gstgood_dependencies="zlib png jpeg glib gdkpixbuf cairo gstreamer gstbase orc"
 spicegtk_dependencies="zlib jpeg pixman gtk pygtk celt openssl gstreamer gstbase"
 msgpack_dependencies=""
+lxml_dependencies="xml xslt"
 
 # Build artifacts
 zlib_artifacts="zlib1.dll"
@@ -227,13 +233,14 @@ pygtk_artifacts="lib/python/gtk-2.0/atk.pyd lib/python/gtk-2.0/pango.pyd lib/pyt
 celt_artifacts="libcelt051-0.dll"
 openssl_artifacts="libeay32.dll ssleay32.dll"
 xml_artifacts="libxml2-2.dll"
-xslt_artifacts="libxslt-1.dll"
+xslt_artifacts="libxslt-1.dll libexslt-0.dll"
 orc_artifacts="liborc-0.4-0.dll liborc-test-0.4-0.dll"
 gstreamer_artifacts="libgstreamer-0.10-0.dll libgstbase-0.10-0.dll lib/gstreamer-0.10/libgstcoreelements.dll lib/gstreamer-0.10/libgstcoreindexers.dll"
 gstbase_artifacts="libgstinterfaces-0.10-0.dll libgstapp-0.10-0.dll libgstaudio-0.10-0.dll libgstpbutils-0.10-0.dll lib/gstreamer-0.10/libgstapp.dll lib/gstreamer-0.10/libgstaudioconvert.dll lib/gstreamer-0.10/libgstaudioresample.dll"
 gstgood_artifacts="lib/gstreamer-0.10/libgstautodetect.dll lib/gstreamer-0.10/libgstdirectsoundsink.dll"
 spicegtk_artifacts="libspice-client-gtk-2.0-4.dll libspice-client-glib-2.0-8.dll lib/python/SpiceClientGtk.pyd spicy.exe"
 msgpack_artifacts="lib/python/msgpack"
+lxml_artifacts="lib/python/lxml"
 
 
 expand() {
@@ -682,6 +689,20 @@ build_one() {
         ;;
     msgpack)
         setup_py
+        ;;
+    lxml)
+        # Wrap xslt-config script so it can be run from native Python
+        local batch
+        mkdir -p "${root}/compilers"
+        batch="${root}/compilers/xslt-config.bat"
+        echo "@set PATH=$(cygpath -w /usr/bin);%PATH%" > "${batch}"
+        echo "@sh ${root}/bin/xslt-config %*" >> "${batch}"
+        # lxml assumes zlib is called zlib.dll on Windows
+        sed -i "s/zlib/z/" setupinfo.py
+        setup_py \
+                --with-xslt-config="$(cygpath -w ${root}/compilers/xslt-config)"
+        rm -r "${root}/lib/python/lxml/includes"
+        rm ${root}/lib/python/lxml/*.h
         ;;
     esac
 
