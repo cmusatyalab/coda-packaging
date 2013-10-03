@@ -21,7 +21,7 @@
 
 set -eE
 
-packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk gtk pycairo pygobject pygtk celt openssl xml xslt orc gstreamer gstbase gstgood spicegtk msgpack lxml"
+packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk gtk pycairo pygobject pygtk celt openssl xml xslt orc gstreamer gstbase gstgood spicegtk msgpack lxml six dateutil requests"
 
 # Cygwin non-default packages
 cygtools="wget zip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc-g++ binutils nasm gettext-devel libglib2.0-devel gtk-update-icon-cache libogg-devel autoconf automake libtool flex bison intltool"
@@ -58,6 +58,9 @@ gstgood_name="gst-plugins-good"
 spicegtk_name="spice-gtk"
 msgpack_name="msgpack-python"
 lxml_name="lxml"
+six_name="six"
+dateutil_name="python-dateutil"
+requests_name="requests"
 
 # Package versions
 configguess_ver="28d244f1"
@@ -95,6 +98,9 @@ gstgood_ver="0.10.31"
 spicegtk_ver="0.21"
 msgpack_ver="0.3.0"
 lxml_ver="3.2.3"
+six_ver="1.4.1"
+dateutil_ver="2.1"
+requests_ver="2.0.0"
 
 # Tarball URLs
 configguess_url="http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=${configguess_ver}"
@@ -125,6 +131,9 @@ gstgood_url="http://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-g
 spicegtk_url="http://www.spice-space.org/download/gtk/spice-gtk-${spicegtk_ver}.tar.bz2"
 msgpack_url="https://pypi.python.org/packages/source/m/msgpack-python/msgpack-python-${msgpack_ver}.tar.gz"
 lxml_url="https://pypi.python.org/packages/source/l/lxml/lxml-${lxml_ver}.tar.gz"
+six_url="https://pypi.python.org/packages/source/s/six/six-${six_ver}.tar.gz"
+dateutil_url="https://pypi.python.org/packages/source/p/python-dateutil/python-dateutil-${dateutil_ver}.tar.gz"
+requests_url="https://pypi.python.org/packages/source/r/requests/requests-${requests_ver}.tar.gz"
 
 # Unpacked source trees
 zlib_build="zlib-${zlib_ver}"
@@ -154,6 +163,9 @@ gstgood_build="gst-plugins-good-${gstgood_ver}"
 spicegtk_build="spice-gtk-${spicegtk_ver}"
 msgpack_build="msgpack-python-${msgpack_ver}"
 lxml_build="lxml-${lxml_ver}"
+six_build="six-${six_ver}"
+dateutil_build="python-dateutil-${dateutil_ver}"
+requests_build="requests-${requests_ver}"
 
 # Locations of license files within the source tree
 zlib_licenses="README"
@@ -183,6 +195,9 @@ gstgood_licenses="COPYING"
 spicegtk_licenses="COPYING"
 msgpack_licenses="COPYING"
 lxml_licenses="LICENSES.txt doc/licenses/BSD.txt doc/licenses/elementtree.txt doc/licenses/GPL.txt"
+six_licenses="LICENSE"
+dateutil_licenses="LICENSE"
+requests_licenses="LICENSE NOTICE"
 
 # Build dependencies
 zlib_dependencies=""
@@ -212,6 +227,9 @@ gstgood_dependencies="zlib png jpeg glib gdkpixbuf cairo gstreamer gstbase orc"
 spicegtk_dependencies="zlib jpeg pixman gtk pygtk celt openssl gstreamer gstbase"
 msgpack_dependencies=""
 lxml_dependencies="xml xslt"
+six_dependencies=""
+dateutil_dependencies="six"
+requests_dependencies=""
 
 # Build artifacts
 zlib_artifacts="zlib1.dll"
@@ -241,6 +259,9 @@ gstgood_artifacts="lib/gstreamer-0.10/libgstautodetect.dll lib/gstreamer-0.10/li
 spicegtk_artifacts="libspice-client-gtk-2.0-4.dll libspice-client-glib-2.0-8.dll lib/python/SpiceClientGtk.pyd spicy.exe"
 msgpack_artifacts="lib/python/msgpack"
 lxml_artifacts="lib/python/lxml"
+six_artifacts="lib/python/six.py lib/python/six.pyc"
+dateutil_artifacts="lib/python/dateutil"
+requests_artifacts="lib/python/requests"
 
 
 expand() {
@@ -367,6 +388,7 @@ do_configure() {
 setup_py() {
     # Run setup.py build and install with the appropriate parameters.
     # Additional parameters can be specified as arguments.
+    local setuptools_args
 
     # --compiler=mingw32 won't allow us to override the compiler executable
     # for cross-compiling, so place a Windows symlink in ${root}/bin and put
@@ -390,12 +412,15 @@ setup_py() {
             "${python}" setup.py build \
             --compiler=mingw32 \
             "$@"
+    # If the package uses setuptools, disable egg installation
+    if grep -q setuptools setup.py ; then
+        setuptools_args="--single-version-externally-managed --record=nul"
+    fi
     PYTHONPATH="$(cygpath -w ${root}/lib/python)" \
             "${python}" setup.py install \
             --prefix="$(cygpath -w ${root})" \
             --install-lib="$(cygpath -w ${root}/lib/python)" \
-            --single-version-externally-managed \
-            --record="nul" \
+            ${setuptools_args} \
             "$@"
 }
 
@@ -703,6 +728,15 @@ build_one() {
                 --with-xslt-config="$(cygpath -w ${root}/compilers/xslt-config)"
         rm -r "${root}/lib/python/lxml/includes"
         rm ${root}/lib/python/lxml/*.h
+        ;;
+    six)
+        setup_py
+        ;;
+    dateutil)
+        setup_py
+        ;;
+    requests)
+        setup_py
         ;;
     esac
 
