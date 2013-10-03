@@ -21,7 +21,7 @@
 
 set -eE
 
-packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk gtk pycairo pygobject pygtk celt openssl xml xslt orc gstreamer gstbase gstgood spicegtk msgpack lxml six dateutil requests"
+packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk gtk pycairo pygobject pygtk celt openssl xml xslt orc gstreamer gstbase gstgood spicegtk msgpack lxml six dateutil requests vmnetx"
 
 # Cygwin non-default packages
 cygtools="wget zip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc-g++ binutils nasm gettext-devel libglib2.0-devel gtk-update-icon-cache libogg-devel autoconf automake libtool flex bison intltool"
@@ -61,6 +61,7 @@ lxml_name="lxml"
 six_name="six"
 dateutil_name="python-dateutil"
 requests_name="requests"
+vmnetx_name="VMNetX"
 
 # Package versions
 configguess_ver="28d244f1"
@@ -101,6 +102,7 @@ lxml_ver="3.2.3"
 six_ver="1.4.1"
 dateutil_ver="2.1"
 requests_ver="2.0.0"
+vmnetx_ver="0.4.0"
 
 # Tarball URLs
 configguess_url="http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=${configguess_ver}"
@@ -134,6 +136,7 @@ lxml_url="https://pypi.python.org/packages/source/l/lxml/lxml-${lxml_ver}.tar.gz
 six_url="https://pypi.python.org/packages/source/s/six/six-${six_ver}.tar.gz"
 dateutil_url="https://pypi.python.org/packages/source/p/python-dateutil/python-dateutil-${dateutil_ver}.tar.gz"
 requests_url="https://pypi.python.org/packages/source/r/requests/requests-${requests_ver}.tar.gz"
+vmnetx_url="https://olivearchive.org/vmnetx/source/vmnetx-${vmnetx_ver}.tar.xz"
 
 # Unpacked source trees
 zlib_build="zlib-${zlib_ver}"
@@ -166,6 +169,7 @@ lxml_build="lxml-${lxml_ver}"
 six_build="six-${six_ver}"
 dateutil_build="python-dateutil-${dateutil_ver}"
 requests_build="requests-${requests_ver}"
+vmnetx_build="vmnetx-${vmnetx_ver}"
 
 # Locations of license files within the source tree
 zlib_licenses="README"
@@ -198,6 +202,7 @@ lxml_licenses="LICENSES.txt doc/licenses/BSD.txt doc/licenses/elementtree.txt do
 six_licenses="LICENSE"
 dateutil_licenses="LICENSE"
 requests_licenses="LICENSE NOTICE"
+vmnetx_licenses="COPYING"
 
 # Build dependencies
 zlib_dependencies=""
@@ -230,6 +235,7 @@ lxml_dependencies="xml xslt"
 six_dependencies=""
 dateutil_dependencies="six"
 requests_dependencies=""
+vmnetx_dependencies="pygobject pygtk spicegtk msgpack lxml dateutil requests"
 
 # Build artifacts
 zlib_artifacts="zlib1.dll"
@@ -262,6 +268,7 @@ lxml_artifacts="lib/python/lxml"
 six_artifacts="lib/python/six.py lib/python/six.pyc"
 dateutil_artifacts="lib/python/dateutil"
 requests_artifacts="lib/python/requests"
+vmnetx_artifacts="vmnetx lib/python/vmnetx share/icons/hicolor/256x256/apps/vmnetx.png"
 
 
 expand() {
@@ -737,6 +744,11 @@ build_one() {
         ;;
     requests)
         setup_py
+        ;;
+    vmnetx)
+        do_configure
+        make $parallel
+        make install
         ;;
     esac
 
