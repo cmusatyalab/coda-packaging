@@ -21,7 +21,7 @@
 
 set -eE
 
-packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk gtk pycairo pygobject pygtk celt openssl xml xslt orc gstreamer gstbase gstgood spicegtk msgpack lxml six dateutil requests vmnetx"
+packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk icontheme gtk pycairo pygobject pygtk celt openssl xml xslt orc gstreamer gstbase gstgood spicegtk msgpack lxml six dateutil requests vmnetx"
 
 # Cygwin non-default packages
 cygtools="wget zip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc-g++ binutils nasm gettext-devel libglib2.0-devel gtk-update-icon-cache libogg-devel autoconf automake libtool flex bison intltool"
@@ -43,6 +43,7 @@ pixman_name="pixman"
 cairo_name="cairo"
 pango_name="pango"
 atk_name="atk"
+icontheme_name="gnome-icon-theme"
 gtk_name="gtk+"
 pycairo_name="py2cairo"
 pygobject_name="PyGObject"
@@ -81,6 +82,8 @@ pango_basever="1.35"
 pango_ver="${pango_basever}.3"
 atk_basever="2.9"
 atk_ver="${atk_basever}.4"
+icontheme_basever="3.10"
+icontheme_ver="${icontheme_basever}.0"
 gtk_basever="2.24"
 gtk_ver="${gtk_basever}.21"
 pycairo_ver="1.10.0"
@@ -118,6 +121,7 @@ pixman_url="http://cairographics.org/releases/pixman-${pixman_ver}.tar.gz"
 cairo_url="http://cairographics.org/releases/cairo-${cairo_ver}.tar.xz"
 pango_url="http://ftp.gnome.org/pub/gnome/sources/pango/${pango_basever}/pango-${pango_ver}.tar.xz"
 atk_url="http://ftp.gnome.org/pub/gnome/sources/atk/${atk_basever}/atk-${atk_ver}.tar.xz"
+icontheme_url="http://ftp.gnome.org/pub/gnome/sources/gnome-icon-theme/${icontheme_basever}/gnome-icon-theme-${icontheme_ver}.tar.xz"
 gtk_url="http://ftp.gnome.org/pub/gnome/sources/gtk+/${gtk_basever}/gtk+-${gtk_ver}.tar.xz"
 pycairo_url="http://cairographics.org/releases/py2cairo-${pycairo_ver}.tar.bz2"
 pygobject_url="http://ftp.gnome.org/pub/GNOME/sources/pygobject/${pygobject_basever}/pygobject-${pygobject_ver}.tar.xz"
@@ -151,6 +155,7 @@ pixman_build="pixman-${pixman_ver}"
 cairo_build="cairo-${cairo_ver}"
 pango_build="pango-${pango_ver}"
 atk_build="atk-${atk_ver}"
+icontheme_build="gnome-icon-theme-${icontheme_ver}"
 gtk_build="gtk+-${gtk_ver}"
 pycairo_build="py2cairo-${pycairo_ver}"
 pygobject_build="pygobject-${pygobject_ver}"
@@ -184,6 +189,7 @@ pixman_licenses="COPYING"
 cairo_licenses="COPYING COPYING-LGPL-2.1 COPYING-MPL-1.1"
 pango_licenses="COPYING"
 atk_licenses="COPYING"
+icontheme_licenses="COPYING COPYING_CCBYSA3 COPYING_LGPL"
 gtk_licenses="COPYING"
 pycairo_licenses="COPYING COPYING-LGPL-2.1 COPYING-MPL-1.1"
 pygobject_licenses="COPYING"
@@ -217,7 +223,8 @@ pixman_dependencies=""
 cairo_dependencies="zlib png pixman"
 pango_dependencies="glib cairo"
 atk_dependencies="glib"
-gtk_dependencies="glib gdkpixbuf cairo pango atk"
+icontheme_dependencies=""
+gtk_dependencies="glib gdkpixbuf cairo pango atk icontheme"
 pycairo_dependencies="cairo"
 pygobject_dependencies="glib"
 pygtk_dependencies="pango atk gtk pycairo pygobject"
@@ -250,7 +257,8 @@ pixman_artifacts="libpixman-1-0.dll"
 cairo_artifacts="libcairo-2.dll"
 pango_artifacts="libpango-1.0-0.dll libpangocairo-1.0-0.dll libpangowin32-1.0-0.dll"
 atk_artifacts="libatk-1.0-0.dll"
-gtk_artifacts="libgtk-win32-2.0-0.dll libgdk-win32-2.0-0.dll lib/gtk-2.0/2.10.0/engines/libwimp.dll share/themes/MS-Windows/gtk-2.0/gtkrc"
+icontheme_artifacts="share/icons/gnome"
+gtk_artifacts="libgtk-win32-2.0-0.dll libgdk-win32-2.0-0.dll etc/gtk-2.0/gtkrc lib/gtk-2.0/2.10.0/engines/libwimp.dll share/themes/MS-Windows/gtk-2.0/gtkrc"
 pycairo_artifacts="lib/python/cairo"
 pygobject_artifacts="libpyglib-2.0-python.dll lib/python/pygtk.py lib/python/pygtk.pth lib/python/glib lib/python/gobject lib/python/gtk-2.0/dsextras.py lib/python/gtk-2.0/gio"
 pygtk_artifacts="lib/python/gtk-2.0/atk.pyd lib/python/gtk-2.0/pango.pyd lib/python/gtk-2.0/pangocairo.pyd lib/python/gtk-2.0/gtk"
@@ -553,6 +561,12 @@ build_one() {
         make $parallel
         make install
         ;;
+    icontheme)
+        do_configure \
+                --disable-icon-mapping
+        make $parallel
+        make install
+        ;;
     gtk)
         # http://pkgs.fedoraproject.org/cgit/mingw-gtk3.git/commit/?id=82ccf489f4763e375805d848351ac3f8fda8e88b
         sed -i 's/#define INITGUID//' gdk/win32/gdkdnd-win32.c
@@ -562,6 +576,8 @@ build_one() {
                 do_configure
         make $parallel
         make install
+        # Use gnome icon theme instead of hicolor
+        echo 'gtk-icon-theme-name = "gnome"' > ${root}/etc/gtk-2.0/gtkrc
         ;;
     pycairo)
         # We need explicit libpython linkage on Windows
