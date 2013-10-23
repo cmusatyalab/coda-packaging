@@ -276,7 +276,7 @@ lxml_artifacts="lib/python/lxml"
 six_artifacts="lib/python/six.py lib/python/six.pyc"
 dateutil_artifacts="lib/python/dateutil"
 requests_artifacts="lib/python/requests"
-vmnetx_artifacts="vmnetx lib/python/vmnetx share/icons/hicolor/256x256/apps/vmnetx.png"
+vmnetx_artifacts="vmnetx lib/python/vmnetx share/icons/hicolor/index.theme share/icons/hicolor/256x256/apps/vmnetx.png"
 
 
 expand() {
@@ -765,6 +765,20 @@ build_one() {
         do_configure
         make $parallel
         make install
+        # Set up hicolor icon theme
+        cat > ${root}/share/icons/hicolor/index.theme <<EOF
+[Icon Theme]
+Name=hicolor
+Comment=Default icon theme
+Directories=256x256/apps
+Hidden=true
+
+[256x256/apps]
+Size=256
+Type=Scalable
+MinSize=1
+MaxSize=512
+EOF
         ;;
     esac
 
