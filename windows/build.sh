@@ -570,6 +570,8 @@ build_one() {
     gtk)
         # http://pkgs.fedoraproject.org/cgit/mingw-gtk3.git/commit/?id=82ccf489f4763e375805d848351ac3f8fda8e88b
         sed -i 's/#define INITGUID//' gdk/win32/gdkdnd-win32.c
+        # https://bugzilla.gnome.org/711110
+        sed -i '/30000/d' gdk/win32/gdkevents-win32.c
         # Use gdk-pixbuf-csource we just built; the one from Cygwin can't
         # read PNG
         PATH="${root}/bin:${PATH}" \
