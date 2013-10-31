@@ -489,6 +489,10 @@ build_one() {
         make install
         ;;
     jpeg)
+        # Windows defines boolean as unsigned char, but libjpeg thinks it
+        # is int.  This can cause problems depending on what headers are
+        # included in what order.
+        sed -i 's/typedef int boolean/typedef unsigned char boolean/' jmorecfg.h
         do_configure
         make $parallel
         make install
@@ -720,8 +724,6 @@ build_one() {
         # We need explicit libpython linkage on Windows
         sed -i 's/SpiceClientGtk_la_LDFLAGS =/& -no-undefined -lpython27/' \
                 gtk/Makefile.in
-        # Work around boolean typedef conflict
-        sed -i 's/#include <jpeglib.h>/typedef int spice_jpeg_boolean;\n#define boolean spice_jpeg_boolean\n#include <jpeglib.h>/' gtk/decode-jpeg.c
         do_configure \
                 --with-sasl=no \
                 --with-gtk=2.0 \
