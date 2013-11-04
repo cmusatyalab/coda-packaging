@@ -34,7 +34,7 @@ pywin32_url="http://prdownloads.sourceforge.net/pywin32/pywin32-218.win32-py2.7.
 # pyinstaller
 pyinstaller_ver="2.1"
 
-# Package display names.  Missing packages are not included in VERSIONS.txt.
+# Package display names
 zlib_name="zlib"
 png_name="libpng"
 jpeg_name="libjpeg-turbo"
@@ -878,11 +878,6 @@ bdist() {
             cp "${build}/$(expand ${package}_build)/${artifact}" \
                     "${licensedir}"
         done
-        name="$(expand ${package}_name)"
-        if [ -n "$name" ] ; then
-            printf "%-30s %s\n" "$name" "$(expand ${package}_ver)" >> \
-                    "${zipdir}/VERSIONS.txt"
-        fi
     done
     rm -f "${zipdir}.zip"
     zip -r "${zipdir}.zip" "${zipdir}"
