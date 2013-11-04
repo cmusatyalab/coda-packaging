@@ -31,6 +31,8 @@ python_url="http://www.python.org/ftp/python/2.7.5/python-2.7.5.msi"
 setuptools_url="https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py"
 # pywin32 (installed from binary, because a source build requires MSVC)
 pywin32_url="http://prdownloads.sourceforge.net/pywin32/pywin32-218.win32-py2.7.exe"
+# pyinstaller
+pyinstaller_ver="2.1"
 
 # Package display names.  Missing packages are not included in VERSIONS.txt.
 zlib_name="zlib"
@@ -321,6 +323,8 @@ setup_environment() {
         fetch setuptools
         ${python} $(cygpath -w "$(tarpath setuptools)")
     fi
+    local easyinstall
+    easyinstall="cygstart -w c:\Python27\Scripts\easy_install.exe"
 
     # Install pywin32.  Sadly, the bdist_wininst installer doesn't support
     # noninteractive installation.
@@ -328,6 +332,11 @@ setup_environment() {
         fetch pywin32
         chmod +x "$(tarpath pywin32)"
         cygstart -w "$(tarpath pywin32)"
+    fi
+
+    # Install PyInstaller
+    if [ ! -e $(cygpath "c:\Python27\Lib\site-packages\PyInstaller-${pyinstaller_ver}-py2.7.egg") ] ; then
+        ${easyinstall} "PyInstaller==${pyinstaller_ver}"
     fi
 }
 
