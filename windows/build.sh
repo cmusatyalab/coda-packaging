@@ -854,24 +854,16 @@ sdist() {
 bdist() {
     # Build binary distribution
     local package name licensedir zipdir artifact_parent
+    # Build
     for package in $packages
     do
         build_one "$package"
     done
-    zipdir="vmnetx-win${build_bits}-$(date +%Y%m%d)"
-    rm -rf "${zipdir}"
-    mkdir -p "${zipdir}/app"
+    # Copy licenses
     for package in $packages
     do
-        for artifact in $(expand ${package}_artifacts)
-        do
-            artifact_parent=$(dirname "${artifact}")
-            if [ "${artifact_parent}" != "." ] ; then
-                mkdir -p "${zipdir}/app/${artifact_parent}"
-            fi
-            cp -r "${root}/app/${artifact}" "${zipdir}/app/${artifact}"
-        done
-        licensedir="${zipdir}/licenses/$(expand ${package}_name)"
+        licensedir="${root}/licenses/$(expand ${package}_name)"
+        rm -rf "${licensedir}"
         mkdir -p "${licensedir}"
         for artifact in $(expand ${package}_licenses)
         do
@@ -879,9 +871,6 @@ bdist() {
                     "${licensedir}"
         done
     done
-    rm -f "${zipdir}.zip"
-    zip -r "${zipdir}.zip" "${zipdir}"
-    rm -r "${zipdir}"
 }
 
 clean() {
