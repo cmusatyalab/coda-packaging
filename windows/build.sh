@@ -381,7 +381,7 @@ is_built() {
     local file
     for file in $(expand ${1}_artifacts)
     do
-        if [ ! -e "${root}/bin/${file}" ] ; then
+        if [ ! -e "${root}/app/${file}" ] ; then
             return 1
         fi
     done
@@ -399,10 +399,14 @@ do_configure() {
     #
     # -static-libgcc is in ${ldflags} but libtool filters it out, so we
     # also pass it in CC
+    #
+    # Don't call bindir "bin", since that name is special-cased by
+    # g_win32_get_package_installation_directory_of_module()
     ./configure \
             --host=${build_host} \
             --build=${build_system} \
             --prefix="$root" \
+            --bindir="${root}/app" \
             --disable-static \
             --disable-dependency-tracking \
             PKG_CONFIG=pkg-config \
@@ -425,8 +429,8 @@ setup_py() {
     local setuptools_args
 
     # --compiler=mingw32 won't allow us to override the compiler executable
-    # for cross-compiling, so place a Windows symlink in ${root}/bin and put
-    # ${root}/bin into the PATH.
+    # for cross-compiling, so place a Windows symlink in ${root}/compilers
+    # and put ${root}/compilers into the PATH.
     mkdir -p "${root}/compilers"
     if [ ! -e "${root}/compilers/gcc.exe" ] ; then
         cmd /c mklink $(cygpath -w "${root}/compilers/gcc.exe") \
@@ -454,20 +458,21 @@ setup_py() {
             "${python}" setup.py install \
             --prefix="$(cygpath -w ${root})" \
             --install-lib="$(cygpath -w ${root}/lib/python)" \
+            --install-scripts="$(cygpath -w ${root}/app)" \
             ${setuptools_args} \
             "$@"
 }
 
-copy_to_bin() {
+copy_to_app() {
     # Treat artifacts with a "/" in their names as paths relative to ${root}
-    # and copy them into ${root}/bin.
+    # and copy them into ${root}/app.
     # $1 = package shortname
     local artifact
     for artifact in $(expand ${1}_artifacts)
     do
         if [ "${artifact/\/}" != "${artifact}" ] ; then
-            mkdir -p "${root}/bin/$(dirname ${artifact})"
-            cp -a "${root}/${artifact}" "${root}/bin/${artifact}"
+            mkdir -p "${root}/app/$(dirname ${artifact})"
+            cp -a "${root}/${artifact}" "${root}/app/${artifact}"
         fi
     done
 }
@@ -498,7 +503,7 @@ build_one() {
         make -f win32/Makefile.gcc \
                 SHARED_MODE=1 \
                 PREFIX="${build_host}-" \
-                BINARY_PATH="${root}/bin" \
+                BINARY_PATH="${root}/app" \
                 INCLUDE_PATH="${root}/include" \
                 LIBRARY_PATH="${root}/lib" install
         ;;
@@ -525,7 +530,8 @@ build_one() {
                 CFLAGS="${cppflags} ${cflags}" \
                 SPECS_FLAGS="${ldflags} -static-libgcc"
         make install \
-                prefix="${root}"
+                prefix="${root}" \
+                BINARY_PATH="${root}/app"
         ;;
     gettext)
         # Missing tests for C++ compiler, which is only needed on Windows
@@ -597,7 +603,7 @@ build_one() {
         sed -i '/30000/d' gdk/win32/gdkevents-win32.c
         # Use gdk-pixbuf-csource we just built; the one from Cygwin can't
         # read PNG
-        PATH="${root}/bin:${PATH}" \
+        PATH="${root}/app:${PATH}" \
                 do_configure
         make $parallel
         make install
@@ -636,7 +642,7 @@ build_one() {
                 "${root}/lib/python/glib/_glib.dll" \
                 "${root}/lib/python/gobject/_gobject.dll" \
                 "${root}/lib/python/gtk-2.0/gio/_gio.dll"
-        cp -a "${root}/lib/libpyglib-2.0-python.dll" "${root}/bin/"
+        cp -a "${root}/lib/libpyglib-2.0-python.dll" "${root}/app/"
         rm ${root}/lib/python/{glib,gobject,gtk-2.0/gio}/*.{dll.a,la}
         ;;
     pygtk)
@@ -697,8 +703,9 @@ build_one() {
     xslt)
         # MinGW mkdir() takes only one argument
         sed -i 's/mkdir(directory, 0755)/mkdir(directory)/' libxslt/security.c
-        do_configure \
-                --with-libxml-prefix="${root}" \
+        # Ensure configure can find xml2-config
+        PATH="${root}/app:${PATH}" \
+                do_configure \
                 --without-python \
                 --without-plugins
         make $parallel
@@ -750,7 +757,7 @@ build_one() {
                 --enable-smartcard=no
         # Ensure make can find pygobject-codegen-2.0, and that CODEGENDIR
         # is set correctly (spice-gtk runs pkg-config at make time)
-        PATH="${root}/bin:${PATH}" \
+        PATH="${root}/app:${PATH}" \
                 PKG_CONFIG_LIBDIR="${root}/lib/pkgconfig" \
                 PKG_CONFIG_PATH= \
                 make $parallel
@@ -766,8 +773,8 @@ build_one() {
         local batch
         mkdir -p "${root}/compilers"
         batch="${root}/compilers/xslt-config.bat"
-        echo "@set PATH=$(cygpath -w /usr/bin);%PATH%" > "${batch}"
-        echo "@sh ${root}/bin/xslt-config %*" >> "${batch}"
+        echo "@set PATH=$(cygpath -w ${root}/app);$(cygpath -w /usr/bin);%PATH%" > "${batch}"
+        echo "@sh ${root}/app/xslt-config %*" >> "${batch}"
         # lxml assumes zlib is called zlib.dll on Windows
         sed -i "s/zlib/z/" setupinfo.py
         setup_py \
@@ -805,7 +812,13 @@ EOF
         ;;
     esac
 
-    copy_to_bin "$1"
+    # Work around packages that don't pass -bindir to libtool link mode
+    if stat -t ${root}/bin/*.dll >/dev/null 2>&1 ; then
+        mkdir -p "${root}/app"
+        mv ${root}/bin/*.dll "${root}/app/"
+    fi
+
+    copy_to_app "$1"
 
     popd >/dev/null
 }
@@ -847,8 +860,6 @@ bdist() {
     done
     zipdir="vmnetx-win${build_bits}-$(date +%Y%m%d)"
     rm -rf "${zipdir}"
-    # Don't use "bin", since it's special-cased by
-    # g_win32_get_package_installation_directory_of_module()
     mkdir -p "${zipdir}/app"
     for package in $packages
     do
@@ -858,7 +869,7 @@ bdist() {
             if [ "${artifact_parent}" != "." ] ; then
                 mkdir -p "${zipdir}/app/${artifact_parent}"
             fi
-            cp -r "${root}/bin/${artifact}" "${zipdir}/app/${artifact}"
+            cp -r "${root}/app/${artifact}" "${zipdir}/app/${artifact}"
         done
         licensedir="${zipdir}/licenses/$(expand ${package}_name)"
         mkdir -p "${licensedir}"
@@ -887,7 +898,7 @@ clean() {
             echo "Cleaning ${package}..."
             for artifact in $(expand ${package}_artifacts)
             do
-                rm -rf "${root}/bin/${artifact}"
+                rm -rf "${root}/app/${artifact}"
             done
         done
     else
