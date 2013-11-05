@@ -248,39 +248,39 @@ dateutil_dependencies="six"
 requests_dependencies=""
 vmnetx_dependencies="pygobject pygtk spicegtk msgpack lxml dateutil requests"
 
-# Build artifacts
-zlib_artifacts="zlib1.dll"
-png_artifacts="libpng16-16.dll"
-jpeg_artifacts="libjpeg-62.dll"
-iconv_artifacts="iconv.dll"
-gettext_artifacts="libintl-8.dll"
-ffi_artifacts="libffi-6.dll"
-glib_artifacts="libglib-2.0-0.dll libgthread-2.0-0.dll libgobject-2.0-0.dll libgio-2.0-0.dll libgmodule-2.0-0.dll"
-gdkpixbuf_artifacts="libgdk_pixbuf-2.0-0.dll"
-pixman_artifacts="libpixman-1-0.dll"
-cairo_artifacts="libcairo-2.dll"
-pango_artifacts="libpango-1.0-0.dll libpangocairo-1.0-0.dll libpangowin32-1.0-0.dll"
-atk_artifacts="libatk-1.0-0.dll"
-icontheme_artifacts="share/icons/gnome"
-gtk_artifacts="libgtk-win32-2.0-0.dll libgdk-win32-2.0-0.dll etc/gtk-2.0/gtkrc lib/gtk-2.0/2.10.0/engines/libwimp.dll share/themes/MS-Windows/gtk-2.0/gtkrc"
-pycairo_artifacts="lib/python/cairo"
-pygobject_artifacts="libpyglib-2.0-python.dll lib/python/pygtk.py lib/python/pygtk.pth lib/python/glib lib/python/gobject lib/python/gtk-2.0/dsextras.py lib/python/gtk-2.0/gio"
-pygtk_artifacts="lib/python/gtk-2.0/atk.pyd lib/python/gtk-2.0/pango.pyd lib/python/gtk-2.0/pangocairo.pyd lib/python/gtk-2.0/gtk"
-celt_artifacts="libcelt051-0.dll"
-openssl_artifacts="libeay32.dll ssleay32.dll"
-xml_artifacts="libxml2-2.dll"
-xslt_artifacts="libxslt-1.dll libexslt-0.dll"
-orc_artifacts="liborc-0.4-0.dll liborc-test-0.4-0.dll"
-gstreamer_artifacts="libgstreamer-0.10-0.dll libgstbase-0.10-0.dll lib/gstreamer-0.10/libgstcoreelements.dll lib/gstreamer-0.10/libgstcoreindexers.dll"
-gstbase_artifacts="libgstinterfaces-0.10-0.dll libgstapp-0.10-0.dll libgstaudio-0.10-0.dll libgstpbutils-0.10-0.dll lib/gstreamer-0.10/libgstapp.dll lib/gstreamer-0.10/libgstaudioconvert.dll lib/gstreamer-0.10/libgstaudioresample.dll"
-gstgood_artifacts="lib/gstreamer-0.10/libgstautodetect.dll lib/gstreamer-0.10/libgstdirectsoundsink.dll"
-spicegtk_artifacts="libspice-client-gtk-2.0-4.dll libspice-client-glib-2.0-8.dll lib/python/SpiceClientGtk.pyd"
-msgpack_artifacts="lib/python/msgpack"
-lxml_artifacts="lib/python/lxml"
-six_artifacts="lib/python/six.py lib/python/six.pyc"
-dateutil_artifacts="lib/python/dateutil"
-requests_artifacts="lib/python/requests"
-vmnetx_artifacts="vmnetx lib/python/vmnetx share/icons/hicolor/index.theme share/icons/hicolor/256x256/apps/vmnetx.png"
+# Installed file that proves the package has been built
+zlib_stamp="app/zlib1.dll"
+png_stamp="app/libpng16-16.dll"
+jpeg_stamp="app/libjpeg-62.dll"
+iconv_stamp="app/iconv.dll"
+gettext_stamp="app/libintl-8.dll"
+ffi_stamp="app/libffi-6.dll"
+glib_stamp="app/libglib-2.0-0.dll"
+gdkpixbuf_stamp="app/libgdk_pixbuf-2.0-0.dll"
+pixman_stamp="app/libpixman-1-0.dll"
+cairo_stamp="app/libcairo-2.dll"
+pango_stamp="app/libpango-1.0-0.dll"
+atk_stamp="app/libatk-1.0-0.dll"
+icontheme_stamp="share/icons/gnome/index.theme"
+gtk_stamp="app/libgtk-win32-2.0-0.dll"
+pycairo_stamp="lib/python/cairo/_cairo.pyd"
+pygobject_stamp="lib/python/gobject/_gobject.pyd"
+pygtk_stamp="lib/python/gtk-2.0/gtk/_gtk.pyd"
+celt_stamp="app/libcelt051-0.dll"
+openssl_stamp="app/ssleay32.dll"
+xml_stamp="app/libxml2-2.dll"
+xslt_stamp="app/libxslt-1.dll"
+orc_stamp="app/liborc-0.4-0.dll"
+gstreamer_stamp="app/libgstreamer-0.10-0.dll"
+gstbase_stamp="app/libgstapp-0.10-0.dll"
+gstgood_stamp="lib/gstreamer-0.10/libgstautodetect.dll"
+spicegtk_stamp="lib/python/SpiceClientGtk.pyd"
+msgpack_stamp="lib/python/msgpack/_packer.pyd"
+lxml_stamp="lib/python/lxml/etree.pyd"
+six_stamp="lib/python/six.py"
+dateutil_stamp="lib/python/dateutil/tz.py"
+requests_stamp="lib/python/requests/sessions.py"
+vmnetx_stamp="app/vmnetx"
 
 
 expand() {
@@ -378,14 +378,10 @@ unpack() {
 is_built() {
     # Return true if the specified package is already built
     # $1  = package shortname
-    local file
-    for file in $(expand ${1}_artifacts)
-    do
-        if [ ! -e "${root}/app/${file}" ] ; then
-            return 1
-        fi
-    done
-    return 0
+    if [ -e "${root}/$(expand ${1}_stamp)" ] ; then
+        return 0
+    fi
+    return 1
 }
 
 do_configure() {
@@ -461,20 +457,6 @@ setup_py() {
             --install-scripts="$(cygpath -w ${root}/app)" \
             ${setuptools_args} \
             "$@"
-}
-
-copy_to_app() {
-    # Treat artifacts with a "/" in their names as paths relative to ${root}
-    # and copy them into ${root}/app.
-    # $1 = package shortname
-    local artifact
-    for artifact in $(expand ${1}_artifacts)
-    do
-        if [ "${artifact/\/}" != "${artifact}" ] ; then
-            mkdir -p "${root}/app/$(dirname ${artifact})"
-            cp -a "${root}/${artifact}" "${root}/app/${artifact}"
-        fi
-    done
 }
 
 build_one() {
@@ -813,8 +795,6 @@ EOF
         mv ${root}/bin/*.dll "${root}/app/"
     fi
 
-    copy_to_app "$1"
-
     popd >/dev/null
 }
 
@@ -890,10 +870,7 @@ clean() {
         for package in "$@"
         do
             echo "Cleaning ${package}..."
-            for artifact in $(expand ${package}_artifacts)
-            do
-                rm -rf "${root}/app/${artifact}"
-            done
+            rm -f "${root}/$(expand ${package}_stamp)"
         done
     else
         echo "Cleaning..."
