@@ -621,7 +621,6 @@ build_one() {
         make $parallel
         make install
         rename .dll .pyd ${root}/lib/python/cairo/_cairo.dll
-        rm ${root}/lib/python/cairo/*.{dll.a,la}
         ;;
     pygobject)
         # We need explicit libpython linkage on Windows
@@ -643,7 +642,6 @@ build_one() {
                 "${root}/lib/python/gobject/_gobject.dll" \
                 "${root}/lib/python/gtk-2.0/gio/_gio.dll"
         cp -a "${root}/lib/libpyglib-2.0-python.dll" "${root}/app/"
-        rm ${root}/lib/python/{glib,gobject,gtk-2.0/gio}/*.{dll.a,la}
         ;;
     pygtk)
         # We give codegen Cygwin paths, so run it with Cygwin Python
@@ -660,7 +658,6 @@ build_one() {
                 "${root}/lib/python/gtk-2.0/pango.dll" \
                 "${root}/lib/python/gtk-2.0/pangocairo.dll" \
                 "${root}/lib/python/gtk-2.0/gtk/_gtk.dll"
-        rm ${root}/lib/python/gtk-2.0/{,gtk/}*.{dll.a,la}
         ;;
     celt)
         # libtool needs -no-undefined to build shared libraries on Windows
@@ -779,8 +776,6 @@ build_one() {
         sed -i "s/zlib/z/" setupinfo.py
         setup_py \
                 --with-xslt-config="$(cygpath -w ${root}/compilers/xslt-config)"
-        rm -r "${root}/lib/python/lxml/includes"
-        rm ${root}/lib/python/lxml/*.h
         ;;
     six)
         setup_py
