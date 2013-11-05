@@ -27,6 +27,7 @@ coll = COLLECT(
     a.zipfiles,
     a.datas,
     Tree(r'!!ROOT!!\lib\python\vmnetx\schema', 'share/vmnetx/schema'),
+    Tree(r'!!ROOT!!\licenses', 'licenses'),
     Tree(r'!!ROOT!!\share\icons\gnome', 'share/icons/gnome'),
     [
         # Dependencies of gstreamer plugins
