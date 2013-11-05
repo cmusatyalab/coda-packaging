@@ -861,6 +861,18 @@ bdist() {
             --clean \
             --noconfirm \
             vmnetx.spec
+
+    # Strip libraries.  Stripping seems to break MSVC-compiled libraries,
+    # so limit ourselves to those built with MinGW.
+    local file
+    find "${root}/bundle" -name '*.dll' -o -name '*.pyd' | while read file; do
+        if ${build_host}-objdump -h "${file}" | grep -qF .CRT ; then
+            echo "Stripping ${file#${root}/bundle/vmnetx/}"
+            ${build_host}-strip "${file}"
+        else
+            echo "Not stripping ${file#${root}/bundle/vmnetx/}"
+        fi
+    done
 }
 
 clean() {
