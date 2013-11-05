@@ -212,7 +212,7 @@ lxml_licenses="LICENSES.txt doc/licenses/BSD.txt doc/licenses/elementtree.txt do
 six_licenses="LICENSE"
 dateutil_licenses="LICENSE"
 requests_licenses="LICENSE NOTICE"
-vmnetx_licenses="COPYING"
+vmnetx_licenses="COPYING desktop/README.icon"
 
 # Build dependencies
 zlib_dependencies=""
