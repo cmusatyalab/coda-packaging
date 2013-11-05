@@ -1,0 +1,41 @@
+a = Analysis(
+    [r'!!ROOT!!\app\vmnetx'],
+    pathex=[
+        r'!!ROOT!!\lib\python',
+        r'!!ROOT!!\lib\python\gtk-2.0',
+    ],
+    hiddenimports=[],
+    hookspath=None,
+    runtime_hooks=None
+)
+pyz = PYZ(
+    a.pure
+)
+exe = EXE(
+    pyz,
+    a.scripts,
+    exclude_binaries=True,
+    name='vmnetx.exe',
+    debug=False,
+    strip=None,
+    upx=False,
+    console=False
+)
+coll = COLLECT(
+    exe,
+    a.binaries,
+    a.zipfiles,
+    a.datas,
+    Tree(r'!!ROOT!!\lib\python\vmnetx\schema', 'share/vmnetx/schema'),
+    Tree(r'!!ROOT!!\share\icons\gnome', 'share/icons/gnome'),
+    [
+        ('etc/gtk-2.0/gtkrc', r'!!ROOT!!\etc\gtk-2.0\gtkrc', 'DATA'),
+        ('lib/gtk-2.0/2.10.0/engines/libwimp.dll', r'!!ROOT!!\lib\gtk-2.0\2.10.0\engines\libwimp.dll', 'BINARY'),
+        ('share/icons/hicolor/index.theme', r'!!ROOT!!\share\icons\hicolor\index.theme', 'DATA'),
+        ('share/icons/hicolor/256x256/apps/vmnetx.png', r'!!ROOT!!\share\icons\hicolor\256x256\apps\vmnetx.png', 'DATA'),
+        ('share/themes/MS-Windows/gtk-2.0/gtkrc', r'!!ROOT!!\share\themes\MS-Windows\gtk-2.0\gtkrc', 'DATA'),
+    ],
+    strip=None,
+    upx=False,
+    name='vmnetx'
+)

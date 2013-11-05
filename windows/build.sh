@@ -854,11 +854,13 @@ sdist() {
 bdist() {
     # Build binary distribution
     local package name licensedir zipdir artifact_parent
+
     # Build
     for package in $packages
     do
         build_one "$package"
     done
+
     # Copy licenses
     for package in $packages
     do
@@ -871,6 +873,19 @@ bdist() {
                     "${licensedir}"
         done
     done
+
+    # Create PyInstaller bundle
+    local winroot
+    winroot="$(cygpath -w ${root} | sed -e 's/\\/\\\\/g')"
+    sed -e "s;!!ROOT!!;${winroot};g" vmnetx.spec.in > vmnetx.spec
+    # DLLs must be in PATH for PyInstaller to find them
+    PATH="$(cygpath -w ${root}/app):${PATH}" \
+            $(cygpath "c:\Python27\Scripts\pyi-build.exe") \
+            --distpath="$(cygpath -w ${root}/bundle)" \
+            --workpath="$(cygpath -w ${build}/pyinstaller)" \
+            --clean \
+            --noconfirm \
+            vmnetx.spec
 }
 
 clean() {
