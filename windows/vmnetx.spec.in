@@ -29,7 +29,20 @@ coll = COLLECT(
     Tree(r'!!ROOT!!\lib\python\vmnetx\schema', 'share/vmnetx/schema'),
     Tree(r'!!ROOT!!\share\icons\gnome', 'share/icons/gnome'),
     [
+        # Dependencies of gstreamer plugins
+        ('libgstaudio-0.10-0.dll', r'!!ROOT!!\app\libgstaudio-0.10-0.dll', 'BINARY'),
+        ('libgstpbutils-0.10-0.dll', r'!!ROOT!!\app\libgstpbutils-0.10-0.dll', 'BINARY'),
+        ('liborc-0.4-0.dll', r'!!ROOT!!\app\liborc-0.4-0.dll', 'BINARY'),
+        ('liborc-test-0.4-0.dll', r'!!ROOT!!\app\liborc-test-0.4-0.dll', 'BINARY'),
+
         ('etc/gtk-2.0/gtkrc', r'!!ROOT!!\etc\gtk-2.0\gtkrc', 'DATA'),
+        ('lib/gstreamer-0.10/libgstapp.dll', r'!!ROOT!!\lib\gstreamer-0.10\libgstapp.dll', 'BINARY'),
+        ('lib/gstreamer-0.10/libgstaudioconvert.dll', r'!!ROOT!!\lib\gstreamer-0.10\libgstaudioconvert.dll', 'BINARY'),
+        ('lib/gstreamer-0.10/libgstaudioresample.dll', r'!!ROOT!!\lib\gstreamer-0.10\libgstaudioresample.dll', 'BINARY'),
+        ('lib/gstreamer-0.10/libgstautodetect.dll', r'!!ROOT!!\lib\gstreamer-0.10\libgstautodetect.dll', 'BINARY'),
+        ('lib/gstreamer-0.10/libgstcoreelements.dll', r'!!ROOT!!\lib\gstreamer-0.10\libgstcoreelements.dll', 'BINARY'),
+        ('lib/gstreamer-0.10/libgstcoreindexers.dll', r'!!ROOT!!\lib\gstreamer-0.10\libgstcoreindexers.dll', 'BINARY'),
+        ('lib/gstreamer-0.10/libgstdirectsoundsink.dll', r'!!ROOT!!\lib\gstreamer-0.10\libgstdirectsoundsink.dll', 'BINARY'),
         ('lib/gtk-2.0/2.10.0/engines/libwimp.dll', r'!!ROOT!!\lib\gtk-2.0\2.10.0\engines\libwimp.dll', 'BINARY'),
         ('share/icons/hicolor/index.theme', r'!!ROOT!!\share\icons\hicolor\index.theme', 'DATA'),
         ('share/icons/hicolor/256x256/apps/vmnetx.png', r'!!ROOT!!\share\icons\hicolor\256x256\apps\vmnetx.png', 'DATA'),
