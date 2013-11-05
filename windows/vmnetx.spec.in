@@ -16,6 +16,7 @@ exe = EXE(
     a.scripts,
     exclude_binaries=True,
     name='vmnetx.exe',
+    icon='vmnetx.ico',
     debug=False,
     strip=None,
     upx=False,
