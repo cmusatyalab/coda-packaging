@@ -33,6 +33,8 @@ setuptools_url="https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py"
 pywin32_url="http://prdownloads.sourceforge.net/pywin32/pywin32-218.win32-py2.7.exe"
 # pyinstaller
 pyinstaller_ver="2.1"
+# WiX
+wix_url="http://wix.codeplex.com/releases/view/99514"
 
 # Package display names
 zlib_name="zlib"
@@ -337,6 +339,12 @@ setup_environment() {
     # Install PyInstaller
     if [ ! -e $(cygpath "c:\Python27\Lib\site-packages\PyInstaller-${pyinstaller_ver}-py2.7.egg") ] ; then
         ${easyinstall} "PyInstaller==${pyinstaller_ver}"
+    fi
+
+    # Prompt to install WiX.  We can't install it ourselves because CodePlex
+    # doesn't permit direct downloads.
+    if [ ! -e "$(cygpath 'c:\Program Files\WiX Toolset v3.7\bin\candle.exe')" ] ; then
+        cygstart "${wix_url}"
     fi
 }
 
