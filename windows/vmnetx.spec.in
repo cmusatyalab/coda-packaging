@@ -17,6 +17,7 @@ exe = EXE(
     exclude_binaries=True,
     name='vmnetx.exe',
     icon='vmnetx.ico',
+    version='vmnetx.verinfo',
     debug=False,
     strip=None,
     upx=False,

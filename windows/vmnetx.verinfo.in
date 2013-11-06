@@ -1,0 +1,26 @@
+VSVersionInfo(
+  ffi=FixedFileInfo(
+    filevers=(!!VERSION_MAJOR!!, !!VERSION_MINOR!!, 0, !!VERSION_REVISION!!),
+    prodvers=(!!VERSION_MAJOR!!, !!VERSION_MINOR!!, 0, !!VERSION_REVISION!!),
+    mask=0x0,
+    flags=0x0,
+    OS=0x4,
+    fileType=0x1,
+    subtype=0x0,
+    date=(0, 0)
+    ),
+  kids=[
+    StringFileInfo(
+      [
+      StringTable(
+        u'040904b0',
+        [StringStruct(u'CompanyName', u'Carnegie Mellon University'),
+        StringStruct(u'FileDescription', u'VMNetX'),
+        StringStruct(u'FileVersion', u'!!VERSION!!'),
+        StringStruct(u'LegalCopyright', u'Copyright 2006-2013 Carnegie Mellon University'),
+        StringStruct(u'ProductName', u'VMNetX'),
+        StringStruct(u'ProductVersion', u'!!VERSION!!')])
+      ]),
+    VarFileInfo([VarStruct(u'Translation', [1033, 1200])])
+  ]
+)

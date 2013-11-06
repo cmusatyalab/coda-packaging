@@ -853,6 +853,11 @@ bdist() {
     local winroot
     winroot="$(cygpath -w ${root} | sed -e 's/\\/\\\\/g')"
     sed -e "s;!!ROOT!!;${winroot};g" vmnetx.spec.in > vmnetx.spec
+    sed -e "s/!!VERSION!!/${vmnetx_ver}/g" \
+            -e "s/!!VERSION_MAJOR!!/$(echo ${vmnetx_ver} | cut -f1 -d.)/g" \
+            -e "s/!!VERSION_MINOR!!/$(echo ${vmnetx_ver} | cut -f2 -d.)/g" \
+            -e "s/!!VERSION_REVISION!!/$(echo ${vmnetx_ver} | cut -f3 -d.)/g" \
+            vmnetx.verinfo.in > vmnetx.verinfo
     # DLLs must be in PATH for PyInstaller to find them
     PATH="$(cygpath -w ${root}/app):${PATH}" \
             $(cygpath "c:\Python27\Scripts\pyi-build.exe") \
