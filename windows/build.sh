@@ -875,6 +875,10 @@ bdist() {
             --noconfirm \
             vmnetx.spec
 
+    # Drop system libraries from PyInstaller bundle
+    rm -f ${root}/bundle/vmnetx/MSVCR*.dll \
+            "${root}/bundle/vmnetx/ws2_32.dll"
+
     # Strip libraries.  Stripping seems to break MSVC-compiled libraries,
     # so limit ourselves to those built with MinGW.
     local file
