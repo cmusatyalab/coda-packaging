@@ -41,6 +41,7 @@
 
     <Feature Id='Main'>
       <ComponentGroupRef Id='FileComponents'/>
+      <ComponentGroupRef Id='RegistryComponents'/>
     </Feature>
 
     <Directory Id='TARGETDIR' Name='SourceDir'>
@@ -55,6 +56,41 @@
     <MajorUpgrade
         AllowSameVersionUpgrades="yes"
         DowngradeErrorMessage="A newer version of VMNetX is already installed on your system."/>
+
+    <ComponentGroup Id='RegistryComponents'>
+      <Component Id='reference_handler'
+          Directory='TARGETDIR'
+          Guid='968311AE-4530-4BB7-ACC6-3B8D843A5023'>
+        <ProgId Id='VMNetX.Reference.0'
+            Description='VMNetX virtual machine'
+            Icon='f_vmnetx.exe'
+            Advertise='no'>
+          <Extension Id='netx'
+              ContentType='application/x-vmnetx-reference+xml'>
+            <Verb Id='launch'
+                Command='&amp;Launch'
+                Argument='"%1"'
+                TargetFile='f_vmnetx.exe'/>
+          </Extension>
+        </ProgId>
+      </Component>
+      <Component Id='package_handler'
+          Directory='TARGETDIR'
+          Guid='A9BBBE2B-A281-4F9D-9B5F-E64A60E9C241'>
+        <ProgId Id='VMNetX.Package.0'
+            Description='VMNetX virtual machine package'
+            Icon='f_vmnetx.exe'
+            Advertise='no'>
+          <Extension Id='nxpk'
+              ContentType='application/x-vmnetx-package'>
+            <Verb Id='launch'
+                Command='&amp;Launch'
+                Argument='"%1"'
+                TargetFile='f_vmnetx.exe'/>
+          </Extension>
+        </ProgId>
+      </Component>
+    </ComponentGroup>
 
     <?include components.wxi?>
 
