@@ -881,7 +881,7 @@ bdist() {
     bundledir="${root}/bundle/vmnetx"
 
     # Drop system libraries from PyInstaller bundle
-    rm -f ${bundledir}/MSVCR*.dll "${bundledir}/ws2_32.dll"
+    rm -f "${bundledir}/ws2_32.dll"
     # and pyconfig.h
     rm -r "${bundledir}/include"
 
