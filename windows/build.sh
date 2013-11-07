@@ -923,7 +923,8 @@ clean() {
         done
     else
         echo "Cleaning..."
-        rm -rf 32 64 vmnetx-win*-*.zip
+        rm -rf 32 64 vmnetx-winbuild-*.zip *.msi *.wixobj *.wixpdb \
+                components.wxi vmnetx.spec vmnetx.verinfo
     fi
 }
 
