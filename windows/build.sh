@@ -710,7 +710,7 @@ build_one() {
         # Disable registry cache file
         sed -i \
                 -e 's/disable_registry_cache = FALSE/disable_registry_cache = TRUE/' \
-                -e 's/!write_changes/FALSE/' \
+                -e 's/!write_changes/TRUE/' \
                 gst/gstregistry.c
         # gstreamer confuses POSIX timers with the availability of
         # clock_gettime()
