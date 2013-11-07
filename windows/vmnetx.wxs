@@ -33,7 +33,7 @@
     <Property Id="ARPPRODUCTICON" Value="icon" />
     <Property Id="ARPURLINFOABOUT" Value="https://olivearchive.org/" />
 
-    <UIRef Id='WixUI_Minimal'/>
+    <UIRef Id='UI_WelcomeOnly'/>
     <Property Id='WIXUI_EXITDIALOGOPTIONALTEXT'
         Value='VMNetX was successfully installed.'/>
 
@@ -59,4 +59,7 @@
     <?include components.wxi?>
 
   </Product>
+
+  <?include ui.wxi?>
+
 </Wix>
