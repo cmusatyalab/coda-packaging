@@ -903,7 +903,9 @@ bdist() {
     # Build installer
     local wixdir
     wixdir=$(cygpath "c:\Program Files\WiX Toolset v${wix_ver}\bin")
-    "${wixdir}/candle" vmnetx.wxs
+    "${wixdir}/candle" \
+            "-dVersion=${vmnetx_ver}" \
+            vmnetx.wxs
     # Suppress warning 1076, caused by AllowSameVersionUpgrades
     "${wixdir}/light" \
             -ext WixUIExtension -cultures:en-us \
