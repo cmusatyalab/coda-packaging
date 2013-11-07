@@ -823,7 +823,7 @@ build() {
 sdist() {
     # Build source distribution
     local package path xzpath zipdir
-    zipdir="vmnetx-winbuild-$(date +%Y%m%d)"
+    zipdir="vmnetx-windows-src-${vmnetx_ver}"
     rm -rf "${zipdir}"
     mkdir -p "${zipdir}/tar"
     for package in $packages
@@ -831,7 +831,9 @@ sdist() {
         fetch "$package"
         cp "$(tarpath ${package})" "${zipdir}/tar/"
     done
-    cp build.sh README.md lgpl-2.1.txt "${zipdir}/"
+    cp build.sh generate-components.py MS-RL.txt README.icon README.md \
+            ui.wxi vmnetx.ico vmnetx.spec.in vmnetx.verinfo.in vmnetx.wxs \
+            "${zipdir}/"
     rm -f "${zipdir}.zip"
     zip -r "${zipdir}.zip" "${zipdir}"
     rm -r "${zipdir}"
