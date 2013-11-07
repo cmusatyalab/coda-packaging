@@ -874,22 +874,23 @@ bdist() {
             --clean \
             --noconfirm \
             vmnetx.spec
+    local bundledir
+    bundledir="${root}/bundle/vmnetx"
 
     # Drop system libraries from PyInstaller bundle
-    rm -f ${root}/bundle/vmnetx/MSVCR*.dll \
-            "${root}/bundle/vmnetx/ws2_32.dll"
+    rm -f ${bundledir}/MSVCR*.dll "${bundledir}/ws2_32.dll"
     # and pyconfig.h
-    rm -r "${root}/bundle/vmnetx/include"
+    rm -r "${bundledir}/include"
 
     # Strip libraries.  Stripping seems to break MSVC-compiled libraries,
     # so limit ourselves to those built with MinGW.
     local file
     find "${root}/bundle" -name '*.dll' -o -name '*.pyd' | while read file; do
         if ${build_host}-objdump -h "${file}" | grep -qF .CRT ; then
-            echo "Stripping ${file#${root}/bundle/vmnetx/}"
+            echo "Stripping ${file#${bundledir}/}"
             ${build_host}-strip "${file}"
         else
-            echo "Not stripping ${file#${root}/bundle/vmnetx/}"
+            echo "Not stripping ${file#${bundledir}/}"
         fi
     done
 }
