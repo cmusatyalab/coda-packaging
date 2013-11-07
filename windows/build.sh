@@ -881,7 +881,7 @@ bdist() {
     bundledir="${root}/bundle/vmnetx"
 
     # Drop system libraries from PyInstaller bundle
-    rm -f "${bundledir}/ws2_32.dll"
+    rm -f ${bundledir}/{ole32,shell32,ws2_32}.dll
 
     # Strip libraries.  Stripping seems to break MSVC-compiled libraries,
     # so limit ourselves to those built with MinGW.
