@@ -878,6 +878,8 @@ bdist() {
     # Drop system libraries from PyInstaller bundle
     rm -f ${root}/bundle/vmnetx/MSVCR*.dll \
             "${root}/bundle/vmnetx/ws2_32.dll"
+    # and pyconfig.h
+    rm -r "${root}/bundle/vmnetx/include"
 
     # Strip libraries.  Stripping seems to break MSVC-compiled libraries,
     # so limit ourselves to those built with MinGW.
