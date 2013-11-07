@@ -882,8 +882,6 @@ bdist() {
 
     # Drop system libraries from PyInstaller bundle
     rm -f "${bundledir}/ws2_32.dll"
-    # and pyconfig.h
-    rm -r "${bundledir}/include"
 
     # Strip libraries.  Stripping seems to break MSVC-compiled libraries,
     # so limit ourselves to those built with MinGW.
