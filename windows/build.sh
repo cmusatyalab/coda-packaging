@@ -896,6 +896,20 @@ bdist() {
             echo "Not stripping ${file#${bundledir}/}"
         fi
     done
+
+    # Generate file components for WiX
+    ${python} generate-components.py "$(cygpath -w ${bundledir})" > components.wxi
+
+    # Build installer
+    local wixdir
+    wixdir=$(cygpath "c:\Program Files\WiX Toolset v${wix_ver}\bin")
+    "${wixdir}/candle" vmnetx.wxs
+    # Suppress warning 1076, caused by AllowSameVersionUpgrades
+    "${wixdir}/light" \
+            -ext WixUIExtension -cultures:en-us \
+            -sw1076 \
+            -out "vmnetx-${vmnetx_ver}.msi" \
+            vmnetx.wixobj
 }
 
 clean() {

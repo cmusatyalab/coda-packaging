@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+
+  <!-- Designed for simplicity rather than efficiency.  Thus:
+       - Every upgrade is a Major Upgrade
+       - RemoveExistingProducts is scheduled early so we don't have to test
+         for obscure consequences of component rule violations.
+   -->
+
+  <?define Version = '0.4.0'?>
+
+  <Product
+      Name='VMNetX $(var.Version)'
+      Version='$(var.Version)'
+      Id='*'
+      UpgradeCode='F4A9E99F-24ED-41C4-BDC9-5E0398205692'
+      Language='1033' Codepage='1252'
+      Manufacturer='Olive Executable Archive'>
+
+    <Package
+        Description='Virtual machine network execution'
+        Comments='This package installs the VMNetX client software.'
+        Manufacturer='Olive Executable Archive'
+        InstallerVersion='100'
+        Languages='1033' SummaryCodepage='1252'
+        Compressed='yes'/>
+
+    <Condition Message="VMNetX requires Windows 7 or better.">
+      <![CDATA[Installed OR (VersionNT >= 601)]]>
+    </Condition>
+
+    <Icon Id="icon" SourceFile="vmnetx.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="icon" />
+    <Property Id="ARPURLINFOABOUT" Value="https://olivearchive.org/" />
+
+    <UIRef Id='WixUI_Minimal'/>
+    <Property Id='WIXUI_EXITDIALOGOPTIONALTEXT'
+        Value='VMNetX was successfully installed.'/>
+
+    <Media Id='1' Cabinet='vmnetx.cab' EmbedCab='yes'/>
+
+    <Feature Id='Main'>
+      <ComponentGroupRef Id='FileComponents'/>
+    </Feature>
+
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+      <Directory Id='ProgramFilesFolder'>
+        <Directory Id='INSTALLDIR' Name='VMNetX'/>
+      </Directory>
+    </Directory>
+
+    <!-- AllowSameVersionUpgrades="yes" prevents different builds with the
+         same version number from being installed at the same time (since
+         we generate a new ProductId on every build) -->
+    <MajorUpgrade
+        AllowSameVersionUpgrades="yes"
+        DowngradeErrorMessage="A newer version of VMNetX is already installed on your system."/>
+
+    <?include components.wxi?>
+
+  </Product>
+</Wix>

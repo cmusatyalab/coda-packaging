@@ -1,6 +1,10 @@
 32
 64
 tar
+*.msi
+*.wixobj
+*.wixpdb
 *.zip
+components.wxi
 vmnetx.spec
 vmnetx.verinfo
