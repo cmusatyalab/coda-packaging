@@ -67,7 +67,7 @@
             <MIME
                 ContentType='application/x-vmnetx-reference+xml'
                 Default='yes'/>
-            <Verb Id='launch'
+            <Verb Id='open'
                 Command='&amp;Launch'
                 Argument='"%1"'
                 TargetFile='f_vmnetx.exe'/>
@@ -85,7 +85,7 @@
             <MIME
                ContentType='application/x-vmnetx-package'
                Default='yes'/>
-            <Verb Id='launch'
+            <Verb Id='open'
                 Command='&amp;Launch'
                 Argument='"%1"'
                 TargetFile='f_vmnetx.exe'/>
