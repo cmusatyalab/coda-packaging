@@ -2,8 +2,8 @@
 %global selinux_variants mls targeted minimal
 
 Name:           vmnetx
-Version:        0.4.0
-Release:        2%{?dist}
+Version:        0.4.1
+Release:        1%{?dist}
 Summary:        Virtual machine network execution
 
 # desktop/vmnetx.png is under CC-BY-3.0
@@ -165,6 +165,9 @@ fi
 
 
 %changelog
+* Thu Nov  7 2013 Benjamin Gilbert <bgilbert@cs.cmu.edu> - 0.4.1-1
+- New release
+
 * Fri Aug 30 2013 Benjamin Gilbert <bgilbert@cs.cmu.edu> - 0.4.0-2
 - Move python-msgpack dependency to -common (fixes thin client mode)
 
