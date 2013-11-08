@@ -116,6 +116,23 @@ rpmrepo:
 	@$(call buildrpm,rpmrepo/vmnetx-release-fedora.spec,fedora-18-i386)
 	@$(call buildrpm,rpmrepo/vmnetx-release-el.spec,epel-6-i386)
 
+.PHONY: msi
+msi:
+	mkdir -p $(OUTDIR)
+	@tmp=`mktemp -dt windows-XXXXXXXX` && \
+	output=`pwd`/$(OUTDIR) && \
+	for file in windows/* ; do \
+		if [ -f $$file ] ; then \
+			cp $$file $$tmp ; \
+		fi ; \
+	done && \
+	( cd $$tmp && \
+		./build.sh clean && \
+		./build.sh sdist && \
+		./build.sh -j10 bdist && \
+		mv *.zip *.msi $$output ) && \
+	rm -r $$tmp
+
 .PHONY: distribute
 distribute:
 	[ -n "$(VMNETX_DISTRIBUTE_HOST)" -a -n "$(VMNETX_INCOMING_DIR)" ]
