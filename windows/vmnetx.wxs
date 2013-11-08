@@ -63,8 +63,10 @@
             Description='VMNetX virtual machine'
             Icon='f_vmnetx.exe'
             Advertise='no'>
-          <Extension Id='netx'
-              ContentType='application/x-vmnetx-reference+xml'>
+          <Extension Id='netx'>
+            <MIME
+                ContentType='application/x-vmnetx-reference+xml'
+                Default='yes'/>
             <Verb Id='launch'
                 Command='&amp;Launch'
                 Argument='"%1"'
@@ -79,8 +81,10 @@
             Description='VMNetX virtual machine package'
             Icon='f_vmnetx.exe'
             Advertise='no'>
-          <Extension Id='nxpk'
-              ContentType='application/x-vmnetx-package'>
+          <Extension Id='nxpk'>
+            <MIME
+               ContentType='application/x-vmnetx-package'
+               Default='yes'/>
             <Verb Id='launch'
                 Command='&amp;Launch'
                 Argument='"%1"'
