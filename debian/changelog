@@ -1,3 +1,9 @@
+vmnetx (0.4.1-1+DISTVER) DIST; urgency=low
+
+  * New release
+
+ -- Benjamin Gilbert <bgilbert@cs.cmu.edu>  Thu, 07 Nov 2013 20:09:46 -0500
+
 vmnetx (0.4.0-3+DISTVER) DIST; urgency=low
 
   * Move msgpack-python dependency to -common (fixes thin client mode)
