@@ -21,10 +21,10 @@
 
 set -eE
 
-packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk icontheme gtk pycairo pygobject pygtk celt openssl xml xslt orc gstreamer gstbase gstgood spicegtk msgpack lxml six dateutil requests vmnetx"
+packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk icontheme gtk pycairo pygobject pygtk celt openssl xml xslt orc gstreamer gstbase gstgood spicegtk msgpack lxml six dateutil requests comtypes vmnetx"
 
 # Cygwin non-default packages
-cygtools="wget zip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc-g++ binutils nasm gettext-devel libglib2.0-devel gtk-update-icon-cache libogg-devel autoconf automake libtool flex bison intltool"
+cygtools="wget zip unzip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc-g++ binutils nasm gettext-devel libglib2.0-devel gtk-update-icon-cache libogg-devel autoconf automake libtool flex bison intltool"
 # Python installer
 python_url="http://www.python.org/ftp/python/2.7.5/python-2.7.5.msi"
 # setuptools
@@ -69,6 +69,7 @@ lxml_name="lxml"
 six_name="six"
 dateutil_name="python-dateutil"
 requests_name="requests"
+comtypes_name="comtypes"
 vmnetx_name="VMNetX"
 
 # Package versions
@@ -112,6 +113,7 @@ lxml_ver="3.2.3"
 six_ver="1.4.1"
 dateutil_ver="2.1"
 requests_ver="2.0.0"
+comtypes_ver="0.6.2"
 vmnetx_ver="0.4.1"
 
 # Tarball URLs
@@ -147,6 +149,7 @@ lxml_url="https://pypi.python.org/packages/source/l/lxml/lxml-${lxml_ver}.tar.gz
 six_url="https://pypi.python.org/packages/source/s/six/six-${six_ver}.tar.gz"
 dateutil_url="https://pypi.python.org/packages/source/p/python-dateutil/python-dateutil-${dateutil_ver}.tar.gz"
 requests_url="https://pypi.python.org/packages/source/r/requests/requests-${requests_ver}.tar.gz"
+comtypes_url="http://prdownloads.sourceforge.net/comtypes/comtypes-${comtypes_ver}.zip"
 vmnetx_url="https://olivearchive.org/vmnetx/source/vmnetx-${vmnetx_ver}.tar.xz"
 
 # Unpacked source trees
@@ -181,6 +184,7 @@ lxml_build="lxml-${lxml_ver}"
 six_build="six-${six_ver}"
 dateutil_build="python-dateutil-${dateutil_ver}"
 requests_build="requests-${requests_ver}"
+comtypes_build="comtypes-${comtypes_ver}"
 vmnetx_build="vmnetx-${vmnetx_ver}"
 
 # Locations of license files within the source tree
@@ -215,6 +219,7 @@ lxml_licenses="LICENSES.txt doc/licenses/BSD.txt doc/licenses/elementtree.txt do
 six_licenses="LICENSE"
 dateutil_licenses="LICENSE"
 requests_licenses="LICENSE NOTICE"
+comtypes_licenses="README"
 vmnetx_licenses="COPYING desktop/README.icon"
 
 # Build dependencies
@@ -249,7 +254,8 @@ lxml_dependencies="xml xslt"
 six_dependencies=""
 dateutil_dependencies="six"
 requests_dependencies=""
-vmnetx_dependencies="pygobject pygtk spicegtk msgpack lxml dateutil requests"
+comtypes_dependencies=""
+vmnetx_dependencies="pygobject pygtk spicegtk msgpack lxml dateutil requests comtypes"
 
 # Installed file that proves the package has been built
 zlib_stamp="app/zlib1.dll"
@@ -283,6 +289,7 @@ lxml_stamp="lib/python/lxml/etree.pyd"
 six_stamp="lib/python/six.py"
 dateutil_stamp="lib/python/dateutil/tz.py"
 requests_stamp="lib/python/requests/sessions.py"
+comtypes_stamp="lib/python/comtypes/client/__init__.py"
 vmnetx_stamp="app/vmnetx"
 
 
@@ -371,7 +378,7 @@ fetch() {
 unpack() {
     # Remove the package build directory and re-unpack it
     # $1  = package shortname
-    local path
+    local path tarpath
     fetch "${1}"
     mkdir -p "${build}"
     path="${build}/$(expand ${1}_build)"
@@ -382,7 +389,12 @@ unpack() {
     else
         echo "Unpacking ${1}..."
         rm -rf "${path}"
-        tar xf "$(tarpath $1)" -C "${build}"
+        tarpath="$(tarpath $1)"
+        if [ "${tarpath%.zip}" != "${tarpath}" ] ; then
+            unzip -q -d "${build}" "${tarpath}"
+        else
+            tar xf "${tarpath}" -C "${build}"
+        fi
     fi
 }
 
@@ -779,6 +791,11 @@ build_one() {
     requests)
         setup_py
         ;;
+    comtypes)
+        # Fix build failure with comtypes 0.6.2 (r576)
+        sed -i "s/, DistutilsOptionError/\nfrom distutils.errors import DistutilsOptionError/" setup.py
+        setup_py
+        ;;
     vmnetx)
         do_configure
         make $parallel
@@ -883,7 +900,7 @@ bdist() {
     bundledir="${root}/bundle/vmnetx"
 
     # Drop system libraries from PyInstaller bundle
-    rm -f ${bundledir}/{ole32,shell32,ws2_32}.dll
+    rm -f ${bundledir}/{ole32,oleaut32,shell32,user32,ws2_32}.dll
 
     # Strip libraries.  Stripping seems to break MSVC-compiled libraries,
     # so limit ourselves to those built with MinGW.
