@@ -56,6 +56,18 @@
         DowngradeErrorMessage="A newer version of VMNetX is already installed on your system."/>
 
     <ComponentGroup Id='RegistryComponents'>
+      <Component Id='application_reg'
+          Directory='TARGETDIR'
+          Guid='251E37BF-AD4E-4B31-9E9A-19DC33E16F03'>
+        <RegistryKey
+            Root='HKCR'
+            Key='Applications\vmnetx.exe'>
+          <RegistryValue
+              Name='NoStartPage'
+              Type='string'
+              Value=''/>
+        </RegistryKey>
+      </Component>
       <Component Id='reference_handler'
           Directory='TARGETDIR'
           Guid='968311AE-4530-4BB7-ACC6-3B8D843A5023'>
