@@ -21,6 +21,8 @@ You will need a Windows system.
     If `build.sh` opens a WiX Toolset download page in a web browser,
     download and install the indicated version of WiX.
 
+4.  Enable the "Create Symbolic Links" security policy or disable UAC.
+
 [cygwin]: http://cygwin.com/install.html
 
 ### Building
