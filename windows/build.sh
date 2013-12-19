@@ -24,7 +24,7 @@ set -eE
 packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk icontheme gtk pycairo pygobject pygtk celt openssl xml xslt orc gstreamer gstbase gstgood spicegtk msgpack lxml six dateutil requests comtypes vmnetx"
 
 # Cygwin non-default packages
-cygtools="wget zip unzip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc-g++ binutils nasm gettext-devel libglib2.0-devel gtk-update-icon-cache libogg-devel autoconf automake libtool flex bison intltool"
+cygtools="wget zip unzip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc-g++ binutils nasm gettext-devel libglib2.0-devel gtk-update-icon-cache libogg-devel autoconf automake libtool flex bison intltool util-linux"
 # Python installer
 python_url="http://www.python.org/ftp/python/2.7.5/python-2.7.5.msi"
 # setuptools
