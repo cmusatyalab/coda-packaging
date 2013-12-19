@@ -19,13 +19,17 @@
         Description='Virtual machine network execution'
         Comments='This package installs the VMNetX client software.'
         Manufacturer='Olive Executable Archive'
-        InstallerVersion='100'
+        InstallerVersion='500'
         Languages='1033' SummaryCodepage='1252'
         Compressed='yes'/>
 
     <Condition Message="VMNetX requires Windows 7 or better.">
       <![CDATA[Installed OR (VersionNT >= 601)]]>
     </Condition>
+
+    <!-- Support per-user and per-machine installs -->
+    <Property Id="ALLUSERS" Value="2" />
+    <Property Id="MSIINSTALLPERUSER" Value="1" />
 
     <Icon Id="icon" SourceFile="vmnetx.ico"/>
     <Property Id="ARPPRODUCTICON" Value="icon" />
