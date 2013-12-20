@@ -151,6 +151,7 @@ dateutil_url="https://pypi.python.org/packages/source/p/python-dateutil/python-d
 requests_url="https://pypi.python.org/packages/source/r/requests/requests-${requests_ver}.tar.gz"
 comtypes_url="http://prdownloads.sourceforge.net/comtypes/comtypes-${comtypes_ver}.zip"
 vmnetx_url="https://olivearchive.org/vmnetx/source/vmnetx-${vmnetx_ver}.tar.xz"
+vmnetx_update_check_url="https://olivearchive.org/vmnetx/windows/latest.json"
 
 # Unpacked source trees
 zlib_build="zlib-${zlib_ver}"
@@ -807,7 +808,8 @@ EOF
         setup_py
         ;;
     vmnetx)
-        do_configure
+        do_configure \
+                --enable-update-checking="${vmnetx_update_check_url}"
         make $parallel
         make install
         # Set up hicolor icon theme
