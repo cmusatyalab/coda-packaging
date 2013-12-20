@@ -26,7 +26,7 @@ packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cair
 # Cygwin non-default packages
 cygtools="wget zip unzip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc-g++ binutils nasm gettext-devel libglib2.0-devel gtk-update-icon-cache libogg-devel autoconf automake libtool flex bison intltool util-linux"
 # Python installer
-python_url="http://www.python.org/ftp/python/2.7.5/python-2.7.5.msi"
+python_url="http://www.python.org/ftp/python/2.7.6/python-2.7.6.msi"
 # setuptools
 setuptools_url="https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py"
 # pywin32 (installed from binary, because a source build requires MSVC)
@@ -460,11 +460,6 @@ setup_py() {
         cmd /c mklink $(cygpath -w "${root}/compilers/g++.exe") \
                 $(cygpath -w "/usr/bin/${build_host}-g++.exe") >/dev/null
     fi
-    # Modify installed distutils package to work around removal of
-    # -mno-cygwin option from current gcc.  No longer necessary in
-    # Python 2.7.6.
-    sed -i 's/-mno-cygwin//' \
-            $(cygpath 'c:\Python27\Lib\distutils\cygwinccompiler.py')
     PATH="$(cygpath -w ${root}/compilers):${PATH}" \
             PYTHONPATH="$(cygpath -w ${root}/lib/python)" \
             "${python}" setup.py build \
