@@ -112,7 +112,7 @@ msgpack_ver="0.3.0"
 lxml_ver="3.2.3"
 six_ver="1.4.1"
 dateutil_ver="2.1"
-requests_ver="2.0.0"
+requests_ver="2.1.0"
 comtypes_ver="0.6.2"
 vmnetx_ver="0.4.1"
 
