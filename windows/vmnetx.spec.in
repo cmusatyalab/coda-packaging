@@ -49,6 +49,7 @@ coll = COLLECT(
         ('lib/gtk-2.0/2.10.0/engines/libwimp.dll', r'!!ROOT!!\lib\gtk-2.0\2.10.0\engines\libwimp.dll', 'BINARY'),
         ('share/icons/hicolor/index.theme', r'!!ROOT!!\share\icons\hicolor\index.theme', 'DATA'),
         ('share/icons/hicolor/256x256/apps/vmnetx.png', r'!!ROOT!!\share\icons\hicolor\256x256\apps\vmnetx.png', 'DATA'),
+        ('share/requests/cacert.pem', r'!!ROOT!!\lib\python\requests\cacert.pem', 'DATA'),
         ('share/themes/MS-Windows/gtk-2.0/gtkrc', r'!!ROOT!!\share\themes\MS-Windows\gtk-2.0\gtkrc', 'DATA'),
     ],
     strip=None,

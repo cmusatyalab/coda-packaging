@@ -789,6 +789,16 @@ build_one() {
         setup_py
         ;;
     requests)
+        # Packages in PyInstaller bundles don't have separate package
+        # directories, so we need to look elsewhere for CA certificates
+        cat > requests/certs.py <<EOF
+import os, sys
+def where():
+    if getattr(sys, 'frozen', False):
+        return os.path.join(sys._MEIPASS, 'share', 'requests', 'cacert.pem')
+    else:
+        return os.path.join(os.path.dirname(__file__), 'cacert.pem')
+EOF
         setup_py
         ;;
     comtypes)
