@@ -131,7 +131,7 @@ msi:
 		./build.sh sdist && \
 		./build.sh -j10 bdist && \
 		mv *.zip *.msi $$output ) && \
-	rm -r $$tmp
+	rm -rf $$tmp
 
 .PHONY: distribute
 distribute:
