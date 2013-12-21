@@ -453,11 +453,13 @@ setup_py() {
     # and put ${root}/compilers into the PATH.
     mkdir -p "${root}/compilers"
     if [ ! -e "${root}/compilers/gcc.exe" ] ; then
-        cmd /c mklink $(cygpath -w "${root}/compilers/gcc.exe") \
+        cygstart --action=runas cmd /c mklink \
+                $(cygpath -w "${root}/compilers/gcc.exe") \
                 $(cygpath -w "/usr/bin/${build_host}-gcc.exe") >/dev/null
     fi
     if [ ! -e "${root}/compilers/g++.exe" ] ; then
-        cmd /c mklink $(cygpath -w "${root}/compilers/g++.exe") \
+        cygstart --action=runas cmd /c mklink \
+                $(cygpath -w "${root}/compilers/g++.exe") \
                 $(cygpath -w "/usr/bin/${build_host}-g++.exe") >/dev/null
     fi
     PATH="$(cygpath -w ${root}/compilers):${PATH}" \
