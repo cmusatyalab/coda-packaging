@@ -1,4 +1,4 @@
-%global selinux_policyver %(%{__sed} -e 's,.*selinux-policy-\\([^/]*\\)/.*,\\1,' /usr/share/selinux/devel/policyhelp 2>/dev/null || echo 0.0.0)
+%{!?_selinux_policy_version: %global _selinux_policy_version %(sed -e 's,.*selinux-policy-\\([^/]*\\)/.*,\\1,' /usr/share/selinux/devel/policyhelp 2>/dev/null || echo 0.0.0)}
 %global selinux_variants mls targeted minimal
 
 Name:           vmnetx
@@ -51,7 +51,7 @@ Requires:       dbus-python
 Requires:       dbus
 Requires:       polkit
 # For SELinux
-Requires:       selinux-policy >= %{selinux_policyver}
+Requires:       selinux-policy >= %{_selinux_policy_version}
 Requires(post): /usr/sbin/semodule
 Requires(postun): /usr/sbin/semodule
 
