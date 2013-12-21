@@ -2,7 +2,7 @@
 %global selinux_variants mls targeted minimal
 
 Name:           vmnetx
-Version:        0.4.1
+Version:        0.4.2
 Release:        1%{?dist}
 Summary:        Virtual machine network execution
 
@@ -75,7 +75,7 @@ This package includes the VMNetX remote execution server.
 
 
 %build
-%configure
+%configure --disable-update-checking
 make %{?_smp_mflags}
 
 # Build SELinux modules
@@ -165,6 +165,10 @@ fi
 
 
 %changelog
+* Fri Dec 20 2013 Benjamin Gilbert <bgilbert@cs.cmu.edu> - 0.4.2-1
+- New release
+- Correctly set selinux-policy version requirement on F20
+
 * Thu Nov  7 2013 Benjamin Gilbert <bgilbert@cs.cmu.edu> - 0.4.1-1
 - New release
 
