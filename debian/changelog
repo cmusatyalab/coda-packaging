@@ -1,3 +1,9 @@
+vmnetx (0.4.2-1+DISTVER) DIST; urgency=low
+
+  * New release
+
+ -- Benjamin Gilbert <bgilbert@cs.cmu.edu>  Sat, 21 Dec 2013 00:22:33 +0000
+
 vmnetx (0.4.1-1+DISTVER) DIST; urgency=low
 
   * New release
