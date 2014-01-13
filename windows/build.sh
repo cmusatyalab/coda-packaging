@@ -316,10 +316,12 @@ setup_environment() {
     # $1  = path to Cygwin setup.exe
 
     # Install cygwin packages
-    # Avoid UAC setup.exe magic
-    cp "$1" cygwin.exe
-    ./cygwin.exe -q -P "${cygtools// /,}" >/dev/null
-    rm cygwin.exe
+    "$1" -q -P "${cygtools// /,}" >/dev/null
+
+    # Wait for cygwin setup to install wget
+    while [ ! -x /usr/bin/wget ] ; do
+    	sleep 1
+    done
 
     # Install native Python
     if [ ! -d $(cygpath "c:\Python27") ] ; then
