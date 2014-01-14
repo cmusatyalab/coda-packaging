@@ -6,7 +6,7 @@ DEB_DISTS_DEBIAN = squeeze wheezy
 DEB_DISTS_UBUNTU = precise quantal raring saucy
 DEB_DISTS = $(DEB_DISTS_DEBIAN) $(DEB_DISTS_UBUNTU)
 DEB_ARCHES = i386 amd64
-RPM_ROOTS_FEDORA := $(foreach dist,18 19 20,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
+RPM_ROOTS_FEDORA := $(foreach dist,19 20,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
 RPM_ROOTS_EL := $(foreach dist,6,$(foreach arch,x86_64,epel-$(dist)-$(arch)))
 RPM_ROOTS := $(RPM_ROOTS_FEDORA) $(RPM_ROOTS_EL)
 
@@ -113,7 +113,7 @@ rpm:
 .PHONY: rpmrepo
 rpmrepo:
 	@# Build on a single representative root for each distribution.
-	@$(call buildrpm,rpmrepo/vmnetx-release-fedora.spec,fedora-18-i386)
+	@$(call buildrpm,rpmrepo/vmnetx-release-fedora.spec,fedora-20-i386)
 	@$(call buildrpm,rpmrepo/vmnetx-release-el.spec,epel-6-i386)
 
 .PHONY: msi
