@@ -3,7 +3,7 @@ SOURCE_URL = https://olivearchive.org/vmnetx/source/vmnetx-VERSION.tar.xz
 VMNETX_FULL_DISTRIBUTE ?= yes
 OUTDIR = output
 DEB_DISTS_DEBIAN = squeeze wheezy
-DEB_DISTS_UBUNTU = precise quantal raring saucy
+DEB_DISTS_UBUNTU = precise quantal saucy
 DEB_DISTS = $(DEB_DISTS_DEBIAN) $(DEB_DISTS_UBUNTU)
 DEB_ARCHES = i386 amd64
 RPM_ROOTS_FEDORA := $(foreach dist,19 20,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
@@ -14,7 +14,6 @@ squeeze_DISTVER = debian6.0
 wheezy_DISTVER = debian7.0
 precise_DISTVER = ubuntu12.04
 quantal_DISTVER = ubuntu12.10
-raring_DISTVER = ubuntu13.04
 saucy_DISTVER = ubuntu13.10
 
 DEB_CHROOT_BASE = chroots
