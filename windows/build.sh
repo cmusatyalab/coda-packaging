@@ -75,45 +75,45 @@ vmnetx_name="VMNetX"
 # Package versions
 configguess_ver="28d244f1"
 zlib_ver="1.2.8"
-png_ver="1.6.5"
+png_ver="1.6.9"
 jpeg_ver="1.3.0"
 iconv_ver="0.0.6"
 gettext_ver="0.18.3.1"
 ffi_ver="3.0.13"
-glib_basever="2.36"
-glib_ver="${glib_basever}.4"
-gdkpixbuf_basever="2.28"
-gdkpixbuf_ver="${gdkpixbuf_basever}.2"
-pixman_ver="0.30.2"
+glib_basever="2.38"
+glib_ver="${glib_basever}.2"
+gdkpixbuf_basever="2.30"
+gdkpixbuf_ver="${gdkpixbuf_basever}.6"
+pixman_ver="0.32.4"
 cairo_ver="1.12.16"
-pango_basever="1.35"
-pango_ver="${pango_basever}.3"
-atk_basever="2.9"
-atk_ver="${atk_basever}.4"
-icontheme_basever="3.10"
-icontheme_ver="${icontheme_basever}.0"
+pango_basever="1.36"
+pango_ver="${pango_basever}.2"
+atk_basever="2.11"
+atk_ver="${atk_basever}.90"
+icontheme_basever="3.11"
+icontheme_ver="${icontheme_basever}.5"
 gtk_basever="2.24"
-gtk_ver="${gtk_basever}.21"
+gtk_ver="${gtk_basever}.22"
 pycairo_ver="1.10.0"
 pygobject_basever="2.28"
 pygobject_ver="${pygobject_basever}.6"
 pygtk_basever="2.24"
 pygtk_ver="${pygtk_basever}.0"
 celt_ver="0.5.1.3"  # spice-gtk requires 0.5.1.x specifically
-openssl_ver="1.0.1e"
+openssl_ver="1.0.1f"
 xml_ver="2.9.1"
 xslt_ver="1.1.28"
 orc_ver="0.4.18"
 gstreamer_ver="0.10.36"  # spice-gtk requires 0.10.x
 gstbase_ver="0.10.36"
 gstgood_ver="0.10.31"
-spicegtk_ver="0.21"
-msgpack_ver="0.3.0"
-lxml_ver="3.2.3"
-six_ver="1.4.1"
-dateutil_ver="2.1"
-requests_ver="2.1.0"
-comtypes_ver="0.6.2"
+spicegtk_ver="0.23"
+msgpack_ver="0.4.1"
+lxml_ver="3.3.2"
+six_ver="1.5.2"
+dateutil_ver="2.2"
+requests_ver="2.2.1"
+comtypes_ver="1.0.0"
 vmnetx_ver="0.4.2"
 
 # Tarball URLs
@@ -149,7 +149,7 @@ lxml_url="https://pypi.python.org/packages/source/l/lxml/lxml-${lxml_ver}.tar.gz
 six_url="https://pypi.python.org/packages/source/s/six/six-${six_ver}.tar.gz"
 dateutil_url="https://pypi.python.org/packages/source/p/python-dateutil/python-dateutil-${dateutil_ver}.tar.gz"
 requests_url="https://pypi.python.org/packages/source/r/requests/requests-${requests_ver}.tar.gz"
-comtypes_url="http://prdownloads.sourceforge.net/comtypes/comtypes-${comtypes_ver}.zip"
+comtypes_url="https://pypi.python.org/packages/source/c/comtypes/comtypes-${comtypes_ver}.zip"
 vmnetx_url="https://olivearchive.org/vmnetx/source/vmnetx-${vmnetx_ver}.tar.xz"
 vmnetx_update_check_url="https://olivearchive.org/vmnetx/windows/latest.json"
 
@@ -556,9 +556,6 @@ build_one() {
         make install
         ;;
     glib)
-        # gtk-doc.make has a bogus timestamp, causing an attempt to
-        # regenerate docs/reference/glib/Makefile.in
-        touch -r configure gtk-doc.make
         do_configure \
                 --disable-modular-tests \
                 --with-threads=win32
@@ -752,10 +749,13 @@ build_one() {
         # We need explicit libpython linkage on Windows
         sed -i 's/SpiceClientGtk_la_LDFLAGS =/& -no-undefined -lpython27/' \
                 gtk/Makefile.in
+        # Test cases fail to build with --disable-static on 0.23
+        sed -i 's/ tests//g' Makefile.in
         do_configure \
                 --with-sasl=no \
                 --with-gtk=2.0 \
                 --with-audio=gstreamer \
+                --with-python=yes \
                 --enable-smartcard=no
         # Ensure make can find pygobject-codegen-2.0, and that CODEGENDIR
         # is set correctly (spice-gtk runs pkg-config at make time)
@@ -802,8 +802,6 @@ EOF
         setup_py
         ;;
     comtypes)
-        # Fix build failure with comtypes 0.6.2 (r576)
-        sed -i "s/, DistutilsOptionError/\nfrom distutils.errors import DistutilsOptionError/" setup.py
         setup_py
         ;;
     vmnetx)
