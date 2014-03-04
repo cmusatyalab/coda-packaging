@@ -17,7 +17,7 @@ VSVersionInfo(
         [StringStruct(u'CompanyName', u'Carnegie Mellon University'),
         StringStruct(u'FileDescription', u'VMNetX'),
         StringStruct(u'FileVersion', u'!!VERSION!!'),
-        StringStruct(u'LegalCopyright', u'Copyright 2006-2013 Carnegie Mellon University'),
+        StringStruct(u'LegalCopyright', u'Copyright 2006-2014 Carnegie Mellon University'),
         StringStruct(u'ProductName', u'VMNetX'),
         StringStruct(u'ProductVersion', u'!!VERSION!!')])
       ]),
