@@ -2,7 +2,7 @@
 %global selinux_variants mls targeted minimal
 
 Name:           vmnetx
-Version:        0.4.2
+Version:        0.4.3
 Release:        1%{?dist}
 Summary:        Virtual machine network execution
 
@@ -124,6 +124,7 @@ hardlink -cv $RPM_BUILD_ROOT%{_datadir}/selinux
 
 
 %files server
+%{_sbindir}/vmnetx-example-frontend
 %{_sbindir}/vmnetx-server
 %{_datadir}/man/man8/*
 
@@ -165,6 +166,9 @@ fi
 
 
 %changelog
+* Tue Mar 04 2014 Benjamin Gilbert <bgilbert@cs.cmu.edu> - 0.4.3-1
+- New release
+
 * Fri Dec 20 2013 Benjamin Gilbert <bgilbert@cs.cmu.edu> - 0.4.2-1
 - New release
 - Correctly set selinux-policy version requirement on F20
