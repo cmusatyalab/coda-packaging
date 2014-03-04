@@ -1,3 +1,11 @@
+vmnetx (0.4.3-1+DISTVER) DIST; urgency=low
+
+  * New release
+  * Depend on xz-utils, since it is not required priority on newer Ubuntu
+  * Recommend: lzop for memory image recompression
+
+ -- Benjamin Gilbert <bgilbert@cs.cmu.edu>  Tue, 04 Mar 2014 14:59:38 -0500
+
 vmnetx (0.4.2-1+DISTVER) DIST; urgency=low
 
   * New release
