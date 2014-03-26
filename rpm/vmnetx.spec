@@ -3,7 +3,7 @@
 
 Name:           vmnetx
 Version:        0.4.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Virtual machine network execution
 
 # desktop/vmnetx.png is under CC-BY-3.0
@@ -65,6 +65,15 @@ License:        GPLv2
 Requires:       %{name}-common%{?_isa} = %{version}-%{release}
 Requires:       python-flask
 Requires:       PyYAML
+%if 0%{?rhel} == 6
+# On RHEL 6, python-flask Requires python-jinja2-26, which does not add
+# itself to the Python path, rather than python-jinja2 which does (RHBZ
+# 1079599).  Flask's requirement for a newer jinja2 doesn't actually affect
+# us since we don't use templating, but its inability to import jinja2
+# causes the servers to crash at startup.  Work around this by explicitly
+# requiring an importable jinja2.
+Requires:       python-jinja2
+%endif
 
 %description    server
 This package includes the VMNetX remote execution server.
@@ -166,6 +175,9 @@ fi
 
 
 %changelog
+* Wed Mar 26 2014 Benjamin Gilbert <bgilbert@cs.cmu.edu> - 0.4.3-2
+- Add -server python-jinja2 dependency on EL 6 to work around RHBZ 1079599
+
 * Tue Mar 04 2014 Benjamin Gilbert <bgilbert@cs.cmu.edu> - 0.4.3-1
 - New release
 
