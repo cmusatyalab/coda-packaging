@@ -21,7 +21,7 @@
 
 set -eE
 
-packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk icontheme gtk pycairo pygobject pygtk celt openssl xml xslt orc gstreamer gstbase gstgood spicegtk msgpack lxml six dateutil requests comtypes vmnetx"
+packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cairo pango atk icontheme gtk pycairo pygobject pygtk celt openssl xml xslt sqlite soup orc gstreamer gstbase gstgood spicegtk msgpack lxml six dateutil requests comtypes vmnetx"
 
 # Cygwin non-default packages
 cygtools="wget zip unzip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc-g++ binutils nasm gettext-devel libglib2.0-devel gtk-update-icon-cache libogg-devel autoconf automake libtool flex bison intltool util-linux"
@@ -59,6 +59,8 @@ celt_name="celt"
 openssl_name="OpenSSL"
 xml_name="libxml2"
 xslt_name="libxslt"
+sqlite_name="SQLite"
+soup_name="libsoup"
 orc_name="orc"
 gstreamer_name="gstreamer"
 gstbase_name="gst-plugins-base"
@@ -103,11 +105,16 @@ celt_ver="0.5.1.3"  # spice-gtk requires 0.5.1.x specifically
 openssl_ver="1.0.1g"
 xml_ver="2.9.1"
 xslt_ver="1.1.28"
+sqlite_year="2014"
+sqlite_ver="3.8.4.3"
+sqlite_vernum="3080403"
+soup_basever="2.46"
+soup_ver="${soup_basever}.0"
 orc_ver="0.4.18"
 gstreamer_ver="0.10.36"  # spice-gtk requires 0.10.x
 gstbase_ver="0.10.36"
 gstgood_ver="0.10.31"
-spicegtk_ver="0.23"
+spicegtk_ver="0.25"
 msgpack_ver="0.4.2"
 lxml_ver="3.3.5"
 six_ver="1.6.1"
@@ -139,6 +146,8 @@ celt_url="http://downloads.xiph.org/releases/celt/celt-${celt_ver}.tar.gz"
 openssl_url="http://www.openssl.org/source/openssl-${openssl_ver}.tar.gz"
 xml_url="ftp://xmlsoft.org/libxml2/libxml2-${xml_ver}.tar.gz"
 xslt_url="ftp://xmlsoft.org/libxslt/libxslt-${xslt_ver}.tar.gz"
+sqlite_url="http://www.sqlite.org/${sqlite_year}/sqlite-autoconf-${sqlite_vernum}.tar.gz"
+soup_url="http://ftp.gnome.org/pub/gnome/sources/libsoup/${soup_basever}/libsoup-${soup_ver}.tar.xz"
 orc_url="http://code.entropywave.com/download/orc/orc-${orc_ver}.tar.gz"
 gstreamer_url="http://gstreamer.freedesktop.org/src/gstreamer/gstreamer-${gstreamer_ver}.tar.xz"
 gstbase_url="http://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-${gstbase_ver}.tar.xz"
@@ -176,6 +185,8 @@ openssl_build="openssl-${openssl_ver}"
 xml_build="libxml2-${xml_ver}"
 xslt_build="libxslt-${xslt_ver}"
 orc_build="orc-${orc_ver}"
+sqlite_build="sqlite-autoconf-${sqlite_vernum}"
+soup_build="libsoup-${soup_ver}"
 gstreamer_build="gstreamer-${gstreamer_ver}"
 gstbase_build="gst-plugins-base-${gstbase_ver}"
 gstgood_build="gst-plugins-good-${gstgood_ver}"
@@ -210,6 +221,8 @@ celt_licenses="COPYING"
 openssl_licenses="LICENSE"
 xml_licenses="COPYING"
 xslt_licenses="COPYING"
+sqlite_licenses="PUBLIC-DOMAIN.txt"
+soup_licenses="COPYING"
 orc_licenses="COPYING"
 gstreamer_licenses="COPYING"
 gstbase_licenses="COPYING.LIB"
@@ -245,11 +258,13 @@ celt_dependencies=""
 openssl_dependencies=""
 xml_dependencies="zlib iconv"
 xslt_dependencies="xml"
+sqlite_dependencies=""
+soup_dependencies="glib xml sqlite"
 orc_dependencies=""
 gstreamer_dependencies="glib xml"
 gstbase_dependencies="glib gstreamer orc"
 gstgood_dependencies="zlib png jpeg glib gdkpixbuf cairo gstreamer gstbase orc"
-spicegtk_dependencies="zlib jpeg pixman gtk pygtk celt openssl gstreamer gstbase"
+spicegtk_dependencies="zlib jpeg pixman gtk pygtk celt openssl soup gstreamer gstbase"
 msgpack_dependencies=""
 lxml_dependencies="xml xslt"
 six_dependencies=""
@@ -280,6 +295,8 @@ celt_stamp="app/libcelt051-0.dll"
 openssl_stamp="app/ssleay32.dll"
 xml_stamp="app/libxml2-2.dll"
 xslt_stamp="app/libxslt-1.dll"
+sqlite_stamp="app/libsqlite3-0.dll"
+soup_stamp="app/libsoup-2.4-1.dll"
 orc_stamp="app/liborc-0.4-0.dll"
 gstreamer_stamp="app/libgstreamer-0.10-0.dll"
 gstbase_stamp="app/libgstapp-0.10-0.dll"
@@ -708,6 +725,18 @@ build_one() {
         make $parallel
         make install
         ;;
+    sqlite)
+        do_configure
+        make $parallel
+        make install
+        # Extract public-domain dedication from the top of sqlite3.h
+        awk '/\*{8}/ {exit} /^\*{2}/ {print}' sqlite3.h > PUBLIC-DOMAIN.txt
+        ;;
+    soup)
+        do_configure
+        make $parallel
+        make install
+        ;;
     orc)
         do_configure
         make $parallel
@@ -747,8 +776,6 @@ build_one() {
         # We need explicit libpython linkage on Windows
         sed -i 's/SpiceClientGtk_la_LDFLAGS =/& -no-undefined -lpython27/' \
                 gtk/Makefile.in
-        # Test cases fail to build with --disable-static on 0.23
-        sed -i 's/ tests//g' Makefile.in
         do_configure \
                 --with-sasl=no \
                 --with-gtk=2.0 \
