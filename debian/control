@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 9.0.0), python, dh-autoreconf,
  libcurl4-gnutls-dev, libfuse-dev, libglib2.0-dev,
  pkg-config, autoconf, automake, libtool, libxml2-dev,
  python-dev
-Standards-Version: 3.9.4
+Standards-Version: 3.9.5
 Homepage: https://github.com/cmusatyalab/vmnetx
 Vcs-Git: git://github.com/cmusatyalab/vmnetx-packaging.git
 Vcs-Browser: https://github.com/cmusatyalab/vmnetx-packaging
