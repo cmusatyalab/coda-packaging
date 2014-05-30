@@ -17,8 +17,8 @@ Architecture: i386 amd64
 Replaces: vmnetx (<< 0.4.0)
 Breaks: vmnetx (<< 0.4.0)
 Depends: ${shlibs:Depends}, ${misc:Depends},
- ${python:Depends}, qemu-kvm, fuse | fuse-utils, xz-utils,
- libvirt-bin, python-gobject-2 | python-gobject (<< 3),
+ ${python:Depends}, qemu-kvm, fuse, xz-utils,
+ libvirt-bin, python-gobject-2,
  python-requests, python-dateutil, python-libvirt, python-dbus,
  python-lxml, msgpack-python
 Recommends: dbus, policykit-1, lzop
