@@ -2,8 +2,8 @@
 %global selinux_variants mls targeted minimal
 
 Name:           vmnetx
-Version:        0.4.3
-Release:        2%{?dist}
+Version:        0.4.4
+Release:        1%{?dist}
 Summary:        Virtual machine network execution
 
 # desktop/vmnetx.png is under CC-BY-3.0
@@ -123,7 +123,7 @@ hardlink -cv $RPM_BUILD_ROOT%{_datadir}/selinux
 
 
 %files common
-%doc COPYING README.rst NEWS.md
+%doc COPYING README.md NEWS.md
 %{_sysconfdir}/dbus-1/system.d/org.olivearchive.VMNetX.Authorizer.conf
 %{_libexecdir}/%{name}
 %{python_sitelib}/*
@@ -175,6 +175,9 @@ fi
 
 
 %changelog
+* Fri May 30 2014 Benjamin Gilbert <bgilbert@cs.cmu.edu> - 0.4.4-1
+- New release
+
 * Wed Mar 26 2014 Benjamin Gilbert <bgilbert@cs.cmu.edu> - 0.4.3-2
 - Add -server python-jinja2 dependency on EL 6 to work around RHBZ 1079599
 
