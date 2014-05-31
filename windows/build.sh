@@ -121,7 +121,7 @@ six_ver="1.6.1"
 dateutil_ver="2.2"
 requests_ver="2.3.0"
 comtypes_ver="1.0.0"
-vmnetx_ver="0.4.3"
+vmnetx_ver="0.4.4"
 
 # Tarball URLs
 configguess_url="http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=${configguess_ver}"
