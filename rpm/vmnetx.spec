@@ -27,6 +27,10 @@ Requires:       %{name}-common%{?_isa} = %{version}-%{release}
 Requires:       pygtk2
 Requires:       gtk-vnc-python
 Requires:       spice-gtk-python
+%if 0%{?rhel} == 6
+# Python 2.6 doesn't have argparse in the standard library
+Requires:       python-argparse
+%endif
 
 
 %description
