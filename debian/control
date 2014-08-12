@@ -31,8 +31,7 @@ Description: VMNetX support code
 Package: vmnetx
 Architecture: i386 amd64
 Depends: vmnetx-common (= ${binary:Version}), ${misc:Depends},
- ${python:Depends}, python-gtk2, python-gtk-vnc
-Recommends: python-spice-client-gtk
+ ${python:Depends}, python-gtk2, python-spice-client-gtk
 Description: Virtual machine network execution
  VMNetX allows you to execute a KVM virtual machine over the Internet
  without downloading all of its data to your computer in advance.
