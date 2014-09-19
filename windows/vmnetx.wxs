@@ -108,6 +108,75 @@
           </Extension>
         </ProgId>
       </Component>
+      <Component Id='vmnetx_scheme_handler'
+          Directory='TARGETDIR'
+          Guid='BC19085E-DF5E-44E9-A97A-BBFCE6174982'>
+        <RegistryKey
+            Root='HKCR'
+            Key='vmnetx'>
+          <RegistryValue
+              Type='string'
+              Value='VMNetX remote virtual machine'/>
+          <RegistryValue
+              Name='URL Protocol'
+              Type='string'
+              Value=''/>
+          <RegistryValue
+              Key='DefaultIcon'
+              Type='string'
+              Value='[#f_vmnetx.exe]'/>
+          <RegistryValue
+              Key='shell\open\command'
+              Type='string'
+              Value='&quot;[#f_vmnetx.exe]&quot; &quot;%1&quot;'/>
+        </RegistryKey>
+      </Component>
+      <Component Id='vmnetx_http_scheme_handler'
+          Directory='TARGETDIR'
+          Guid='0F78EFD6-A82C-4115-ABFE-37FBEBE36D18'>
+        <RegistryKey
+            Root='HKCR'
+            Key='vmnetx+http'>
+          <RegistryValue
+              Type='string'
+              Value='VMNetX virtual machine'/>
+          <RegistryValue
+              Name='URL Protocol'
+              Type='string'
+              Value=''/>
+          <RegistryValue
+              Key='DefaultIcon'
+              Type='string'
+              Value='[#f_vmnetx.exe]'/>
+          <RegistryValue
+              Key='shell\open\command'
+              Type='string'
+              Value='&quot;[#f_vmnetx.exe]&quot; &quot;%1&quot;'/>
+        </RegistryKey>
+      </Component>
+      <Component Id='vmnetx_https_scheme_handler'
+          Directory='TARGETDIR'
+          Guid='BBA8E19F-DF2A-4B49-B754-4728D3AA27A7'>
+        <RegistryKey
+            Root='HKCR'
+            Key='vmnetx+https'>
+          <RegistryValue
+              Type='string'
+              Value='VMNetX virtual machine'/>
+          <RegistryValue
+              Name='URL Protocol'
+              Type='string'
+              Value=''/>
+          <RegistryValue
+              Key='DefaultIcon'
+              Type='string'
+              Value='[#f_vmnetx.exe]'/>
+          <RegistryValue
+              Key='shell\open\command'
+              Type='string'
+              Value='&quot;[#f_vmnetx.exe]&quot; &quot;%1&quot;'/>
+        </RegistryKey>
+      </Component>
     </ComponentGroup>
 
     <?include components.wxi?>
