@@ -50,7 +50,7 @@ pixman_name="pixman"
 cairo_name="cairo"
 pango_name="pango"
 atk_name="atk"
-icontheme_name="gnome-icon-theme"
+icontheme_name="adwaita-icon-theme"
 gtk_name="gtk+"
 pycairo_name="py2cairo"
 pygobject_name="PyGObject"
@@ -92,7 +92,7 @@ pango_basever="1.36"
 pango_ver="${pango_basever}.3"
 atk_basever="2.12"
 atk_ver="${atk_basever}.0"
-icontheme_basever="3.12"
+icontheme_basever="3.14"
 icontheme_ver="${icontheme_basever}.0"
 gtk_basever="2.24"
 gtk_ver="${gtk_basever}.23"
@@ -137,7 +137,7 @@ pixman_url="http://cairographics.org/releases/pixman-${pixman_ver}.tar.gz"
 cairo_url="http://cairographics.org/releases/cairo-${cairo_ver}.tar.xz"
 pango_url="http://ftp.gnome.org/pub/gnome/sources/pango/${pango_basever}/pango-${pango_ver}.tar.xz"
 atk_url="http://ftp.gnome.org/pub/gnome/sources/atk/${atk_basever}/atk-${atk_ver}.tar.xz"
-icontheme_url="http://ftp.gnome.org/pub/gnome/sources/gnome-icon-theme/${icontheme_basever}/gnome-icon-theme-${icontheme_ver}.tar.xz"
+icontheme_url="http://ftp.gnome.org/pub/gnome/sources/adwaita-icon-theme/${icontheme_basever}/adwaita-icon-theme-${icontheme_ver}.tar.xz"
 gtk_url="http://ftp.gnome.org/pub/gnome/sources/gtk+/${gtk_basever}/gtk+-${gtk_ver}.tar.xz"
 pycairo_url="http://cairographics.org/releases/py2cairo-${pycairo_ver}.tar.bz2"
 pygobject_url="http://ftp.gnome.org/pub/GNOME/sources/pygobject/${pygobject_basever}/pygobject-${pygobject_ver}.tar.xz"
@@ -175,7 +175,7 @@ pixman_build="pixman-${pixman_ver}"
 cairo_build="cairo-${cairo_ver}"
 pango_build="pango-${pango_ver}"
 atk_build="atk-${atk_ver}"
-icontheme_build="gnome-icon-theme-${icontheme_ver}"
+icontheme_build="adwaita-icon-theme-${icontheme_ver}"
 gtk_build="gtk+-${gtk_ver}"
 pycairo_build="py2cairo-${pycairo_ver}"
 pygobject_build="pygobject-${pygobject_ver}"
@@ -286,7 +286,7 @@ pixman_stamp="app/libpixman-1-0.dll"
 cairo_stamp="app/libcairo-2.dll"
 pango_stamp="app/libpango-1.0-0.dll"
 atk_stamp="app/libatk-1.0-0.dll"
-icontheme_stamp="share/icons/gnome/index.theme"
+icontheme_stamp="share/icons/Adwaita/index.theme"
 gtk_stamp="app/libgtk-win32-2.0-0.dll"
 pycairo_stamp="lib/python/cairo/_cairo.pyd"
 pygobject_stamp="lib/python/gobject/_gobject.pyd"
@@ -610,8 +610,7 @@ build_one() {
         make install
         ;;
     icontheme)
-        do_configure \
-                --disable-icon-mapping
+        do_configure
         make $parallel
         make install
         ;;
@@ -624,8 +623,8 @@ build_one() {
                 do_configure
         make $parallel
         make install
-        # Use gnome icon theme instead of hicolor
-        echo 'gtk-icon-theme-name = "gnome"' > ${root}/etc/gtk-2.0/gtkrc
+        # Use Adwaita icon theme instead of hicolor
+        echo 'gtk-icon-theme-name = "Adwaita"' > ${root}/etc/gtk-2.0/gtkrc
         ;;
     pycairo)
         # We need explicit libpython linkage on Windows

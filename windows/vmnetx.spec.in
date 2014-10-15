@@ -30,7 +30,7 @@ coll = COLLECT(
     a.datas,
     Tree(r'!!ROOT!!\lib\python\vmnetx\schema', 'share/vmnetx/schema'),
     Tree(r'!!ROOT!!\licenses', 'licenses'),
-    Tree(r'!!ROOT!!\share\icons\gnome', 'share/icons/gnome'),
+    Tree(r'!!ROOT!!\share\icons\Adwaita', 'share/icons/Adwaita'),
     [
         # Dependencies of gstreamer plugins
         ('libgstaudio-0.10-0.dll', r'!!ROOT!!\app\libgstaudio-0.10-0.dll', 'BINARY'),
