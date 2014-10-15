@@ -13,7 +13,8 @@ def ns(name):
 
 
 def path_to_id(typecode, path):
-    return typecode + '_' + path.replace(os.sep, '_').translate(None, '-+')
+    path = path.replace(os.sep, '_').translate(None, '-+')
+    return typecode + '_' + path[-70:]
 
 
 def add_components_for_dir(component_ids, element, basedir, relpath=None):
