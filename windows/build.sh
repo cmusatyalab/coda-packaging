@@ -836,6 +836,11 @@ build_one() {
                 -e 's/disable_registry_cache = FALSE/disable_registry_cache = TRUE/' \
                 -e 's/!write_changes/TRUE/' \
                 gst/gstregistry.c
+        # 0.10.36 doesn't work with Bison 3; upstream commit 60516f4798
+        sed -i \
+                -e '/^#define YYLEX_PARAM scanner$/d' \
+                -e 's/%pure-parser/%lex-param { void *scanner }\n%pure-parser/' \
+                gst/parse/grammar.y
         # gstreamer confuses POSIX timers with the availability of
         # clock_gettime()
         do_configure \
