@@ -77,38 +77,38 @@ vmnetx_name="VMNetX"
 # Package versions
 configguess_ver="28d244f1"
 zlib_ver="1.2.8"
-png_ver="1.6.10"
+png_ver="1.6.12"
 jpeg_ver="1.3.1"
 iconv_ver="0.0.6"
-gettext_ver="0.18.3.2"
+gettext_ver="0.19.2"
 ffi_ver="3.1"
-glib_basever="2.40"
+glib_basever="2.42"
 glib_ver="${glib_basever}.0"
-gdkpixbuf_basever="2.30"
-gdkpixbuf_ver="${gdkpixbuf_basever}.7"
-pixman_ver="0.32.4"
-cairo_ver="1.12.16"
+gdkpixbuf_basever="2.31"
+gdkpixbuf_ver="${gdkpixbuf_basever}.1"
+pixman_ver="0.32.6"
+cairo_ver="1.14.0"
 pango_basever="1.36"
-pango_ver="${pango_basever}.3"
-atk_basever="2.12"
+pango_ver="${pango_basever}.8"
+atk_basever="2.14"
 atk_ver="${atk_basever}.0"
 icontheme_basever="3.14"
 icontheme_ver="${icontheme_basever}.0"
 gtk_basever="2.24"
-gtk_ver="${gtk_basever}.23"
+gtk_ver="${gtk_basever}.25"
 pycairo_ver="1.10.0"
 pygobject_basever="2.28"
 pygobject_ver="${pygobject_basever}.6"
 pygtk_basever="2.24"
 pygtk_ver="${pygtk_basever}.0"
 celt_ver="0.5.1.3"  # spice-gtk requires 0.5.1.x specifically
-openssl_ver="1.0.1g"
+openssl_ver="1.0.1j"
 xml_ver="2.9.1"
 xslt_ver="1.1.28"
 sqlite_year="2014"
-sqlite_ver="3.8.4.3"
-sqlite_vernum="3080403"
-soup_basever="2.46"
+sqlite_ver="3.8.6"
+sqlite_vernum="3080600"
+soup_basever="2.48"
 soup_ver="${soup_basever}.0"
 orc_ver="0.4.18"
 gstreamer_ver="0.10.36"  # spice-gtk requires 0.10.x
@@ -116,11 +116,11 @@ gstbase_ver="0.10.36"
 gstgood_ver="0.10.31"
 spicegtk_ver="0.25"
 msgpack_ver="0.4.2"
-lxml_ver="3.3.5"
-six_ver="1.6.1"
+lxml_ver="3.4.0"
+six_ver="1.8.0"
 dateutil_ver="2.2"
-requests_ver="2.3.0"
-comtypes_ver="1.0.0"
+requests_ver="2.4.3"
+comtypes_ver="1.1.1"
 vmnetx_ver="0.4.4"
 
 # Tarball URLs
@@ -233,7 +233,7 @@ lxml_licenses="LICENSES.txt doc/licenses/BSD.txt doc/licenses/elementtree.txt do
 six_licenses="LICENSE"
 dateutil_licenses="LICENSE"
 requests_licenses="LICENSE NOTICE"
-comtypes_licenses="README"
+comtypes_licenses="setup.py"  # LICENSE.txt is not distributed
 vmnetx_licenses="COPYING desktop/README.icon"
 
 # Build dependencies
@@ -699,6 +699,11 @@ build_one() {
     gtk)
         # http://pkgs.fedoraproject.org/cgit/mingw-gtk3.git/commit/?id=82ccf489f4763e375805d848351ac3f8fda8e88b
         sed -i 's/#define INITGUID//' gdk/win32/gdkdnd-win32.c
+        # Cross builds try to pass --include-image-data to the native
+        # gtk-update-icon-cache, which may not understand it
+        if ! gtk-update-icon-cache -h | grep -q include-image-data; then
+            sed -i 's/--include-image-data//' gtk/Makefile.in
+        fi
         # Use gdk-pixbuf-csource we just built; the one from Cygwin can't
         # read PNG
         PATH="${root}/app:${PATH}" \
@@ -814,6 +819,8 @@ build_one() {
         awk '/\*{8}/ {exit} /^\*{2}/ {print}' sqlite3.h > PUBLIC-DOMAIN.txt
         ;;
     soup)
+        # 2.48.0 has a nonexistent symbol in its export list
+        sed -i '/^soup_server_get_gsocket$/d' libsoup/libsoup-2.4.sym
         do_configure
         make $parallel
         make install
@@ -908,6 +915,7 @@ EOF
         setup_py
         ;;
     comtypes)
+        # XXX update comtypes_licenses after next release
         setup_py
         ;;
     vmnetx)
