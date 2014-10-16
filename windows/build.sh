@@ -3,7 +3,7 @@
 # A script for building VMNetX and its dependencies for Windows
 # Based on build.sh from openslide-winbuild
 #
-# Copyright (c) 2011-2013 Carnegie Mellon University
+# Copyright (c) 2011-2014 Carnegie Mellon University
 # All rights reserved.
 #
 # This script is free software: you can redistribute it and/or modify it
@@ -310,6 +310,88 @@ requests_stamp="lib/python/requests/sessions.py"
 comtypes_stamp="lib/python/comtypes/client/__init__.py"
 vmnetx_stamp="app/vmnetx"
 
+# Update-checking URLs
+zlib_upurl="http://zlib.net/"
+png_upurl="http://www.libpng.org/pub/png/libpng-manual.txt"
+jpeg_upurl="http://sourceforge.net/projects/libjpeg-turbo/files/"
+iconv_upurl="http://win-iconv.googlecode.com/svn/tags/"
+gettext_upurl="http://ftp.gnu.org/pub/gnu/gettext/"
+ffi_upurl="ftp://sourceware.org/pub/libffi/"
+glib_upurl="https://git.gnome.org/browse/glib/refs/"
+gdkpixbuf_upurl="https://git.gnome.org/browse/gdk-pixbuf/refs/"
+pixman_upurl="http://cairographics.org/releases/"
+cairo_upurl="http://cairographics.org/releases/"
+pango_upurl="https://git.gnome.org/browse/pango/refs/"
+# ATK still uses old-style tag names
+atk_upurl="https://git.gnome.org/browse/atk/tree/NEWS"
+icontheme_upurl="https://git.gnome.org/browse/adwaita-icon-theme/refs/"
+# Require 2.x
+gtk_upurl="http://ftp.gnome.org/pub/gnome/sources/gtk+/${gtk_basever}/"
+pycairo_upurl="http://cairographics.org/releases/"
+# Require 2.x
+pygobject_upurl="http://ftp.gnome.org/pub/gnome/sources/pygobject/${pygobject_basever}/"
+# Require 2.x
+pygtk_upurl="http://ftp.gnome.org/pub/gnome/sources/pygtk/${pygtk_basever}/"
+celt_upurl="http://downloads.xiph.org/releases/celt/"
+openssl_upurl="http://www.openssl.org/source/"
+xml_upurl="ftp://xmlsoft.org/libxml2/"
+xslt_upurl="ftp://xmlsoft.org/libxml2/"
+sqlite_upurl="http://sqlite.org/download.html"
+soup_upurl="https://git.gnome.org/browse/libsoup/refs/"
+orc_upurl="http://code.entropywave.com/download/orc/"
+gstreamer_upurl="http://gstreamer.freedesktop.org/src/gstreamer/"
+gstbase_upurl="http://gstreamer.freedesktop.org/src/gst-plugins-base/"
+gstgood_upurl="http://gstreamer.freedesktop.org/src/gst-plugins-good/"
+spicegtk_upurl="http://www.spice-space.org/download/gtk/"
+msgpack_upurl="https://pypi.python.org/packages/source/m/msgpack-python/"
+lxml_upurl="https://pypi.python.org/packages/source/l/lxml/"
+six_upurl="https://pypi.python.org/packages/source/s/six/"
+dateutil_upurl="https://pypi.python.org/packages/source/p/python-dateutil/"
+requests_upurl="https://pypi.python.org/packages/source/r/requests/"
+comtypes_upurl="https://pypi.python.org/packages/source/c/comtypes/"
+vmnetx_upurl="https://olivearchive.org/vmnetx/source/"
+
+# Update-checking regexes
+zlib_upregex="source code, version ([0-9.]+)"
+png_upregex="libpng version ([0-9.]+) -"
+jpeg_upregex="files/([0-9.]+)/"
+iconv_upregex=">([0-9.]+)/<"
+gettext_upregex="gettext-([0-9.]+)\.tar"
+ffi_upregex="libffi-([0-9.]+)\.tar"
+glib_upregex="snapshot/glib-([0-9]+\.[0-9]*[02468]\.[0-9]+)\.tar"
+# Exclude 2.90.x
+gdkpixbuf_upregex="snapshot/gdk-pixbuf-2\.90.*|.*snapshot/gdk-pixbuf-([0-9.]+)\.tar"
+pixman_upregex="LATEST-pixman-([0-9.]+)"
+cairo_upregex="LATEST-cairo-([0-9.]+)"
+pango_upregex="snapshot/pango-([0-9]+\.[0-9]*[02468]\.[0-9]+)\.tar"
+atk_upregex="Changes in version ([0-9.]+):"
+icontheme_upregex="snapshot/adwaita-icon-theme-([0-9]+\.[0-9]*[02468]\.[0-9]+)\.tar"
+gtk_upregex="LATEST-IS-([0-9.]+)"
+pycairo_upregex="pycairo-([0-9.]+)\.tar"
+pygobject_upregex="LATEST-IS-([0-9.]+)"
+pygtk_upregex="LATEST-IS-([0-9.]+)"
+# Require 0.5.1.x
+celt_upregex="celt-(0\.5\.1\.[0-9]+)\.tar"
+openssl_upregex="openssl-([0-9.]+[a-z]?)\.tar"
+xml_upregex="LATEST_LIBXML2_IS_([0-9.]+)"
+xslt_upregex="LATEST_LIBXSLT_IS_([0-9.]+)"
+sqlite_upregex="SQLite ([0-9.]+)"
+soup_upregex="snapshot/libsoup-([0-9]+\.[0-9]*[02468]\.[0-9]+)\.tar"
+orc_upregex="orc-([0-9.]+)\.tar"
+# Require 0.10.x
+gstreamer_upregex="gstreamer-(0\.10\.[0-9]+)\.tar"
+# Require 0.10.x
+gstbase_upregex="gst-plugins-base-(0\.10\.[0-9]+)\.tar"
+# Require 0.10.x
+gstgood_upregex="gst-plugins-good-(0\.10\.[0-9]+)\.tar"
+spicegtk_upregex="spice-gtk-([0-9.]+)\.tar"
+msgpack_upregex="msgpack-python-([0-9.]+)\.tar"
+lxml_upregex="lxml-([0-9.]+)\.tar"
+six_upregex="six-([0-9.]+)\.tar"
+dateutil_upregex="python-dateutil-([0-9.]+)\.tar"
+requests_upregex="requests-([0-9.]+)\.tar"
+comtypes_upregex="comtypes-([0-9.]+)\.zip"
+vmnetx_upregex="vmnetx-([0-9.]+)\.tar"
 
 expand() {
     # Print the contents of the named variable
@@ -980,6 +1062,26 @@ clean() {
     fi
 }
 
+updates() {
+    # Report new releases of software packages
+    local package url curver newver
+    for package in $packages
+    do
+        url="$(expand ${package}_upurl)"
+        if [ -z "$url" ] ; then
+            continue
+        fi
+        curver="$(expand ${package}_ver)"
+        newver=$(wget -q --no-check-certificate -O- "$url" | \
+                sed -nr "s%.*$(expand ${package}_upregex).*%\\1%p" | \
+                sort -uV | \
+                tail -n 1)
+        if [ "${curver}" != "${newver}" ] ; then
+            printf "%-15s %10s  => %10s\n" "${package}" "${curver}" "${newver}"
+        fi
+    done
+}
+
 probe() {
     # Probe the build environment and set up variables
     build="${build_bits}/build"
@@ -1067,12 +1169,16 @@ clean)
     shift
     clean "$@"
     ;;
+updates)
+    updates
+    ;;
 *)
     cat <<EOF
 Usage: $0 setup /path/to/cygwin/setup.exe
        $0 sdist
        $0 [-j<n>] [-m{32|64}] bdist
        $0 [-m{32|64}] clean [package...]
+       $0 updates
 
 Packages:
 $packages
