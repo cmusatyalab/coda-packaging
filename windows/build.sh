@@ -699,7 +699,9 @@ build_one() {
     gtk)
         # http://pkgs.fedoraproject.org/cgit/mingw-gtk3.git/commit/?id=82ccf489f4763e375805d848351ac3f8fda8e88b
         sed -i 's/#define INITGUID//' gdk/win32/gdkdnd-win32.c
-        # Cross builds try to pass --include-image-data to the native
+        # Ensure we consistently use the system gtk-update-icon-cache
+        rm -f "${root}/app/gtk-update-icon-cache.exe"
+        # Cross builds try to pass --include-image-data to the system
         # gtk-update-icon-cache, which may not understand it
         if ! gtk-update-icon-cache -h | grep -q include-image-data; then
             sed -i 's/--include-image-data//' gtk/Makefile.in
