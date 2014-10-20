@@ -80,7 +80,7 @@ zlib_ver="1.2.8"
 png_ver="1.6.12"
 jpeg_ver="1.3.1"
 iconv_ver="0.0.6"
-gettext_ver="0.19.2"
+gettext_ver="0.19.3"
 ffi_ver="3.1"
 glib_basever="2.42"
 glib_ver="${glib_basever}.0"
@@ -103,11 +103,11 @@ pygtk_basever="2.24"
 pygtk_ver="${pygtk_basever}.0"
 celt_ver="0.5.1.3"  # spice-gtk requires 0.5.1.x specifically
 openssl_ver="1.0.1j"
-xml_ver="2.9.1"
+xml_ver="2.9.2"
 xslt_ver="1.1.28"
 sqlite_year="2014"
-sqlite_ver="3.8.6"
-sqlite_vernum="3080600"
+sqlite_ver="3.8.7"
+sqlite_vernum="3080700"
 soup_basever="2.48"
 soup_ver="${soup_basever}.0"
 orc_ver="0.4.18"
@@ -798,6 +798,7 @@ build_one() {
         ;;
     xml)
         do_configure \
+                --with-zlib="$root" \
                 --without-python
         make $parallel
         make install
