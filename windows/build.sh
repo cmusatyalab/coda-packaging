@@ -25,17 +25,29 @@ packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cair
 
 # Cygwin non-default packages
 cygtools="wget zip unzip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc-g++ binutils nasm gettext-devel libglib2.0-devel gtk-update-icon-cache libogg-devel autoconf automake libtool flex bison intltool util-linux"
+# Other tools
+wintools="python setuptools pywin32 pyinstaller wix"
 # Python installer
-python_url="http://www.python.org/ftp/python/2.7.6/python-2.7.6.msi"
+python_ver="2.7.6"
+python_url="http://www.python.org/ftp/python/${python_ver}/python-${python_ver}.msi"
+python_upurl="http://www.python.org/ftp/python/"
+python_upregex=">(2\.7\.[0-9]+)/<"
 # setuptools
 setuptools_url="https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py"
 # pywin32 (installed from binary, because a source build requires MSVC)
-pywin32_url="http://prdownloads.sourceforge.net/pywin32/pywin32-218.win32-py2.7.exe"
+pywin32_ver=218
+pywin32_url="http://prdownloads.sourceforge.net/pywin32/pywin32-${pywin32_ver}.win32-py2.7.exe"
+pywin32_upurl="http://sourceforge.net/projects/pywin32/files/pywin32/"
+pywin32_upregex="Build ?([0-9]+)"
 # pyinstaller
 pyinstaller_ver="2.1"
+pyinstaller_upurl="http://www.pyinstaller.org/"
+pyinstaller_upregex="latest stable release of PyInstaller is ([0-9.]+)"
 # WiX
 wix_ver="3.7"
 wix_url="http://wix.codeplex.com/releases/view/99514"
+wix_upurl="http://wix.codeplex.com/"
+wix_upregex="WiX Toolset v([0-9.]+)"
 
 # Package display names
 zlib_name="zlib"
@@ -1081,7 +1093,7 @@ clean() {
 updates() {
     # Report new releases of software packages
     local package url curver newver
-    for package in $packages
+    for package in $wintools $packages
     do
         url="$(expand ${package}_upurl)"
         if [ -z "$url" ] ; then
