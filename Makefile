@@ -7,7 +7,7 @@ DEB_DISTS_UBUNTU = trusty
 DEB_DISTS = $(DEB_DISTS_DEBIAN) $(DEB_DISTS_UBUNTU)
 DEB_ARCHES = i386 amd64
 RPM_ROOTS_FEDORA := $(foreach dist,19 20,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
-RPM_ROOTS_EL := $(foreach dist,6,$(foreach arch,x86_64,epel-$(dist)-$(arch)))
+RPM_ROOTS_EL := epel-6-x86_64 epel-7-vmnetx-x86_64
 RPM_ROOTS := $(RPM_ROOTS_FEDORA) $(RPM_ROOTS_EL)
 
 wheezy_DISTVER = debian7.0
@@ -43,7 +43,12 @@ builddebroot = mkdir -p $(DEB_CHROOT_BASE) && \
 
 # $1 = specfile
 # $2 = roots
-buildrpm = sources=`mktemp -dt vmnetx-sources-XXXXXXXX` && \
+buildrpm = $(foreach root,$(2), \
+		if [ ! -e "/etc/mock/$(root).cfg" ] ; then \
+			echo "Missing mock root: $(root)" && \
+			false ; \
+		fi && ) \
+	sources=`mktemp -dt vmnetx-sources-XXXXXXXX` && \
 	rpms=`mktemp -dt vmnetx-rpms-XXXXXXXX` && \
 	mkdir -p $(OUTDIR) && \
 	$(foreach file,\
