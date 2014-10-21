@@ -8,3 +8,4 @@ tar
 components.wxi
 vmnetx.spec
 vmnetx.verinfo
+setup.log*
