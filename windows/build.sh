@@ -28,14 +28,14 @@ cygtools="wget zip unzip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc
 # Other tools
 wintools="python setuptools pywin32 pyinstaller wix"
 # Python installer
-python_ver="2.7.6"
+python_ver="2.7.8"
 python_url="http://www.python.org/ftp/python/${python_ver}/python-${python_ver}.msi"
 python_upurl="http://www.python.org/ftp/python/"
 python_upregex=">(2\.7\.[0-9]+)/<"
 # setuptools
 setuptools_url="https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py"
 # pywin32 (installed from binary, because a source build requires MSVC)
-pywin32_ver=218
+pywin32_ver=219
 pywin32_url="http://prdownloads.sourceforge.net/pywin32/pywin32-${pywin32_ver}.win32-py2.7.exe"
 pywin32_upurl="http://sourceforge.net/projects/pywin32/files/pywin32/"
 pywin32_upregex="Build ?([0-9]+)"
@@ -44,8 +44,8 @@ pyinstaller_ver="2.1"
 pyinstaller_upurl="http://www.pyinstaller.org/"
 pyinstaller_upregex="latest stable release of PyInstaller is ([0-9.]+)"
 # WiX
-wix_ver="3.7"
-wix_url="http://wix.codeplex.com/releases/view/99514"
+wix_ver="3.8"
+wix_url="http://wix.codeplex.com/releases/view/115492"
 wix_upurl="http://wix.codeplex.com/"
 wix_upregex="WiX Toolset v([0-9.]+)"
 
