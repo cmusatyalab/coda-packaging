@@ -422,6 +422,56 @@ tarpath() {
     fi
 }
 
+wintool_current() {
+    # Return true if the specified tool is installed and the correct version,
+    # false otherwise.
+    # $1  = package from $wintools
+
+    case "$1" in
+    python)
+        local python curver
+        python=$(cygpath "c:\Python27\pythonw.exe")
+        if [ ! -e "${python}" ] ; then
+            return 1
+        fi
+        curver=$(${python} -c \
+                "import platform; print platform.python_version()" | \
+                tr -d '\r')
+        [ "${curver}" = "${python_ver}" ]
+        return
+        ;;
+    setuptools)
+        # We don't check the setuptools version, since setuptools isn't
+        # embedded into the release package
+        [ -e $(cygpath "c:\Python27\Scripts\easy_install.exe") ]
+        return
+        ;;
+    pywin32)
+        local verfile
+        verfile=$(cygpath "c:\Python27\Lib\site-packages\pywin32.version.txt")
+        if [ ! -e "${verfile}" ] ; then
+            return 1
+        fi
+        [ "$(cat ${verfile} | tr -d '\r')" = "${pywin32_ver}" ]
+        return
+        ;;
+    pyinstaller)
+        [ -e $(cygpath "c:\Python27\Lib\site-packages\PyInstaller-${pyinstaller_ver}-py2.7.egg") ]
+        return
+        ;;
+    wix)
+        local wixdir
+        wixdir=$(cygpath "c:\Program Files\WiX Toolset v${wix_ver}\bin")
+        [ -e "${wixdir}/candle.exe" ]
+        return
+        ;;
+    *)
+        echo "Unrecognized tool $1"
+        return 1
+        ;;
+    esac
+}
+
 setup_environment() {
     # Install necessary tools into environment.
     # $1  = path to Cygwin setup.exe
@@ -435,7 +485,7 @@ setup_environment() {
     done
 
     # Install native Python
-    if [ ! -d $(cygpath "c:\Python27") ] ; then
+    if ! wintool_current python; then
         fetch python
         msiexec /passive /i $(cygpath -w "$(tarpath python)")
     fi
@@ -443,7 +493,7 @@ setup_environment() {
     python="cygstart -w c:\Python27\python.exe"
 
     # Install setuptools
-    if [ ! -e $(cygpath "c:\Python27\Scripts\easy_install.exe") ] ; then
+    if ! wintool_current setuptools; then
         fetch setuptools
         ${python} $(cygpath -w "$(tarpath setuptools)")
     fi
@@ -452,22 +502,20 @@ setup_environment() {
 
     # Install pywin32.  Sadly, the bdist_wininst installer doesn't support
     # noninteractive installation.
-    if [ ! -d $(cygpath "c:\Python27\Lib\site-packages\win32") ] ; then
+    if ! wintool_current pywin32; then
         fetch pywin32
         chmod +x "$(tarpath pywin32)"
         cygstart -w "$(tarpath pywin32)"
     fi
 
     # Install PyInstaller
-    if [ ! -e $(cygpath "c:\Python27\Lib\site-packages\PyInstaller-${pyinstaller_ver}-py2.7.egg") ] ; then
+    if ! wintool_current pyinstaller; then
         ${easyinstall} "PyInstaller==${pyinstaller_ver}"
     fi
 
     # Prompt to install WiX.  We can't install it ourselves because CodePlex
     # doesn't permit direct downloads.
-    local wixdir
-    wixdir=$(cygpath "c:\Program Files\WiX Toolset v${wix_ver}\bin")
-    if [ ! -e "${wixdir}/candle.exe" ] ; then
+    if ! wintool_current wix; then
         cygstart "${wix_url}"
     fi
 }
