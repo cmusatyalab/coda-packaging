@@ -1049,7 +1049,16 @@ sdist() {
 
 bdist() {
     # Build binary distribution
-    local package name licensedir zipdir artifact_parent
+    local tool package name licensedir zipdir artifact_parent
+
+    # Check versions of embeddable Windows-native tools
+    for tool in $wintools
+    do
+        if ! wintool_current "${tool}" ; then
+            echo "$tool is missing or out of date.  Rerun setup subcommand."
+            exit 1
+        fi
+    done
 
     # Build
     for package in $packages
