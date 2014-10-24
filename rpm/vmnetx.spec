@@ -2,7 +2,7 @@
 %global selinux_variants mls targeted minimal
 
 Name:           vmnetx
-Version:        0.4.4
+Version:        0.5.0
 Release:        1%{?dist}
 Summary:        Virtual machine network execution
 
@@ -178,6 +178,9 @@ fi
 
 
 %changelog
+* Fri Oct 24 2014 Benjamin Gilbert <bgilbert@cs.cmu.edu> - 0.5.0-1
+- New release
+
 * Fri May 30 2014 Benjamin Gilbert <bgilbert@cs.cmu.edu> - 0.4.4-1
 - New release
 
