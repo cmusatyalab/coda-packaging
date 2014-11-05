@@ -755,6 +755,8 @@ build_one() {
         do_configure
         make $parallel
         make install
+        # Regenerate icon cache without image data to save space
+        gtk-update-icon-cache -qif "${root}/share/icons/Adwaita"
         ;;
     gtk)
         # http://pkgs.fedoraproject.org/cgit/mingw-gtk3.git/commit/?id=82ccf489f4763e375805d848351ac3f8fda8e88b
