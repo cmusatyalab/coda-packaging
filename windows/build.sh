@@ -28,7 +28,7 @@ cygtools="wget zip unzip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc
 # Other tools
 wintools="python setuptools pywin32 pyinstaller wix"
 # Python installer
-python_ver="2.7.8"
+python_ver="2.7.9"
 python_url="http://www.python.org/ftp/python/${python_ver}/python-${python_ver}.msi"
 python_upurl="http://www.python.org/ftp/python/"
 python_upregex=">(2\.7\.[0-9]+)/<"
@@ -44,8 +44,8 @@ pyinstaller_ver="2.1"
 pyinstaller_upurl="http://www.pyinstaller.org/"
 pyinstaller_upregex="latest stable release of PyInstaller is ([0-9.]+)"
 # WiX
-wix_ver="3.8"
-wix_url="http://wix.codeplex.com/releases/view/115492"
+wix_ver="3.9"
+wix_url="http://wix.codeplex.com/releases/view/136891"
 wix_upurl="http://wix.codeplex.com/"
 wix_upregex="WiX Toolset v([0-9.]+)"
 
@@ -89,23 +89,23 @@ vmnetx_name="VMNetX"
 # Package versions
 configguess_ver="28d244f1"
 zlib_ver="1.2.8"
-png_ver="1.6.12"
+png_ver="1.6.15"
 jpeg_ver="1.3.1"
 iconv_ver="0.0.6"
 gettext_ver="0.19.3"
-ffi_ver="3.1"
+ffi_ver="3.2.1"
 glib_basever="2.42"
-glib_ver="${glib_basever}.0"
+glib_ver="${glib_basever}.1"
 gdkpixbuf_basever="2.31"
 gdkpixbuf_ver="${gdkpixbuf_basever}.1"
 pixman_ver="0.32.6"
 cairo_ver="1.14.0"
 pango_basever="1.36"
 pango_ver="${pango_basever}.8"
-atk_basever="2.14"
-atk_ver="${atk_basever}.0"
+atk_basever="2.15"
+atk_ver="${atk_basever}.3"
 icontheme_basever="3.14"
-icontheme_ver="${icontheme_basever}.0"
+icontheme_ver="${icontheme_basever}.1"
 gtk_basever="2.24"
 gtk_ver="${gtk_basever}.25"
 pycairo_ver="1.10.0"
@@ -118,20 +118,20 @@ openssl_ver="1.0.1j"
 xml_ver="2.9.2"
 xslt_ver="1.1.28"
 sqlite_year="2014"
-sqlite_ver="3.8.7"
-sqlite_vernum="3080700"
+sqlite_ver="3.8.7.4"
+sqlite_vernum="3080704"
 soup_basever="2.48"
-soup_ver="${soup_basever}.0"
+soup_ver="${soup_basever}.1"
 orc_ver="0.4.18"
 gstreamer_ver="0.10.36"  # spice-gtk requires 0.10.x
 gstbase_ver="0.10.36"
 gstgood_ver="0.10.31"
-spicegtk_ver="0.25"
+spicegtk_ver="0.27"
 msgpack_ver="0.4.2"
-lxml_ver="3.4.0"
+lxml_ver="3.4.1"
 six_ver="1.8.0"
-dateutil_ver="2.2"
-requests_ver="2.4.3"
+dateutil_ver="2.3"
+requests_ver="2.5.0"
 comtypes_ver="1.1.1"
 vmnetx_ver="0.5.0"
 
@@ -718,6 +718,10 @@ build_one() {
         do_configure \
                 --disable-modular-tests \
                 --with-threads=win32
+        # https://bugzilla.gnome.org/show_bug.cgi?id=739656
+        sed -i -e "s/.*HAVE_IF_INDEXTONAME.*/#define HAVE_IF_INDEXTONAME 1/" \
+                -e "s/.*HAVE_IF_NAMETOINDEX.*/#define HAVE_IF_NAMETOINDEX 1/" \
+                config.h
         make $parallel
         make install
         ;;
