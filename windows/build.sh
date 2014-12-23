@@ -41,8 +41,8 @@ pywin32_upurl="http://sourceforge.net/projects/pywin32/files/pywin32/"
 pywin32_upregex="Build ?([0-9]+)"
 # pyinstaller
 pyinstaller_ver="2.1"
-pyinstaller_upurl="http://www.pyinstaller.org/"
-pyinstaller_upregex="latest stable release of PyInstaller is ([0-9.]+)"
+pyinstaller_upurl="https://github.com/pyinstaller/pyinstaller/tags"
+pyinstaller_upregex="/tag/v([0-9.]+)"
 # WiX
 wix_ver="3.9"
 wix_url="http://wix.codeplex.com/releases/view/136891"
