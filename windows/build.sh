@@ -644,7 +644,7 @@ setup_py() {
 build_one() {
     # Build the specified package and its dependencies if not already built
     # $1  = package shortname
-    local builddir artifact
+    local builddir
 
     if is_built "$1" ; then
         return
@@ -1036,7 +1036,7 @@ build() {
 
 sdist() {
     # Build source distribution
-    local package path xzpath zipdir
+    local package zipdir
     zipdir="vmnetx-windows-src-${vmnetx_ver}"
     rm -rf "${zipdir}"
     mkdir -p "${zipdir}/tar"
@@ -1055,7 +1055,7 @@ sdist() {
 
 bdist() {
     # Build binary distribution
-    local tool package name licensedir zipdir artifact_parent
+    local tool package licensedir
 
     # Check versions of embeddable Windows-native tools
     for tool in $wintools
@@ -1139,7 +1139,7 @@ bdist() {
 
 clean() {
     # Clean built files
-    local package artifact
+    local package
     if [ $# -gt 0 ] ; then
         for package in "$@"
         do
