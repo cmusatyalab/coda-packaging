@@ -532,7 +532,7 @@ fetch() {
             # config.guess is special; we have to rename the saved file
             wget -q -O tar/config.guess "$url"
         else
-            wget -P tar -q --no-check-certificate "$url"
+            wget -P tar -q "$url"
         fi
     fi
 }
@@ -1163,7 +1163,7 @@ updates() {
             continue
         fi
         curver="$(expand ${package}_ver)"
-        newver=$(wget -q --no-check-certificate -O- "$url" | \
+        newver=$(wget -q -O- "$url" | \
                 sed -nr "s%.*$(expand ${package}_upregex).*%\\1%p" | \
                 sort -uV | \
                 tail -n 1)
