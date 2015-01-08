@@ -374,7 +374,7 @@ glib_upregex="snapshot/glib-([0-9]+\.[0-9]*[02468]\.[0-9]+)\.tar"
 # Exclude 2.90.x
 gdkpixbuf_upregex="snapshot/gdk-pixbuf-2\.90.*|.*snapshot/gdk-pixbuf-([0-9.]+)\.tar"
 pixman_upregex="pixman-([0-9.]+)\.tar"
-cairo_upregex="cairo-([0-9.]+)\.tar"
+cairo_upregex="\"cairo-([0-9.]+)\.tar"
 pango_upregex="snapshot/pango-([0-9]+\.[0-9]*[02468]\.[0-9]+)\.tar"
 atk_upregex="Changes in version ([0-9.]+):"
 icontheme_upregex="snapshot/adwaita-icon-theme-([0-9]+\.[0-9]*[02468]\.[0-9]+)\.tar"
