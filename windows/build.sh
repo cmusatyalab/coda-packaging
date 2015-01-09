@@ -123,9 +123,9 @@ sqlite_vernum="3080704"
 soup_basever="2.48"
 soup_ver="${soup_basever}.1"
 orc_ver="0.4.18"
-gstreamer_ver="0.10.36"  # spice-gtk requires 0.10.x
-gstbase_ver="0.10.36"
-gstgood_ver="0.10.31"
+gstreamer_ver="1.4.5"
+gstbase_ver="1.4.5"
+gstgood_ver="1.4.5"
 spicegtk_ver="0.27"
 msgpack_ver="0.4.3"
 lxml_ver="3.4.1"
@@ -310,9 +310,9 @@ xslt_stamp="app/libxslt-1.dll"
 sqlite_stamp="app/libsqlite3-0.dll"
 soup_stamp="app/libsoup-2.4-1.dll"
 orc_stamp="app/liborc-0.4-0.dll"
-gstreamer_stamp="app/libgstreamer-0.10-0.dll"
-gstbase_stamp="app/libgstapp-0.10-0.dll"
-gstgood_stamp="lib/gstreamer-0.10/libgstautodetect.dll"
+gstreamer_stamp="app/libgstreamer-1.0-0.dll"
+gstbase_stamp="app/libgstapp-1.0-0.dll"
+gstgood_stamp="lib/gstreamer-1.0/libgstautodetect.dll"
 spicegtk_stamp="lib/python/SpiceClientGtk.pyd"
 msgpack_stamp="lib/python/msgpack/_packer.pyd"
 lxml_stamp="lib/python/lxml/etree.pyd"
@@ -390,12 +390,9 @@ xslt_upregex="libxslt-([0-9.]+)\.tar"
 sqlite_upregex="SQLite ([0-9.]+)"
 soup_upregex="snapshot/libsoup-([0-9]+\.[0-9]*[02468]\.[0-9]+)\.tar"
 orc_upregex="orc-([0-9.]+)\.tar"
-# Require 0.10.x
-gstreamer_upregex="gstreamer-(0\.10\.[0-9]+)\.tar"
-# Require 0.10.x
-gstbase_upregex="gst-plugins-base-(0\.10\.[0-9]+)\.tar"
-# Require 0.10.x
-gstgood_upregex="gst-plugins-good-(0\.10\.[0-9]+)\.tar"
+gstreamer_upregex="gstreamer-([0-9.]+)\.tar"
+gstbase_upregex="gst-plugins-base-([0-9.]+)\.tar"
+gstgood_upregex="gst-plugins-good-([0-9.]+)\.tar"
 spicegtk_upregex="spice-gtk-([0-9.]+)\.tar"
 msgpack_upregex="msgpack-python-([0-9.]+)\.tar"
 lxml_upregex="lxml-([0-9.]+)\.tar"
@@ -905,15 +902,14 @@ build_one() {
                 -e 's/disable_registry_cache = FALSE/disable_registry_cache = TRUE/' \
                 -e 's/!write_changes/TRUE/' \
                 gst/gstregistry.c
-        # 0.10.36 doesn't work with Bison 3; upstream commit 60516f4798
+        # Disable pthreads to avoid dynamic dependency on
+        # libwinpthread-1.dll distributed with compiler
         sed -i \
-                -e '/^#define YYLEX_PARAM scanner$/d' \
-                -e 's/%pure-parser/%lex-param { void *scanner }\n%pure-parser/' \
-                gst/parse/grammar.y
-        # gstreamer confuses POSIX timers with the availability of
-        # clock_gettime()
-        do_configure \
-                gst_cv_posix_timers=no
+                -e '/AX_PTHREAD/d' \
+                -e 's/pthread, clock_gettime/foo, missing/' \
+                configure.ac
+        autoreconf -fi
+        do_configure
         make $parallel
         make install
         ;;
@@ -941,7 +937,7 @@ build_one() {
         do_configure \
                 --with-sasl=no \
                 --with-gtk=2.0 \
-                --with-audio=gstreamer \
+                --with-audio=gstreamer1 \
                 --with-python=yes \
                 --enable-smartcard=no
         # Ensure make can find pygobject-codegen-2.0, and that CODEGENDIR
