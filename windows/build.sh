@@ -793,6 +793,9 @@ build_one() {
     pygobject)
         # We need explicit libpython linkage on Windows
         sed -i 's/-no-undefined/& -lpython27/' {glib,gio,gobject}/Makefile.am
+        # Avoid build failure with testhelper DLL
+        sed -i 's/testhelper_la_LDFLAGS =/& -no-undefined -lpython27/' \
+                tests/Makefile.am
         # glib convenience library must also be a DLL
         echo 'AM_LDFLAGS = $(common_ldflags)' >> glib/Makefile.am
         # Ensure convenience library doesn't have "python.exe" in its name
