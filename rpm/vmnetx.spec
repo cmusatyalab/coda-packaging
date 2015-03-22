@@ -49,6 +49,7 @@ Requires:       python-msgpack
 Requires:       libvirt
 Requires:       libvirt-python
 Requires:       qemu-kvm
+Requires:       fuse
 # For authorizer
 Requires:       dbus-python
 Requires:       dbus
