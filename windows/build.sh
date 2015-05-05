@@ -89,23 +89,23 @@ vmnetx_name="VMNetX"
 # Package versions
 configguess_ver="28d244f1"
 zlib_ver="1.2.8"
-png_ver="1.6.16"
+png_ver="1.6.17"
 jpeg_ver="1.4.0"
 iconv_ver="0.0.6"
 gettext_ver="0.19.4"
 ffi_ver="3.2.1"
-glib_basever="2.42"
-glib_ver="${glib_basever}.2"
+glib_basever="2.44"
+glib_ver="${glib_basever}.0"
 gdkpixbuf_basever="2.31"
 gdkpixbuf_ver="${gdkpixbuf_basever}.1"
 pixman_ver="0.32.6"
-cairo_ver="1.14.0"
+cairo_ver="1.14.2"
 pango_basever="1.36"
 pango_ver="${pango_basever}.8"
-atk_basever="2.15"
-atk_ver="${atk_basever}.4"
-icontheme_basever="3.14"
-icontheme_ver="${icontheme_basever}.1"
+atk_basever="2.16"
+atk_ver="${atk_basever}.0"
+icontheme_basever="3.16"
+icontheme_ver="${icontheme_basever}.0"
 gtk_basever="2.24"
 gtk_ver="${gtk_basever}.27"
 pycairo_ver="1.10.0"
@@ -114,24 +114,24 @@ pygobject_ver="${pygobject_basever}.6"
 pygtk_basever="2.24"
 pygtk_ver="${pygtk_basever}.0"
 celt_ver="0.5.1.3"  # spice-gtk requires 0.5.1.x specifically
-openssl_ver="1.0.2"
+openssl_ver="1.0.2a"
 xml_ver="2.9.2"
 xslt_ver="1.1.28"
 sqlite_year="2015"
-sqlite_ver="3.8.8.3"
-sqlite_vernum="3080803"
-soup_basever="2.48"
-soup_ver="${soup_basever}.1"
+sqlite_ver="3.8.9"
+sqlite_vernum="3080900"
+soup_basever="2.50"
+soup_ver="${soup_basever}.0"
 orc_ver="0.4.18"
 gstreamer_ver="1.4.5"
 gstbase_ver="1.4.5"
 gstgood_ver="1.4.5"
 spicegtk_ver="0.28"
-msgpack_ver="0.4.5"
-lxml_ver="3.4.2"
+msgpack_ver="0.4.6"
+lxml_ver="3.4.4"
 six_ver="1.9.0"
-dateutil_ver="2.4.0"
-requests_ver="2.5.1"
+dateutil_ver="2.4.2"
+requests_ver="2.7.0"
 comtypes_ver="1.1.1"
 vmnetx_ver="0.5.0"
 
@@ -716,6 +716,8 @@ build_one() {
                 --disable-modular-tests \
                 --with-threads=win32
         # https://bugzilla.gnome.org/show_bug.cgi?id=739656
+        sed -i 's/#include "config.h"/\0\n#undef _WIN32_WINNT\n#define _WIN32_WINNT 0x0600/' \
+                gio/gsocket.c
         sed -i -e "s/.*HAVE_IF_INDEXTONAME.*/#define HAVE_IF_INDEXTONAME 1/" \
                 -e "s/.*HAVE_IF_NAMETOINDEX.*/#define HAVE_IF_NAMETOINDEX 1/" \
                 config.h
@@ -888,8 +890,6 @@ build_one() {
         awk '/\*{8}/ {exit} /^\*{2}/ {print}' sqlite3.h > PUBLIC-DOMAIN.txt
         ;;
     soup)
-        # 2.48.0 has a nonexistent symbol in its export list
-        sed -i '/^soup_server_get_gsocket$/d' libsoup/libsoup-2.4.sym
         do_configure
         make $parallel
         make install
