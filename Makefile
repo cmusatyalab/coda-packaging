@@ -1,6 +1,5 @@
 SOURCE_URL = https://olivearchive.org/vmnetx/source/vmnetx-VERSION.tar.xz
 
-VMNETX_FULL_DISTRIBUTE ?= yes
 OUTDIR = output
 DEB_DISTS_DEBIAN = wheezy
 DEB_DISTS_UBUNTU = trusty utopic
@@ -135,18 +134,18 @@ msi:
 		mv *.zip *.msi $$output ) && \
 	rm -rf $$tmp
 
-.PHONY: distribute
-distribute:
+.PHONY: upload
+upload:
 	[ -n "$(VMNETX_DISTRIBUTE_HOST)" -a -n "$(VMNETX_INCOMING_DIR)" ]
-	[ "$(VMNETX_FULL_DISTRIBUTE)" != "yes" -o \( \
-		-n "$(VMNETX_DISTRIBUTE_DIR)" -a -n "$(SIGNING_SERVER)" \) ]
-	@mkdir -p "$(OUTDIR)"
 	@rsync -r "$(OUTDIR)/" \
 		"$(VMNETX_DISTRIBUTE_HOST):$(VMNETX_INCOMING_DIR)"
-	@if [ "$(VMNETX_FULL_DISTRIBUTE)" = "yes" ] ; then \
-		SIGNING_SERVER_ADDRESS=localhost:5280 \
-			SIGNING_SERVER_KEYID=$$(git config user.signingkey) \
-			$(SIGNING_SERVER) ssh "$(VMNETX_DISTRIBUTE_HOST)" \
-			-R 5280:localhost:5280 \
-			"cd $(VMNETX_DISTRIBUTE_DIR) && SIGNING_SERVER_ADDRESS=localhost:5280 ./distribute.pl"; \
-	fi
+
+.PHONY: distribute
+distribute:
+	[ -n "$(VMNETX_DISTRIBUTE_HOST)" -a -n "$(VMNETX_DISTRIBUTE_DIR)" ]
+	[ -n "$(SIGNING_SERVER)" ]
+	@SIGNING_SERVER_ADDRESS=localhost:5280 \
+		SIGNING_SERVER_KEYID=$$(git config user.signingkey) \
+		$(SIGNING_SERVER) ssh "$(VMNETX_DISTRIBUTE_HOST)" \
+		-R 5280:localhost:5280 \
+		"cd $(VMNETX_DISTRIBUTE_DIR) && SIGNING_SERVER_ADDRESS=localhost:5280 ./distribute.pl"
