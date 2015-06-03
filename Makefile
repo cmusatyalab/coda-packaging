@@ -1,17 +1,19 @@
 SOURCE_URL = https://olivearchive.org/vmnetx/source/vmnetx-VERSION.tar.xz
 
 OUTDIR = output
-DEB_DISTS_DEBIAN = wheezy
-DEB_DISTS_UBUNTU = trusty utopic
+DEB_DISTS_DEBIAN = wheezy jessie
+DEB_DISTS_UBUNTU = trusty utopic vivid
 DEB_DISTS = $(DEB_DISTS_DEBIAN) $(DEB_DISTS_UBUNTU)
 DEB_ARCHES = i386 amd64
-RPM_ROOTS_FEDORA := $(foreach dist,20 21,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
+RPM_ROOTS_FEDORA := $(foreach dist,20 21 22,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
 RPM_ROOTS_EL := epel-6-x86_64 epel-7-vmnetx-x86_64
 RPM_ROOTS := $(RPM_ROOTS_FEDORA) $(RPM_ROOTS_EL)
 
 wheezy_DISTVER = debian7.0
+jessie_DISTVER = debian8.0
 trusty_DISTVER = ubuntu14.04
 utopic_DISTVER = ubuntu14.10
+vivid_DISTVER = ubuntu15.04
 
 DEB_CHROOT_BASE = chroots
 DEBIAN_KEYRING = /usr/share/keyrings/debian-archive-keyring.gpg
