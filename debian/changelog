@@ -1,3 +1,10 @@
+vmnetx (0.5.1-1+DISTVER) DIST; urgency=low
+
+  * New release
+  * Update maintainer
+
+ -- Jan Harkes <jaharkes@cs.cmu.edu>  Wed, 03 Jun 2015 14:42:11 -0400
+
 vmnetx (0.5.0-1+DISTVER) DIST; urgency=low
 
   * New release
