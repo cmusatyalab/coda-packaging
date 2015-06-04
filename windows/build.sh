@@ -28,7 +28,7 @@ cygtools="wget zip unzip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc
 # Other tools
 wintools="python setuptools pywin32 pyinstaller wix"
 # Python installer
-python_ver="2.7.10"
+python_ver="2.7.9"
 python_url="http://www.python.org/ftp/python/${python_ver}/python-${python_ver}.msi"
 python_upurl="http://www.python.org/ftp/python/"
 python_upregex=">(2\.7\.[0-9]+)/<"
