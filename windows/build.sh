@@ -27,9 +27,11 @@ packages="configguess zlib png jpeg iconv gettext ffi glib gdkpixbuf pixman cair
 cygtools="wget zip unzip pkg-config make mingw64-i686-gcc-g++ mingw64-x86_64-gcc-g++ binutils nasm gettext-devel libglib2.0-devel gtk-update-icon-cache libogg-devel autoconf automake libtool flex bison intltool util-linux"
 # Other tools
 wintools="python setuptools pywin32 pyinstaller wix"
+wintools_src="python_src pywin32_src pyinstaller_src"
 # Python installer
 python_ver="2.7.9"
 python_url="http://www.python.org/ftp/python/${python_ver}/python-${python_ver}.msi"
+python_src_url="http://www.python.org/ftp/python/${python_ver}/Python-${python_ver}.tar.xz"
 python_upurl="http://www.python.org/ftp/python/"
 python_upregex=">(2\.7\.[0-9]+)/<"
 # setuptools
@@ -37,10 +39,12 @@ setuptools_url="https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py"
 # pywin32 (installed from binary, because a source build requires MSVC)
 pywin32_ver=219
 pywin32_url="http://prdownloads.sourceforge.net/pywin32/pywin32-${pywin32_ver}.win32-py2.7.exe"
+pywin32_src_url="http://prdownloads.sourceforge.net/pywin32/pywin32-${pywin32_ver}.zip"
 pywin32_upurl="http://sourceforge.net/projects/pywin32/files/pywin32/"
 pywin32_upregex="Build ?([0-9]+)"
 # pyinstaller
 pyinstaller_ver="2.1"
+pyinstaller_src_url="https://pypi.python.org/packages/source/P/PyInstaller/PyInstaller-${pyinstaller_ver}.tar.gz"
 pyinstaller_upurl="https://github.com/pyinstaller/pyinstaller/tags"
 pyinstaller_upregex="/tag/v([0-9.]+)"
 # WiX
@@ -1039,7 +1043,7 @@ sdist() {
     zipdir="vmnetx-windows-src-${vmnetx_ver}"
     rm -rf "${zipdir}"
     mkdir -p "${zipdir}/tar"
-    for package in $packages
+    for package in $packages $wintools_src
     do
         fetch "$package"
         cp "$(tarpath ${package})" "${zipdir}/tar/"
