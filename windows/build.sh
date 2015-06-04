@@ -529,7 +529,7 @@ fetch() {
             # config.guess is special; we have to rename the saved file
             wget -q -O tar/config.guess "$url"
         else
-            wget -P tar -q "$url"
+            wget -q -P tar --retry-connrefused "$url"
         fi
     fi
 }
