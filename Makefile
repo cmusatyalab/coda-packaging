@@ -1,4 +1,4 @@
-SOURCE_URL = https://olivearchive.org/vmnetx/source/vmnetx-VERSION.tar.xz
+SOURCE_URL = http://coda.cs.cmu.edu/pub/coda/src/coda-VERSION.tar.xz
 
 OUTDIR = output
 DEB_DISTS_DEBIAN = wheezy jessie
@@ -6,7 +6,7 @@ DEB_DISTS_UBUNTU = trusty wily
 DEB_DISTS = $(DEB_DISTS_DEBIAN) $(DEB_DISTS_UBUNTU)
 DEB_ARCHES = i386 amd64
 RPM_ROOTS_FEDORA := $(foreach dist,22 23,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
-RPM_ROOTS_EL := epel-6-x86_64 epel-7-vmnetx-x86_64
+RPM_ROOTS_EL := epel-6-x86_64 epel-7-x86_64
 RPM_ROOTS := $(RPM_ROOTS_FEDORA) $(RPM_ROOTS_EL)
 
 wheezy_DISTVER = debian7.0
@@ -50,8 +50,8 @@ buildrpm = $(foreach root,$(2), \
 			echo "Missing mock root: $(root)" && \
 			false ; \
 		fi && ) \
-	sources=`mktemp -dt vmnetx-sources-XXXXXXXX` && \
-	rpms=`mktemp -dt vmnetx-rpms-XXXXXXXX` && \
+	sources=`mktemp -dt coda-sources-XXXXXXXX` && \
+	rpms=`mktemp -dt coda-rpms-XXXXXXXX` && \
 	mkdir -p $(OUTDIR) && \
 	$(foreach file,\
 		$(shell spectool $(1) | awk '!/:\/\// {print $$2}'),\
@@ -96,7 +96,7 @@ deb:
 		tar xf $$tmp/$${project}_$${version}.orig.tar.xz -C $$tmp && \
 		cp -a debian $$tmp/$${project}-$${version}/ && \
 		sed -i -e "s/DISTVER/$($(dist)_DISTVER)/g" \
-			-e "s/DIST/$(dist)/g" \
+			-e "s/UNRELEASED/$(dist)/g" \
 			$$tmp/$${project}-$${version}/debian/changelog && \
 		( cd $$tmp/$${project}-$${version}/ && \
 		pdebuild --architecture $(arch) \
@@ -111,13 +111,13 @@ deb:
 
 .PHONY: rpm
 rpm:
-	@$(call buildrpm,rpm/vmnetx.spec,$(RPM_ROOTS))
+	@$(call buildrpm,rpm/coda.spec,$(RPM_ROOTS))
 
 .PHONY: rpmrepo
 rpmrepo:
 	@# Build on a single representative root for each distribution.
-	@$(call buildrpm,rpmrepo/vmnetx-release-fedora.spec,fedora-20-i386)
-	@$(call buildrpm,rpmrepo/vmnetx-release-el.spec,epel-6-i386)
+	@$(call buildrpm,rpmrepo/coda-release-fedora.spec,fedora-20-i386)
+	@$(call buildrpm,rpmrepo/coda-release-el.spec,epel-6-i386)
 
 .PHONY: msi
 msi:
@@ -138,16 +138,16 @@ msi:
 
 .PHONY: upload
 upload:
-	[ -n "$(VMNETX_DISTRIBUTE_HOST)" -a -n "$(VMNETX_INCOMING_DIR)" ]
+	[ -n "$(CODA_DISTRIBUTE_HOST)" -a -n "$(CODA_INCOMING_DIR)" ]
 	@rsync -r "$(OUTDIR)/" \
-		"$(VMNETX_DISTRIBUTE_HOST):$(VMNETX_INCOMING_DIR)"
+		"$(CODA_DISTRIBUTE_HOST):$(CODA_INCOMING_DIR)"
 
 .PHONY: distribute
 distribute:
-	[ -n "$(VMNETX_DISTRIBUTE_HOST)" -a -n "$(VMNETX_DISTRIBUTE_DIR)" ]
+	[ -n "$(CODA_DISTRIBUTE_HOST)" -a -n "$(CODA_DISTRIBUTE_DIR)" ]
 	[ -n "$(SIGNING_SERVER)" ]
 	@SIGNING_SERVER_ADDRESS=localhost:5280 \
 		SIGNING_SERVER_KEYID=$$(git config user.signingkey) \
-		$(SIGNING_SERVER) ssh "$(VMNETX_DISTRIBUTE_HOST)" \
+		$(SIGNING_SERVER) ssh "$(CODA_DISTRIBUTE_HOST)" \
 		-R 5280:localhost:5280 \
-		"cd $(VMNETX_DISTRIBUTE_DIR) && SIGNING_SERVER_ADDRESS=localhost:5280 ./distribute.pl"
+		"cd $(CODA_DISTRIBUTE_DIR) && SIGNING_SERVER_ADDRESS=localhost:5280 ./distribute.pl"
