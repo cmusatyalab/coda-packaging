@@ -1,0 +1,7 @@
+debian/tmp/usr/lib/coda/liblwp*.so.*
+debian/tmp/usr/lib/coda/librpc2*.so.*
+debian/tmp/usr/lib/coda/libse*.so.*
+debian/tmp/usr/lib/coda/librdslwp*.so.*
+debian/tmp/usr/lib/coda/librvmlwp*.so.*
+debian/tmp/usr/lib/coda/libseglwp*.so.*
+debian/tmp/usr/sbin/codaconfedit

@@ -1,57 +1,63 @@
-Source: vmnetx
+Source: coda
 Section: net
 Priority: extra
 Maintainer: Jan Harkes <jaharkes@cs.cmu.edu>
-Build-Depends: debhelper (>= 9.0.0), python, dh-autoreconf,
- libcurl4-gnutls-dev, libfuse-dev, libglib2.0-dev,
- pkg-config, autoconf, automake, libtool, libxml2-dev,
- python-dev
 Standards-Version: 3.9.5
-Homepage: https://github.com/cmusatyalab/vmnetx
-Vcs-Git: git://github.com/cmusatyalab/vmnetx-packaging.git
-Vcs-Browser: https://github.com/cmusatyalab/vmnetx-packaging
-X-Python-Version: >= 2.6
+Build-Depends: debhelper (>= 9), dh-python, libreadline-dev, libncurses5-dev,
+ liblua5.1-dev, flex, bison | byacc, pkg-config, python, automake
 
-Package: vmnetx-common
-Architecture: i386 amd64
-Replaces: vmnetx (<< 0.4.0)
-Breaks: vmnetx (<< 0.4.0)
-Depends: ${shlibs:Depends}, ${misc:Depends},
- ${python:Depends}, qemu-kvm, fuse, xz-utils,
- libvirt-bin, python-gobject-2,
- python-requests, python-dateutil, python-libvirt, python-dbus,
- python-lxml, msgpack-python
-Recommends: dbus, policykit-1, lzop
-Description: VMNetX support code
- VMNetX allows you to execute a KVM virtual machine over the Internet
- without downloading all of its data to your computer in advance.
+Package: coda-common
+Architecture: amd64 arm i386 m68k powerpc sparc
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Homepage: http://coda.cs.cmu.edu/
+Description: Common libraries for the Coda distributed file system
+ Coda is an advanced distributed filesystem. It has been developed at CMU
+ by the systems group of M. Satyanarayanan in the SCS department.
  .
- This package includes support code for VMNetX.
+ This package provides the LWP, RPC2 and RVM libraries used by Coda client
+ and server binaries.
 
-Package: vmnetx
-Architecture: i386 amd64
-Depends: vmnetx-common (= ${binary:Version}), ${misc:Depends},
- ${python:Depends}, python-gtk2, python-spice-client-gtk
-Description: Virtual machine network execution
- VMNetX allows you to execute a KVM virtual machine over the Internet
- without downloading all of its data to your computer in advance.
-
-Package: vmnetx-server
-Architecture: i386 amd64
-Depends: vmnetx-common (= ${binary:Version}), ${misc:Depends},
- ${python:Depends}, python-flask, python-yaml
-Description: VMNetX server
- VMNetX allows you to execute a KVM virtual machine over the Internet
- without downloading all of its data to your computer in advance.
+Package: coda-client
+Architecture: linux-any
+Depends: coda-common (= ${binary:Version}), ${shlibs:Depends}, ${python:Depends}, ${perl:Depends}, ${misc:Depends}
+Suggests: python-gtk2
+Pre-Depends: debconf (>= 0.2.17)
+Homepage: http://coda.cs.cmu.edu/
+Description: Client for the Coda distributed file system
+ Coda is an advanced distributed filesystem. It has been developed at CMU
+ by the systems group of M. Satyanarayanan in the SCS department.
  .
- This package includes the VMNetX remote execution server.
+ This package provides the userspace binaries to run a Coda client. You might
+ also need to recompile a linux kernel to include a kernel module for Coda.
 
-Package: vmnetx-dbg
-Architecture: i386 amd64
-Section: debug
-Depends: vmnetx-common (= ${binary:Version}), ${misc:Depends}
-Description: Debugging symbols for VMNetX
- VMNetX allows you to execute a KVM virtual machine over the Internet
- without downloading all of its data to your computer in advance.
+Package: coda-server
+Architecture: any
+Depends: coda-common (= ${binary:Version}), coda-update (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Homepage: http://coda.cs.cmu.edu/
+Description: Server for the Coda distributed file system
+ Coda is an advanced distributed filesystem. It has been developed at CMU
+ by the systems group of M. Satyanarayanan in the SCS department.
  .
- This package contains the debugging symbols for VMNetX.
+ This package provides the binaries to set up a Coda server.
+
+Package: coda-update
+Architecture: any
+Depends: coda-common (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Homepage: http://coda.cs.cmu.edu/
+Description: Server for the Coda distributed file system
+ Coda is an advanced distributed filesystem. It has been developed at CMU
+ by the systems group of M. Satyanarayanan in the SCS department.
+ .
+ This package provides the update daemons needed on both the Coda servers and
+ the Coda backup client.
+
+Package: coda-backup
+Architecture: any
+Depends: coda-common (= ${binary:Version}), coda-update (= ${binary:Version}), ${shlibs:Depends}, ${perl:Depends}, ${misc:Depends}
+Homepage: http://coda.cs.cmu.edu/
+Description: Backup client for the Coda distributed filesystem
+ Coda is an advanced distributed filesystem. It has been developed at CMU
+ by the systems group of M. Satyanarayanan in the SCS department.
+ .
+ This package provides the binaries to set up a backup client to back up Coda
+ servers.
