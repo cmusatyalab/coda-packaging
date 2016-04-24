@@ -1,0 +1,10 @@
+[Unit]
+Description=Coda Master Authentication Server (SCM)
+
+[Service]
+Type=forking
+PIDFile=/vice/auth2/pid
+ExecStart=/usr/sbin/auth2
+
+[Install]
+WantedBy=multi-user.target

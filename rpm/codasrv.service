@@ -1,0 +1,11 @@
+[Unit]
+Description=Coda File Server
+ConditionPathExists=!/vice/srv/CRASH
+
+[Service]
+Type=forking
+PIDFile=/vice/srv/pid
+ExecStart=/usr/sbin/startserver
+
+[Install]
+WantedBy=multi-user.target

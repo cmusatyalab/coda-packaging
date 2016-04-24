@@ -1,0 +1,10 @@
+[Unit]
+Description=Coda Update Master Server
+
+[Service]
+Type=forking
+PIDFile=/vice/misc/updatesrv.pid
+ExecStart=/usr/sbin/updatesrv
+
+[Install]
+WantedBy=multi-user.target
