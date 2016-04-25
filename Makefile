@@ -2,7 +2,7 @@ SOURCE_URL = http://coda.cs.cmu.edu/pub/coda/src/coda-VERSION.tar.xz
 
 OUTDIR = output
 DEB_DISTS_DEBIAN = wheezy jessie
-DEB_DISTS_UBUNTU = trusty wily
+DEB_DISTS_UBUNTU = trusty wily xenial
 DEB_DISTS = $(DEB_DISTS_DEBIAN) $(DEB_DISTS_UBUNTU)
 DEB_ARCHES = i386 amd64
 RPM_ROOTS_FEDORA := $(foreach dist,22 23,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
@@ -12,8 +12,8 @@ RPM_ROOTS := $(RPM_ROOTS_FEDORA) $(RPM_ROOTS_EL)
 wheezy_DISTVER = debian7.0
 jessie_DISTVER = debian8.0
 trusty_DISTVER = ubuntu14.04
-vivid_DISTVER = ubuntu15.04
 wily_DISTVER = ubuntu15.10
+xenial_DISTVER = ubuntu16.04
 
 DEB_CHROOT_BASE = chroots
 DEBIAN_KEYRING = /usr/share/keyrings/debian-archive-keyring.gpg
