@@ -5,7 +5,7 @@ Summary:        Coda distributed file system
 Group:          System Environment/Daemons
 License:        GPLv2
 URL:            http://coda.cs.cmu.edu/
-Source0:        http://coda.cs.cmu.edu/pub/coda/src/%{name}-%{version}.tar.gz
+Source0:        http://coda.cs.cmu.edu/pub/coda/src/%{name}-%{version}.tar.xz
 Source1:        coda-client.service
 Source2:        codasrv.service
 Source3:        auth2-master.service
@@ -89,6 +89,14 @@ This package contains LWP, RPC2 and RVM libraries used by the Coda file system
 client and server binaries.
 
 
+%package devel
+Summary:        LWP, RPC2 and RVM development headers
+Group:          System Environment/Daemons
+
+%description devel
+This package contains LWP, RPC2 and RVM development libraries and headers.
+
+
 %prep
 %setup -q
 
@@ -101,7 +109,8 @@ export CFLAGS="$RPM_OPT_FLAGS -I%{_includedir}/et -I%{_includedir}/readline5"
 export CXXFLAGS="$RPM_OPT_FLAGS -I%{_includedir}/et -I%{_includedir}/readline5"
 export LDFLAGS="-L%{_libdir}/readline5"
 export LIBS="-lstdc++"
-%configure --libdir="$$(prefix)/lib/coda" 
+export PKG_CONFIG_PATH="$(pwd)/lib-src/lwp:$(pwd)/lib-src/rpc2:$(pwd)/lib-src/rvm:$PKG_CONFIG_PATH"
+%configure --libdir="%{_libdir}/coda" --disable-static
 make %{?_smp_mflags}
 
 
@@ -133,6 +142,9 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/coda/{venus,server}.conf
 
 #remove parser, it conflicts with grib_api
 rm -f $RPM_BUILD_ROOT%{_bindir}/parser
+
+# remove libtool files
+find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -296,20 +308,24 @@ fi
 
 %files common
 %defattr(-,root,root,-)
-%{_libdir}/coda/liblwp*.so.*
-%{_libdir}/coda/librpc2*.so.*
-%{_libdir}/coda/libse*.so.*
-%{_libdir}/coda/librdslwp*.so.*
-%{_libdir}/coda/librvmlwp*.so.*
-%{_libdir}/coda/libseglwp*.so.*
 %{_sbindir}/codaconfedit
+%{_libdir}/coda/*.so.*
+
+%files devel
+%defattr(-,root,root,-)
+%{_bindir}/rp2gen
+%{_includedir}/lwp/*.h
+%{_includedir}/rpc2/*.h
+%{_includedir}/rvm/*.h
+%{_libdir}/coda/*.so
+%{_libdir}/coda/pkgconfig/*.pc
 
 
 %changelog
-* Sat Apr 24 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.9.6-1
+* Sun Apr 24 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.9.6-1
 - New upstream release.
 - Don't build kerberos and vcodacon.
-- Move LWP, RPC2 and RVM from seperate libraries into common package.
+- Install LWP, RPC2 and RVM in /usr/lib/coda/.
 
 * Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 6.9.5-16
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
@@ -320,7 +336,7 @@ fi
 * Mon Mar 03 2014 Neil Horman <nhorman@redhat.com> - 6.9.5-14
 - Fixed service file startup script (bz 1071534)
 
-* Wed Dec 03 2013 Neil Horman <nhorman@redhat.com> - 6.9.5-13
+* Tue Dec 03 2013 Neil Horman <nhorman@redhat.com> - 6.9.5-13
 - Fixed format-secure errors (bz 1037020)
 
 * Wed Aug 28 2013 Neil Horman <nhorman@redhat.com> - 6.9.5-12
