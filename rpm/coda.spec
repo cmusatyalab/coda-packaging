@@ -327,7 +327,7 @@ fi
 
 
 %changelog
-* Sun Apr 24 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.9.6-1
+* Tue Apr 26 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.9.6-1
 - New upstream release.
 - Don't build kerberos and vcodacon.
 - Install LWP, RPC2 and RVM in %{_libdir}/coda/.
