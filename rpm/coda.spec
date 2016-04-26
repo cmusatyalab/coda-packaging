@@ -12,7 +12,6 @@ Source3:        auth2-master.service
 Source4:        coda-update-master.service
 Source5:	auth2-slave.service
 Source6:	coda-update-slave.service
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  compat-readline5-devel
 BuildRequires:  flex bison python perl
@@ -89,14 +88,6 @@ This package contains LWP, RPC2 and RVM libraries used by the Coda file system
 client and server binaries.
 
 
-%package devel
-Summary:        LWP, RPC2 and RVM development headers
-Group:          System Environment/Daemons
-
-%description devel
-This package contains LWP, RPC2 and RVM development libraries and headers.
-
-
 %prep
 %setup -q
 
@@ -143,8 +134,13 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/coda/{venus,server}.conf
 #remove parser, it conflicts with grib_api
 rm -f $RPM_BUILD_ROOT%{_bindir}/parser
 
-# remove libtool files
+# remove build/development files we don't want to package
+find $RPM_BUILD_ROOT -name '*.h' -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
+find $RPM_BUILD_ROOT -name '*.pc' -exec rm -f {} ';'
+find $RPM_BUILD_ROOT -name '*.so' -exec rm -f {} ';'
+rm -f $RPM_BUILD_ROOT/%{_bindir}/rp2gen
+
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -311,21 +307,12 @@ fi
 %{_sbindir}/codaconfedit
 %{_libdir}/coda/*.so.*
 
-%files devel
-%defattr(-,root,root,-)
-%{_bindir}/rp2gen
-%{_includedir}/lwp/*.h
-%{_includedir}/rpc2/*.h
-%{_includedir}/rvm/*.h
-%{_libdir}/coda/*.so
-%{_libdir}/coda/pkgconfig/*.pc
-
 
 %changelog
 * Sun Apr 24 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.9.6-1
 - New upstream release.
 - Don't build kerberos and vcodacon.
-- Install LWP, RPC2 and RVM in /usr/lib/coda/.
+- Install LWP, RPC2 and RVM in %{_libdir}/coda/.
 
 * Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 6.9.5-16
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
