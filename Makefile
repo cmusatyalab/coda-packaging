@@ -1,4 +1,4 @@
-SOURCE_URL = http://coda.cs.cmu.edu/pub/coda/src/coda-VERSION.tar.xz
+SOURCE_URL = http://coda.cs.cmu.edu/coda/source/coda-VERSION.tar.xz
 
 OUTDIR = output
 DEB_DISTS_DEBIAN = jessie
@@ -115,7 +115,7 @@ rpm:
 .PHONY: rpmrepo
 rpmrepo:
 	@# Build on a single representative root for each distribution.
-	@$(call buildrpm,rpmrepo/coda-release-fedora.spec,fedora-20-i386)
+	@$(call buildrpm,rpmrepo/coda-release-fedora.spec,fedora-22-i386)
 	@$(call buildrpm,rpmrepo/coda-release-el.spec,epel-6-i386)
 
 .PHONY: msi

@@ -5,7 +5,7 @@ Summary:        Coda distributed file system
 Group:          System Environment/Daemons
 License:        GPLv2
 URL:            http://coda.cs.cmu.edu/
-Source0:        http://coda.cs.cmu.edu/pub/coda/src/%{name}-%{version}.tar.xz
+Source0:        http://coda.cs.cmu.edu/coda/source/%{name}-%{version}.tar.xz
 Source1:        coda-client.service
 Source2:        codasrv.service
 Source3:        auth2-master.service
