@@ -2,4 +2,4 @@ coda (6.9.6-1+DISTVER) UNRELEASED; urgency=low
 
   * New release after CVS -> Git migration.
 
- -- Jan Harkes <jaharkes@cs.cmu.edu>  Sat, 23 Apr 2016 00:24:08 -0400
+ -- Jan Harkes <jaharkes@cs.cmu.edu>  Sun, 24 Apr 2016 00:24:08 -0400
