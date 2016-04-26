@@ -6,7 +6,7 @@ DEB_DISTS_UBUNTU = trusty wily xenial
 DEB_DISTS = $(DEB_DISTS_DEBIAN) $(DEB_DISTS_UBUNTU)
 DEB_ARCHES = i386 amd64
 RPM_ROOTS_FEDORA := $(foreach dist,22 23,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
-RPM_ROOTS_EL := epel-6-x86_64 epel-7-x86_64
+RPM_ROOTS_EL :=
 RPM_ROOTS := $(RPM_ROOTS_FEDORA) $(RPM_ROOTS_EL)
 
 wheezy_DISTVER = debian7.0

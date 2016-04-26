@@ -15,9 +15,11 @@ Source6:	coda-update-slave.service
 
 BuildRequires:  compat-readline5-devel
 BuildRequires:  flex bison python perl
-BuildRequires:  e2fsprogs-devel systemd-units
+BuildRequires:  e2fsprogs-devel
 # For /etc/rc.d/init.d so that configure can detect we have RH style init
 BuildRequires:  chkconfig
+BuildRequires:  systemd
+%{?systemd_requires}
 
 Requires:       compat-readline5
 
@@ -153,8 +155,13 @@ if [ ! -e /coda ]; then
     mkdir /coda
     touch /coda/NOT_REALLY_CODA
 fi
+%systemd_post coda-client.service
 
+%preun client
+%systemd_preun coda-client.service
 
+%postun client
+%systemd_postun
 
 %files client
 %defattr(-,root,root,-)
@@ -209,6 +216,16 @@ fi
 %dir %{_var}/lib/coda/cache
 %dir %{_var}/lib/coda/spool
 %dir %{_var}/log/coda
+
+
+%post server
+%systemd_post codasrv.service uth2-master.service uth2-slave.service oda-update-master.service oda-update-slave.service
+
+%preun server
+%systemd_preun codasrv.service auth2-master.service auth2-slave.service coda-update-master.service coda-update-slave.service
+
+%postun server
+%systemd_postun_with_restart codasrv.service auth2-master.service auth2-slave.service coda-update-master.service coda-update-slave.service
 
 %files server
 %defattr(-,root,root,-)
@@ -277,6 +294,7 @@ fi
 %{_mandir}/man8/updatesrv.8.gz
 %{_mandir}/man8/vice-setup.8.gz
 %{_mandir}/man8/volutil.8.gz
+
 
 %files backup
 %defattr(-,root,root,-)
