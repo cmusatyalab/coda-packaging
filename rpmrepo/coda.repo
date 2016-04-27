@@ -1,0 +1,23 @@
+[coda]
+name=Coda
+failovermethod=priority
+baseurl=http://coda.cs.cmu.edu/coda/!!DIST!!/$releasever/$basearch/RPMS/
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-coda
+
+[coda-debuginfo]
+name=Coda - Debug
+failovermethod=priority
+baseurl=http://coda.cs.cmu.edu/coda/!!DIST!!/$releasever/$basearch/debug/
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-coda
+
+[coda-source]
+name=Coda - Source
+failovermethod=priority
+baseurl=http://coda.cs.cmu.edu/coda/!!DIST!!/$releasever/SRPMS/
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-coda
