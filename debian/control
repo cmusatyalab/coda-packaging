@@ -63,3 +63,14 @@ Description: Backup client for the Coda distributed filesystem
  .
  This package provides the binaries to set up a backup client to back up Coda
  servers.
+
+Package: coda-dbgsym
+Architecture: any
+Section: debug
+Priority: extra
+Depends: coda-common (= ${binary:Version}), ${misc:Depends}
+Description: Debugging symbols for the Coda distributed filesystem
+ Coda is an advanced distributed filesystem. It has been developed at CMU
+ by the systems group of M. Satyanarayanan in the SCS department.
+ .
+ This package provides debugging symbols for Coda binaries.
