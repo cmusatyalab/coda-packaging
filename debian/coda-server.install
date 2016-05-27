@@ -1,4 +1,7 @@
 debian/tmp/etc/coda/server.conf.ex
+debian/tmp/lib/systemd/system/auth2-master.service
+debian/tmp/lib/systemd/system/auth2-slave.service
+debian/tmp/lib/systemd/system/coda-server.service
 debian/tmp/usr/bin/getvolinfo
 debian/tmp/usr/bin/reinit
 debian/tmp/usr/bin/rpc2ping

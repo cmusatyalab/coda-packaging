@@ -1,3 +1,5 @@
+debian/tmp/lib/systemd/system/coda-update-master.service
+debian/tmp/lib/systemd/system/coda-update-slave.service
 debian/tmp/usr/sbin/updatesrv
 debian/tmp/usr/sbin/updateclnt
 debian/tmp/usr/sbin/updatefetch

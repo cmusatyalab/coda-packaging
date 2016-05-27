@@ -1,17 +1,11 @@
 Name:           coda
-Version:        6.9.6
-Release:       	1%{?dist}
+Version:        6.9.7
+Release:        1%{?dist}
 Summary:        Coda distributed file system
 Group:          System Environment/Daemons
 License:        GPLv2
 URL:            http://coda.cs.cmu.edu/
 Source0:        http://coda.cs.cmu.edu/coda/source/%{name}-%{version}.tar.xz
-Source1:        coda-client.service
-Source2:        codasrv.service
-Source3:        auth2-master.service
-Source4:        coda-update-master.service
-Source5:	auth2-slave.service
-Source6:	coda-update-slave.service
 
 BuildRequires:  compat-readline5-devel
 BuildRequires:  flex bison python perl
@@ -110,15 +104,6 @@ make %{?_smp_mflags}
 %install
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
-
-# init scripts
-mkdir -p $RPM_BUILD_ROOT%{_unitdir}/
-install -p -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_unitdir}/
-install -p -m 755 %{SOURCE2} $RPM_BUILD_ROOT%{_unitdir}/
-install -p -m 755 %{SOURCE3} $RPM_BUILD_ROOT%{_unitdir}/
-install -p -m 755 %{SOURCE4} $RPM_BUILD_ROOT%{_unitdir}/
-install -p -m 755 %{SOURCE5} $RPM_BUILD_ROOT%{_unitdir}/
-install -p -m 755 %{SOURCE6} $RPM_BUILD_ROOT%{_unitdir}/
 
 # coda mount point for the client
 mkdir -p $RPM_BUILD_ROOT/coda
@@ -219,13 +204,13 @@ fi
 
 
 %post server
-%systemd_post codasrv.service uth2-master.service uth2-slave.service oda-update-master.service oda-update-slave.service
+%systemd_post coda-server.service auth2-master.service auth2-slave.service coda-update-master.service coda-update-slave.service
 
 %preun server
-%systemd_preun codasrv.service auth2-master.service auth2-slave.service coda-update-master.service coda-update-slave.service
+%systemd_preun coda-server.service auth2-master.service auth2-slave.service coda-update-master.service coda-update-slave.service
 
 %postun server
-%systemd_postun_with_restart codasrv.service auth2-master.service auth2-slave.service coda-update-master.service coda-update-slave.service
+%systemd_postun_with_restart coda-server.service auth2-master.service auth2-slave.service coda-update-master.service coda-update-slave.service
 
 %files server
 %defattr(-,root,root,-)
@@ -233,7 +218,7 @@ fi
 %dir %{_sysconfdir}/coda
 %ghost %config(noreplace) %{_sysconfdir}/coda/server.conf
 %config(noreplace) %{_sysconfdir}/coda/server.conf.ex
-%{_unitdir}/codasrv.service
+%{_unitdir}/coda-server.service
 %{_unitdir}/auth2-master.service
 %{_unitdir}/auth2-slave.service
 %{_unitdir}/coda-update-master.service
@@ -327,6 +312,9 @@ fi
 
 
 %changelog
+* Fri May 27 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.9.7-1
+- New upstream release.
+
 * Tue Apr 26 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.9.6-1
 - New upstream release.
 - Don't build kerberos and vcodacon.

@@ -1,5 +1,20 @@
+coda (6.9.7-1+DISTVER) UNRELEASED; urgency=medium
+
+  * Make sure tools/make-split-dist.sh is in the source tarball.
+  * Add systemd unit files.
+  * Do not give System:AnyUser default access to a new volume.
+  * Remove code for multiple codasrv processes on a single host.
+  * Use constant time compare on Coda tokens and clog/auth2 passwords.
+  * Fixed a buffer overflow when getting the local hostname in the
+    Coda backup program.
+  * Update copyright years in the lgpl/gpl blurb.
+  * We cannot safely traverse the same va_list twice, which could lead to
+    crashes and undefined behaviour in Venus's eprint statements.
+
+ -- Jan Harkes <jaharkes@cs.cmu.edu>  Fri, 27 May 2016 14:07:10 -0400
+
 coda (6.9.6-2+DISTVER) UNRELEASED; urgency=low
 
   * New release after CVS -> Git migration.
 
- -- Jan Harkes <jaharkes@hurricane.elijah.cs.cmu.edu>  Tue, 26 Apr 2016 15:02:15 -0400
+ -- Jan Harkes <jaharkes@cs.cmu.edu>  Tue, 26 Apr 2016 15:02:15 -0400

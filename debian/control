@@ -3,8 +3,9 @@ Section: net
 Priority: extra
 Maintainer: Jan Harkes <jaharkes@cs.cmu.edu>
 Standards-Version: 3.9.5
-Build-Depends: debhelper (>= 9), dh-python, libreadline-dev, libncurses5-dev,
- liblua5.1-0-dev, flex, bison, pkg-config, python, automake
+Build-Depends: debhelper (>= 9), dh-python, dh-systemd (>= 1.5),
+ libreadline-dev, libncurses5-dev, liblua5.1-0-dev,
+ flex, bison, pkg-config, python, automake
 
 Package: coda-common
 Architecture: amd64 arm i386 m68k powerpc sparc
