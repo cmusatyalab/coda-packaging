@@ -18,9 +18,11 @@ DEB_CHROOT_BASE = chroots
 DEBIAN_KEYRING = /usr/share/keyrings/debian-archive-keyring.gpg
 DEBIAN_MIRROR = http://debian.lcs.mit.edu/debian
 DEBIAN_SOURCES = deb http://security.debian.org/ DISTRO/updates main
+DEBIAN_COMPONENTS = main
 UBUNTU_KEYRING = /usr/share/keyrings/ubuntu-archive-keyring.gpg
 UBUNTU_MIRROR = http://ubuntu.media.mit.edu/ubuntu
 UBUNTU_SOURCES = deb http://security.ubuntu.com/ubuntu DISTRO-security main
+UBUNTU_COMPONENTS = main universe
 
 # Build or update a pbuilder chroot for building Debian packages
 # $1 = distribution
@@ -29,6 +31,7 @@ UBUNTU_SOURCES = deb http://security.ubuntu.com/ubuntu DISTRO-security main
 # $4 = other sources.list lines, pipe-delimited.  DISTRO will be substituted
 #      with $1.
 # $5 = keyring to check Release file against
+# $6 = components (normal default is "main")
 builddebroot = mkdir -p $(DEB_CHROOT_BASE) && \
 	tgz="$(DEB_CHROOT_BASE)/$(1)-$(2).tgz" && \
 	echo "====== $(1) $(2) ======" && \
@@ -39,7 +42,8 @@ builddebroot = mkdir -p $(DEB_CHROOT_BASE) && \
 			--architecture "$(2)" --mirror "$(3)" \
 			--othermirror "$(subst DISTRO,$(1),$(4))" \
 			--debootstrapopts --variant=buildd \
-			--debootstrapopts --keyring=$(5) ;\
+			--debootstrapopts --keyring=$(5) \
+			--components "$(6)" ;\
 	fi
 
 # $1 = specfile
@@ -76,9 +80,9 @@ clean:
 debroots:
 	[ `id -u` = 0 ]
 	@$(foreach dist,$(DEB_DISTS_DEBIAN),$(foreach arch,$(DEB_ARCHES), \
-		$(call builddebroot,$(dist),$(arch),$(DEBIAN_MIRROR),$(DEBIAN_SOURCES),$(DEBIAN_KEYRING)) && )) :
+		$(call builddebroot,$(dist),$(arch),$(DEBIAN_MIRROR),$(DEBIAN_SOURCES),$(DEBIAN_KEYRING),$(DEBIAN_COMPONENTS)) && )) :
 	@$(foreach dist,$(DEB_DISTS_UBUNTU),$(foreach arch,$(DEB_ARCHES), \
-		$(call builddebroot,$(dist),$(arch),$(UBUNTU_MIRROR),$(UBUNTU_SOURCES),$(UBUNTU_KEYRING)) && )) :
+		$(call builddebroot,$(dist),$(arch),$(UBUNTU_MIRROR),$(UBUNTU_SOURCES),$(UBUNTU_KEYRING),$(UBUNTU_COMPONENTS)) && )) :
 
 .PHONY: deb
 deb:
