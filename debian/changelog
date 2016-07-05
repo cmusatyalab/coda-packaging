@@ -1,4 +1,4 @@
-coda (6.9.7-1+DISTVER) UNRELEASED; urgency=medium
+coda (6.9.7-2+DISTVER) UNRELEASED; urgency=medium
 
   * Make sure tools/make-split-dist.sh is in the source tarball.
   * Add systemd unit files.
