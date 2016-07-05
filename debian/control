@@ -8,7 +8,7 @@ Build-Depends: debhelper (>= 9), dh-python, dh-systemd (>= 1.5),
  flex, bison, pkg-config, python, automake
 
 Package: coda-common
-Architecture: amd64 arm i386 m68k powerpc sparc
+Architecture: amd64 i386 m68k powerpc sparc
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Conflicts: coda-server (<= 6.9.5)
 Homepage: http://coda.cs.cmu.edu/
