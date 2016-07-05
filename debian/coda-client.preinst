@@ -8,6 +8,9 @@ case "$1" in
 
     upgrade|abort-upgrade)
 	umount /coda >/dev/null 2>&1 || true
+
+        # clean up old diversion for codaconfedit which is now in coda-common
+        dpkg-divert --quiet --package coda-client --rename --remove /usr/sbin/codaconfedit
     ;;
 
     *)
