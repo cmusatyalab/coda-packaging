@@ -14,6 +14,9 @@ trusty_DISTVER = ubuntu14.04
 wily_DISTVER = ubuntu15.10
 xenial_DISTVER = ubuntu16.04
 
+trusty_INSTALL_SED = "/systemd/\ d"
+wily_INSTALL_SED = "/systemd/\ d"
+
 DEB_CHROOT_BASE = chroots
 DEBIAN_KEYRING = /usr/share/keyrings/debian-archive-keyring.gpg
 DEBIAN_MIRROR = http://debian.lcs.mit.edu/debian
@@ -101,6 +104,10 @@ deb:
 		sed -i -e "s/DISTVER/$($(dist)_DISTVER)/g" \
 			-e "s/UNRELEASED/$(dist)/g" \
 			$$tmp/$${project}-$${version}/debian/changelog && \
+		sed -i -e "$($(dist)_INSTALL_SED)" \
+			$$tmp/$${project}-$${version}/debian/coda-client.install \
+			$$tmp/$${project}-$${version}/debian/coda-server.install \
+			$$tmp/$${project}-$${version}/debian/coda-update.install && \
 		( cd $$tmp/$${project}-$${version}/ && \
 		pdebuild --architecture $(arch) \
 			--buildresult $(abspath $(OUTDIR)) \

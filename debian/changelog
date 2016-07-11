@@ -1,5 +1,19 @@
 coda (6.9.7-3+DISTVER) UNRELEASED; urgency=medium
 
+  * Cleanup old diversion for codaconfedit.
+  * Make sure systemd unit files are packaged.
+
+ -- Jan Harkes <jaharkes@cs.cmu.edu>  Fri, 5 Jul 2016 15:00:00 -0400
+
+coda (6.9.7-2+DISTVER) UNRELEASED; urgency=medium
+
+  * Avoid installing conflicting files in both coda-client and coda-server
+    packages.
+
+ -- Jan Harkes <jaharkes@cs.cmu.edu>  Fri, 5 Jul 2016 14:00:00 -0400
+
+coda (6.9.7-1+DISTVER) UNRELEASED; urgency=medium
+
   * Make sure tools/make-split-dist.sh is in the source tarball.
   * Add systemd unit files.
   * Do not give System:AnyUser default access to a new volume.
