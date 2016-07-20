@@ -1,5 +1,5 @@
 Name:           coda
-Version:        6.9.7
+Version:        6.9.8
 Release:        1%{?dist}
 Summary:        Coda distributed file system
 Group:          System Environment/Daemons
@@ -312,6 +312,9 @@ fi
 
 
 %changelog
+* Fri Jul 20 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.9.8-1
+- New upstream release.
+
 * Fri May 27 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.9.7-1
 - New upstream release.
 
