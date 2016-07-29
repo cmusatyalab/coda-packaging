@@ -36,6 +36,7 @@ Package: coda-server
 Architecture: any
 Depends: coda-common (= ${binary:Version}), coda-update (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Conflicts: rvm-tools
+Replaces: rvm-tools, coda-backup
 Homepage: http://coda.cs.cmu.edu/
 Description: Server for the Coda distributed file system
  Coda is an advanced distributed filesystem. It has been developed at CMU
@@ -53,17 +54,6 @@ Description: Server for the Coda distributed file system
  .
  This package provides the update daemons needed on both the Coda servers and
  the Coda backup client.
-
-Package: coda-backup
-Architecture: any
-Depends: coda-common (= ${binary:Version}), coda-update (= ${binary:Version}), ${shlibs:Depends}, ${perl:Depends}, ${misc:Depends}
-Homepage: http://coda.cs.cmu.edu/
-Description: Backup client for the Coda distributed filesystem
- Coda is an advanced distributed filesystem. It has been developed at CMU
- by the systems group of M. Satyanarayanan in the SCS department.
- .
- This package provides the binaries to set up a backup client to back up Coda
- servers.
 
 Package: coda-dbgsym
 Architecture: any

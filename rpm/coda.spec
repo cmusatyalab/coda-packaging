@@ -20,7 +20,7 @@ Requires:       compat-readline5
 
 %description
 Source package for the Coda file system. Four packages are provided by
-this rpm: the client, server, backup and common components. Separately
+this rpm: the client, server, and common components. Separately
 you must install a kernel module, or have a Coda enabled kernel, and
 you should get the Coda documentation package.
 
@@ -52,16 +52,6 @@ Requires(preun): chkconfig
 %description server
 This package contains the fileserver for the Coda file system, as well
 as the volume utilities.
-
-
-%package backup
-Summary:        Backup coordinator for the Coda distributed file system
-Group:          System Environment/Daemons
-Requires:       coda-common = %{version}-%{release}
-
-%description backup
-This package contains the backup software for the Coda file system, as
-well as the volume utilities.
 
 
 %package gcodacon
@@ -227,6 +217,8 @@ fi
 %{_sbindir}/bldvldb.sh
 %{_sbindir}/coda-server-logrotate
 %{_sbindir}/codadump2tar
+%{_sbindir}/codamergedump
+%{_sbindir}/codareaddump
 %{_sbindir}/codasrv
 %{_sbindir}/codastart
 %{_sbindir}/createvol_rep
@@ -260,6 +252,7 @@ fi
 %{_bindir}/smon2
 %{_mandir}/man1/rdsinit.1.gz
 %{_mandir}/man1/rvmutl.1.gz
+%{_mandir}/man5/codadumpfile.5.gz
 %{_mandir}/man5/maxgroupid.5.gz
 %{_mandir}/man5/passwd.coda.5.gz
 %{_mandir}/man5/servers.5.gz
@@ -268,6 +261,8 @@ fi
 %{_mandir}/man5/vrdb.5.gz
 %{_mandir}/man8/auth2.8.gz
 %{_mandir}/man8/bldvldb.sh.8.gz
+%{_mandir}/man8/codamergedump.8.gz
+%{_mandir}/man8/codareaddump.8.gz
 %{_mandir}/man8/codasrv.8.gz
 %{_mandir}/man8/createvol_rep.8.gz
 %{_mandir}/man8/initpw.8.gz
@@ -279,25 +274,6 @@ fi
 %{_mandir}/man8/updatesrv.8.gz
 %{_mandir}/man8/vice-setup.8.gz
 %{_mandir}/man8/volutil.8.gz
-
-
-%files backup
-%defattr(-,root,root,-)
-%{_sbindir}/auth2
-%{_sbindir}/backup
-%{_sbindir}/backup.sh
-%{_sbindir}/merge
-%{_sbindir}/readdump
-%{_sbindir}/tape.pl
-%{_sbindir}/updateclnt
-%{_sbindir}/updatefetch
-%{_sbindir}/volutil
-%{_mandir}/man5/backuplogs.5.gz
-%{_mandir}/man5/dumpfile.5.gz
-%{_mandir}/man5/dumplist.5.gz
-%{_mandir}/man8/backup.8.gz
-%{_mandir}/man8/merge.8.gz
-%{_mandir}/man8/readdump.8.gz
 
 
 %files gcodacon
@@ -312,6 +288,10 @@ fi
 
 
 %changelog
+* Fri Jul 29 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.9.9-1
+- New upstream release.
+- Remove coda-backup package.
+
 * Fri Jul 20 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.9.8-1
 - New upstream release.
 

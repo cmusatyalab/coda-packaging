@@ -11,6 +11,8 @@ usr/sbin/auth2
 usr/sbin/bldvldb.sh
 usr/sbin/coda-server-logrotate
 usr/sbin/codadump2tar
+usr/sbin/codamergedump
+usr/sbin/codareaddump
 usr/sbin/codasrv
 usr/sbin/codastart
 usr/sbin/createvol_rep
@@ -35,6 +37,7 @@ usr/sbin/vice-killvolumes
 usr/sbin/volutil
 usr/share/man/man1/rdsinit.1
 usr/share/man/man1/rvmutl.1
+usr/share/man/man5/codadumpfile.5
 usr/share/man/man5/maxgroupid.5
 usr/share/man/man5/passwd.coda.5
 usr/share/man/man5/vicetab.5
@@ -43,6 +46,8 @@ usr/share/man/man5/vrdb.5
 usr/share/man/man5/servers.5
 usr/share/man/man8/auth2.8
 usr/share/man/man8/bldvldb.sh.8
+usr/share/man/man8/codamergedump.8
+usr/share/man/man8/codareaddump.8
 usr/share/man/man8/codasrv.8
 usr/share/man/man8/createvol_rep.8
 usr/share/man/man8/initpw.8
