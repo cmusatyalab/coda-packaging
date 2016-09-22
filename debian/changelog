@@ -1,9 +1,9 @@
-coda (6.9.9-1+DISTVER) UNRELEASED; urgency=medium
+coda (6.9.9rc-1+DISTVER) UNRELEASED; urgency=medium
 
   * New upstream release.
   * Remove coda-backup package.
 
- -- Jan Harkes <jaharkes@cs.cmu.edu>  Fri, 29 Jul 2016 15:57:09 -0400
+ -- Jan Harkes <jaharkes@cs.cmu.edu>  Thu, 24 Sep 2016 16:22:29 -0400
 
 coda (6.9.8-1+DISTVER) UNRELEASED; urgency=medium
 
