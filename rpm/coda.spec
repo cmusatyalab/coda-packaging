@@ -287,7 +287,7 @@ fi
 
 
 %changelog
-* Thu Sep 22 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.9.9-1
+* Fri Sep 23 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.9.9-1
 - New upstream release.
 - Remove coda-backup package.
 
