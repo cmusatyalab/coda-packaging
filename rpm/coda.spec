@@ -226,7 +226,6 @@ fi
 %{_sbindir}/inoder
 %{_sbindir}/norton
 %{_sbindir}/norton-reinit
-%{_sbindir}/parserecdump
 %{_sbindir}/partial-reinit.sh
 %{_sbindir}/pdbtool
 %{_sbindir}/printvrdb
