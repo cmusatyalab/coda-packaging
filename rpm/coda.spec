@@ -1,21 +1,27 @@
 Name:           coda
 Version:        6.9.9
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Coda distributed file system
 Group:          System Environment/Daemons
 License:        GPLv2
 URL:            http://coda.cs.cmu.edu/
 Source0:        http://coda.cs.cmu.edu/coda/source/%{name}-%{version}.tar.xz
 
-BuildRequires:  compat-readline5-devel
+BuildRequires:  readline-devel
 BuildRequires:  flex bison python perl
 BuildRequires:  e2fsprogs-devel
 # For /etc/rc.d/init.d so that configure can detect we have RH style init
 BuildRequires:  chkconfig
+Requires:       readline
+
+# Avoid systemd dependency on RHEL6
+%if ! 0%{?el6}
 BuildRequires:  systemd
 %{?systemd_requires}
+%endif
 
-Requires:       compat-readline5
+# Hardened build for long running and/or running as root programs
+%global _hardened_build 1
 
 
 %description
@@ -81,11 +87,6 @@ client and server binaries.
 touch -r aclocal.m4 configure configure.ac configs/*.m4
 
 %build
-# note: remove the -I and -l here when upstream releases fix for krb5 building
-export CFLAGS="$RPM_OPT_FLAGS -I%{_includedir}/et -I%{_includedir}/readline5"
-export CXXFLAGS="$RPM_OPT_FLAGS -I%{_includedir}/et -I%{_includedir}/readline5"
-export LDFLAGS="-L%{_libdir}/readline5"
-export LIBS="-lstdc++"
 export PKG_CONFIG_PATH="$(pwd)/lib-src/lwp:$(pwd)/lib-src/rpc2:$(pwd)/lib-src/rvm:$PKG_CONFIG_PATH"
 %configure --libdir="%{_libdir}/coda" --disable-static
 make %{?_smp_mflags}
@@ -111,7 +112,7 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/coda/{venus,server}.conf
 #remove parser, it conflicts with grib_api
 rm -f $RPM_BUILD_ROOT%{_bindir}/parser
 
-# remove build/development files we don't want to package
+# remove build/development files we don't care to package
 find $RPM_BUILD_ROOT -name '*.h' -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -name '*.pc' -exec rm -f {} ';'
@@ -145,7 +146,9 @@ fi
 %ghost %config(noreplace) %{_sysconfdir}/coda/venus.conf
 %config(noreplace) %{_sysconfdir}/coda/venus.conf.ex
 %config(noreplace) %{_sysconfdir}/coda/realms
+%if %{defined _unitdir}
 %{_unitdir}/coda-client.service
+%endif
 %{_sbindir}/asrlauncher
 %{_sbindir}/venus
 %{_sbindir}/coda-client-setup
@@ -208,11 +211,13 @@ fi
 %dir %{_sysconfdir}/coda
 %ghost %config(noreplace) %{_sysconfdir}/coda/server.conf
 %config(noreplace) %{_sysconfdir}/coda/server.conf.ex
+%if %{defined _unitdir}
 %{_unitdir}/coda-server.service
 %{_unitdir}/auth2-master.service
 %{_unitdir}/auth2-slave.service
 %{_unitdir}/coda-update-master.service
 %{_unitdir}/coda-update-slave.service
+%endif
 %{_sbindir}/auth2
 %{_sbindir}/bldvldb.sh
 %{_sbindir}/coda-server-logrotate
@@ -287,6 +292,10 @@ fi
 
 
 %changelog
+* Tue Sep 27 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.9.9-2
+- Reenabled builds for RHEL6/RHEL7.
+- Build hardened binaries (PIC/Fortify).
+
 * Fri Sep 23 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.9.9-1
 - New upstream release.
 - Remove coda-backup package.
