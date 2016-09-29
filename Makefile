@@ -149,7 +149,7 @@ msi:
 .PHONY: upload
 upload:
 	[ -n "$(CODA_DISTRIBUTE_HOST)" -a -n "$(CODA_INCOMING_DIR)" ]
-	@rsync -r "$(OUTDIR)/" \
+	@rsync -rv "$(OUTDIR)/" \
 		"$(CODA_DISTRIBUTE_HOST):$(CODA_INCOMING_DIR)"
 
 .PHONY: distribute
