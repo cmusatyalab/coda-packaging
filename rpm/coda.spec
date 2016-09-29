@@ -1,5 +1,5 @@
 Name:           coda
-Version:        6.9.10rc
+Version:        6.9.10
 Release:        1%{?dist}
 Summary:        Coda distributed file system
 Group:          System Environment/Daemons
@@ -292,7 +292,7 @@ fi
 
 
 %changelog
-* Wed Sep 28 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.9.10rc-1
+* Thu Sep 29 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.9.10-1
 - New upstream release.
 - Reenabled builds for RHEL6/RHEL7.
 - Build hardened binaries (PIC/Fortify).

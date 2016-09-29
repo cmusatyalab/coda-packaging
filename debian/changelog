@@ -1,8 +1,8 @@
-coda (6.9.10rc-1+DISTVER) UNRELEASED; urgency=medium
+coda (6.9.10-1+DISTVER) UNRELEASED; urgency=medium
 
   * New upstream release.
 
- -- Jan Harkes <jaharkes@cs.cmu.edu>  Wed, 28 Sep 2016 11:25:24 -0400
+ -- Jan Harkes <jaharkes@cs.cmu.edu>  Thu, 29 Sep 2016 16:22:58 -0400
 
 coda (6.9.9-1+DISTVER) UNRELEASED; urgency=medium
 
