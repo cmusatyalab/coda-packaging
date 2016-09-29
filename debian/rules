@@ -12,7 +12,7 @@ override_dh_auto_install:
 	touch "`pwd`/debian/tmp/coda/NOT_REALLY_CODA"
 
 	# Change coda-client-setup to run dpkg-reconfigure
-	echo -e '#!/bin/sh\nset -e\necho "Starting \"dpkg-reconfigure coda-client\""\ndpkg-reconfigure coda-client' > "`pwd`/debian/tmp/usr/sbin/coda-client-setup"
+	/bin/echo -e '#!/bin/sh\nset -e\necho "Starting \"dpkg-reconfigure coda-client\""\ndpkg-reconfigure coda-client' > "`pwd`/debian/tmp/usr/sbin/coda-client-setup"
 	chmod 755 "`pwd`/debian/tmp/usr/sbin/coda-client-setup"
 
 override_dh_strip:
