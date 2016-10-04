@@ -1,6 +1,6 @@
 Name:           coda
 Version:        6.9.10
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Coda distributed file system
 Group:          System Environment/Daemons
 License:        GPLv2
@@ -18,6 +18,8 @@ Requires:       readline
 %if ! 0%{?el6}
 BuildRequires:  systemd
 %{?systemd_requires}
+%else
+%define initdir %(if test -d /etc/rc.d/init.d ; then echo /etc/rc.d/init.d ; else echo /etc/init.d ; fi)
 %endif
 
 # Hardened build for long running and/or running as root programs
@@ -131,13 +133,23 @@ if [ ! -e /coda ]; then
     mkdir /coda
     touch /coda/NOT_REALLY_CODA
 fi
+%if ! 0%{?el6}
 %systemd_post coda-client.service
+%else
+/sbin/chkconfig --add coda-client.init
+%endif
 
 %preun client
+%if ! 0%{?el6}
 %systemd_preun coda-client.service
+%else
+/sbin/chkconfig --del coda-client.init
+%endif
 
+%if ! 0%{?el6}
 %postun client
 %systemd_postun
+%endif
 
 %files client
 %defattr(-,root,root,-)
@@ -148,6 +160,8 @@ fi
 %config(noreplace) %{_sysconfdir}/coda/realms
 %if %{defined _unitdir}
 %{_unitdir}/coda-client.service
+%else
+%{initdir}/coda-client.init
 %endif
 %{_sbindir}/asrlauncher
 %{_sbindir}/venus
@@ -197,13 +211,25 @@ fi
 
 
 %post server
+%if ! 0%{?el6}
 %systemd_post coda-server.service auth2-master.service auth2-slave.service coda-update-master.service coda-update-slave.service
+%else
+/sbin/chkconfig --add coda-update.init
+/sbin/chkconfig --add coda-server.init
+%endif
 
 %preun server
+%if ! 0%{?el6}
 %systemd_preun coda-server.service auth2-master.service auth2-slave.service coda-update-master.service coda-update-slave.service
+%else
+/sbin/chkconfig --del coda-update.init
+/sbin/chkconfig --del coda-server.init
+%endif
 
+%if ! 0%{?el6}
 %postun server
 %systemd_postun_with_restart coda-server.service auth2-master.service auth2-slave.service coda-update-master.service coda-update-slave.service
+%endif
 
 %files server
 %defattr(-,root,root,-)
@@ -217,6 +243,9 @@ fi
 %{_unitdir}/auth2-slave.service
 %{_unitdir}/coda-update-master.service
 %{_unitdir}/coda-update-slave.service
+%else
+%{initdir}/coda-server.init
+%{initdir}/coda-update.init
 %endif
 %{_sbindir}/auth2
 %{_sbindir}/bldvldb.sh
@@ -292,6 +321,9 @@ fi
 
 
 %changelog
+* Tue Oct 04 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.9.10-2
+- Reinstate init scripts on RHEL6.
+
 * Thu Sep 29 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.9.10-1
 - New upstream release.
 - Reenabled builds for RHEL6/RHEL7.
