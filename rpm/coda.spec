@@ -98,6 +98,14 @@ make %{?_smp_mflags}
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
 
+%if 0%{?el6}
+# install init scripts
+install -d $RPM_BUILD_ROOT/${initdir}/
+install -p tools/coda-client.init $RPM_BUILD_ROOT/${initdir}/
+install -p tools/coda-server.init $RPM_BUILD_ROOT/${initdir}/
+install -p tools/coda-update.init $RPM_BUILD_ROOT/${initdir}/
+%endif
+
 # coda mount point for the client
 mkdir -p $RPM_BUILD_ROOT/coda
 touch $RPM_BUILD_ROOT/coda/NOT_REALLY_CODA
