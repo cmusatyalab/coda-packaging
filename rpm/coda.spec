@@ -330,6 +330,9 @@ fi
 
 
 %changelog
+* Tue Oct 25 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.10.0rc-1
+- New upstream release.
+
 * Tue Oct 04 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.9.10-2
 - Reinstate init scripts on RHEL6.
 
