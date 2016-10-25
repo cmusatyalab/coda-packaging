@@ -2,7 +2,7 @@ SOURCE_URL = http://coda.cs.cmu.edu/coda/source/coda-VERSION.tar.xz
 
 OUTDIR = output
 DEB_DISTS_DEBIAN = jessie
-DEB_DISTS_UBUNTU = trusty wily xenial
+DEB_DISTS_UBUNTU = trusty wily xenial yakkety
 DEB_DISTS = $(DEB_DISTS_DEBIAN) $(DEB_DISTS_UBUNTU)
 DEB_ARCHES = i386 amd64
 RPM_ROOTS_FEDORA := $(foreach dist,22 23 24,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
@@ -13,6 +13,7 @@ jessie_DISTVER = debian8.0
 trusty_DISTVER = ubuntu14.04
 wily_DISTVER = ubuntu15.10
 xenial_DISTVER = ubuntu16.04
+yakkety_DISTVER = ubuntu16.10
 
 trusty_INSTALL_SED = "/systemd/\ d"
 wily_INSTALL_SED = "/systemd/\ d"
