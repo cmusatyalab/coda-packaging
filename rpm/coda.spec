@@ -168,6 +168,7 @@ fi
 %config(noreplace) %{_sysconfdir}/coda/realms
 %if %{defined _unitdir}
 %{_unitdir}/coda-client.service
+%{_libdir}/modules-load.d/coda.conf
 %else
 %{initdir}/coda-client.init
 %endif
