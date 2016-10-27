@@ -1,8 +1,8 @@
 coda/NOT_REALLY_CODA
 etc/coda/realms
 etc/coda/venus.conf.ex
-lib/modules-load.d/coda.conf
 lib/systemd/system/coda-client.service
+usr/lib/modules-load.d/coda.conf
 usr/bin/au
 usr/bin/cfs
 usr/bin/clog
