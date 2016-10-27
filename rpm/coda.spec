@@ -18,8 +18,6 @@ Requires:       readline
 %if ! 0%{?el6}
 BuildRequires:  systemd
 %{?systemd_requires}
-%else
-%define initdir %(if test -d /etc/rc.d/init.d ; then echo /etc/rc.d/init.d ; else echo /etc/init.d ; fi)
 %endif
 
 # Hardened build for long running and/or running as root programs
@@ -100,10 +98,10 @@ make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
 
 %if 0%{?el6}
 # install init scripts
-install -d $RPM_BUILD_ROOT/${initdir}/
-install -p tools/coda-client.init $RPM_BUILD_ROOT/${initdir}/
-install -p tools/coda-server.init $RPM_BUILD_ROOT/${initdir}/
-install -p tools/coda-update.init $RPM_BUILD_ROOT/${initdir}/
+install -d $RPM_BUILD_ROOT/%{_initddir}/
+install -p tools/coda-client.init $RPM_BUILD_ROOT/%{_initddir}/
+install -p tools/coda-server.init $RPM_BUILD_ROOT/%{_initddir}/
+install -p tools/coda-update.init $RPM_BUILD_ROOT/%{_initddir}/
 %endif
 
 # coda mount point for the client
@@ -170,7 +168,7 @@ fi
 %{_unitdir}/coda-client.service
 %{_libdir}/modules-load.d/coda.conf
 %else
-%{initdir}/coda-client.init
+%{_initddir}/coda-client.init
 %endif
 %{_sbindir}/asrlauncher
 %{_sbindir}/venus
@@ -253,8 +251,8 @@ fi
 %{_unitdir}/coda-update-master.service
 %{_unitdir}/coda-update-slave.service
 %else
-%{initdir}/coda-server.init
-%{initdir}/coda-update.init
+%{_initddir}/coda-server.init
+%{_initddir}/coda-update.init
 %endif
 %{_sbindir}/auth2
 %{_sbindir}/bldvldb.sh
