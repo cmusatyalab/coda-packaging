@@ -3,7 +3,7 @@
 	dh $@ --with python2 --with systemd
 
 override_dh_auto_configure:
-	dh_auto_configure -- --with-lua --libdir=$$(prefix)/usr/lib/coda
+	dh_auto_configure -- --with-lua --libdir=$$\{prefix\}/lib/coda
 
 override_dh_auto_install:
 	dh_auto_install
