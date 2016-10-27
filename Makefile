@@ -4,7 +4,7 @@ OUTDIR = output
 DEB_DISTS_DEBIAN = jessie
 DEB_DISTS_UBUNTU = trusty wily xenial yakkety
 DEB_DISTS = $(DEB_DISTS_DEBIAN) $(DEB_DISTS_UBUNTU)
-DEB_ARCHES = i386 amd64
+DEB_ARCHES = amd64 i386
 RPM_ROOTS_FEDORA := $(foreach dist,22 23 24,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
 RPM_ROOTS_EL := epel-6-x86_64 epel-7-coda-x86_64
 RPM_ROOTS := $(RPM_ROOTS_FEDORA) $(RPM_ROOTS_EL)
@@ -98,7 +98,7 @@ deb:
 	source=`echo "$(SOURCE_URL)" | sed "s/VERSION/$$version/"` && \
 	output=`pwd`/$(OUTDIR) && \
 	wget -O $$tmp/$${project}_$${version}.orig.tar.xz $$source && \
-	$(foreach dist,$(DEB_DISTS),$(foreach arch,$(DEB_ARCHES), \
+	$(foreach arch,$(DEB_ARCHES),$(foreach dist,$(DEB_DISTS), \
 		echo "====== $(dist) $(arch) ======" && \
 		tar xf $$tmp/$${project}_$${version}.orig.tar.xz -C $$tmp && \
 		cp -a debian $$tmp/$${project}-$${version}/ && \
