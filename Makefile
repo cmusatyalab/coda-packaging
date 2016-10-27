@@ -15,8 +15,8 @@ wily_DISTVER = ubuntu15.10
 xenial_DISTVER = ubuntu16.04
 yakkety_DISTVER = ubuntu16.10
 
-trusty_INSTALL_SED = "/(systemd|modules-load.d)/\ d"
-wily_INSTALL_SED = "/(systemd|modules-load.d)/\ d"
+trusty_INSTALL_SED = "/\\\(systemd\\\|modules-load\\\.d\\\)/\ d"
+wily_INSTALL_SED = "/\\\(systemd\\\|modules-load\\\.d\\\)/\ d"
 
 DEB_CHROOT_BASE = chroots
 DEBIAN_KEYRING = /usr/share/keyrings/debian-archive-keyring.gpg
