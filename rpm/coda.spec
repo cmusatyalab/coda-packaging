@@ -1,6 +1,6 @@
 Name:           coda
-Version:        6.9.10
-Release:        2%{?dist}
+Version:        6.10.0rc
+Release:        1%{?dist}
 Summary:        Coda distributed file system
 Group:          System Environment/Daemons
 License:        GPLv2
