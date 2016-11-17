@@ -1,5 +1,5 @@
 Name:           coda
-Version:        6.10.0rc
+Version:        6.10.0
 Release:        1%{?dist}
 Summary:        Coda distributed file system
 Group:          System Environment/Daemons
@@ -328,7 +328,7 @@ fi
 
 
 %changelog
-* Tue Oct 25 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.10.0rc-1
+* Tue Oct 25 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.10.0-1
 - New upstream release.
 
 * Tue Oct 04 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.9.10-2
