@@ -328,6 +328,9 @@ fi
 
 
 %changelog
+* Thu Dec 15 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.10.0-2
+- Don't use .init extension for init scripts.
+
 * Tue Oct 25 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.10.0-1
 - New upstream release.
 
