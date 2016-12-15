@@ -1,6 +1,6 @@
 Name:           coda
 Version:        6.10.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Coda distributed file system
 Group:          System Environment/Daemons
 License:        GPLv2
@@ -99,9 +99,9 @@ make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
 %if 0%{?el6}
 # install init scripts
 install -d $RPM_BUILD_ROOT/%{_initddir}/
-install -p tools/coda-client.init $RPM_BUILD_ROOT/%{_initddir}/
-install -p tools/coda-server.init $RPM_BUILD_ROOT/%{_initddir}/
-install -p tools/coda-update.init $RPM_BUILD_ROOT/%{_initddir}/
+install -p tools/coda-client.init $RPM_BUILD_ROOT/%{_initddir}/coda-client
+install -p tools/coda-server.init $RPM_BUILD_ROOT/%{_initddir}/coda-server
+install -p tools/coda-update.init $RPM_BUILD_ROOT/%{_initddir}/coda-update
 %endif
 
 # coda mount point for the client
@@ -142,14 +142,14 @@ fi
 %if ! 0%{?el6}
 %systemd_post coda-client.service
 %else
-/sbin/chkconfig --add coda-client.init
+/sbin/chkconfig --add coda-client
 %endif
 
 %preun client
 %if ! 0%{?el6}
 %systemd_preun coda-client.service
 %else
-/sbin/chkconfig --del coda-client.init
+/sbin/chkconfig --del coda-client
 %endif
 
 %if ! 0%{?el6}
@@ -168,7 +168,7 @@ fi
 %{_unitdir}/coda-client.service
 /usr/lib/modules-load.d/coda.conf
 %else
-%{_initddir}/coda-client.init
+%{_initddir}/coda-client
 %endif
 %{_sbindir}/asrlauncher
 %{_sbindir}/venus
@@ -221,16 +221,16 @@ fi
 %if ! 0%{?el6}
 %systemd_post coda-server.service auth2-master.service auth2-slave.service coda-update-master.service coda-update-slave.service
 %else
-/sbin/chkconfig --add coda-update.init
-/sbin/chkconfig --add coda-server.init
+/sbin/chkconfig --add coda-update
+/sbin/chkconfig --add coda-server
 %endif
 
 %preun server
 %if ! 0%{?el6}
 %systemd_preun coda-server.service auth2-master.service auth2-slave.service coda-update-master.service coda-update-slave.service
 %else
-/sbin/chkconfig --del coda-update.init
-/sbin/chkconfig --del coda-server.init
+/sbin/chkconfig --del coda-update
+/sbin/chkconfig --del coda-server
 %endif
 
 %if ! 0%{?el6}
@@ -251,8 +251,8 @@ fi
 %{_unitdir}/coda-update-master.service
 %{_unitdir}/coda-update-slave.service
 %else
-%{_initddir}/coda-server.init
-%{_initddir}/coda-update.init
+%{_initddir}/coda-server
+%{_initddir}/coda-update
 %endif
 %{_sbindir}/auth2
 %{_sbindir}/bldvldb.sh
