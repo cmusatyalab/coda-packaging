@@ -5,7 +5,7 @@ DEB_DISTS_DEBIAN = jessie
 DEB_DISTS_UBUNTU = trusty wily xenial yakkety
 DEB_DISTS = $(DEB_DISTS_DEBIAN) $(DEB_DISTS_UBUNTU)
 DEB_ARCHES = amd64 i386
-RPM_ROOTS_FEDORA := $(foreach dist,22 23 24,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
+RPM_ROOTS_FEDORA := $(foreach dist,23 24 25,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
 RPM_ROOTS_EL := epel-6-x86_64 epel-7-coda-x86_64
 RPM_ROOTS := $(RPM_ROOTS_FEDORA) $(RPM_ROOTS_EL)
 
