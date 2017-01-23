@@ -1,6 +1,6 @@
 Name:           coda
-Version:        6.10.0
-Release:        2%{?dist}
+Version:        6.11.0rc
+Release:        1%{?dist}
 Summary:        Coda distributed file system
 Group:          System Environment/Daemons
 License:        GPLv2
@@ -328,6 +328,9 @@ fi
 
 
 %changelog
+* Mon Jan 23 2017 Jan Harkes <jaharkes@cs.cmu.edu> - 6.11.0rc-1
+- New upstream release.
+
 * Thu Dec 15 2016 Jan Harkes <jaharkes@cs.cmu.edu> - 6.10.0-2
 - Don't use .init extension for init scripts.
 
