@@ -219,7 +219,7 @@ fi
 
 %post server
 %if ! 0%{?el6}
-%systemd_post coda-server.service auth2-master.service auth2-slave.service coda-update-master.service coda-update-slave.service
+%systemd_post coda-server.service coda-auth2.service coda-update-master.service coda-update-slave.service
 %else
 /sbin/chkconfig --add coda-update
 /sbin/chkconfig --add coda-server
@@ -227,7 +227,7 @@ fi
 
 %preun server
 %if ! 0%{?el6}
-%systemd_preun coda-server.service auth2-master.service auth2-slave.service coda-update-master.service coda-update-slave.service
+%systemd_preun coda-server.service coda-auth2.service coda-update-master.service coda-update-slave.service
 %else
 /sbin/chkconfig --del coda-update
 /sbin/chkconfig --del coda-server
@@ -235,7 +235,7 @@ fi
 
 %if ! 0%{?el6}
 %postun server
-%systemd_postun_with_restart coda-server.service auth2-master.service auth2-slave.service coda-update-master.service coda-update-slave.service
+%systemd_postun_with_restart coda-server.service coda-auth2.service coda-update-master.service coda-update-slave.service
 %endif
 
 %files server
@@ -246,8 +246,7 @@ fi
 %config(noreplace) %{_sysconfdir}/coda/server.conf.ex
 %if %{defined _unitdir}
 %{_unitdir}/coda-server.service
-%{_unitdir}/auth2-master.service
-%{_unitdir}/auth2-slave.service
+%{_unitdir}/coda-auth2.service
 %{_unitdir}/coda-update-master.service
 %{_unitdir}/coda-update-slave.service
 %else

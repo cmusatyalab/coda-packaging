@@ -1,6 +1,5 @@
 etc/coda/server.conf.ex
-lib/systemd/system/auth2-master.service
-lib/systemd/system/auth2-slave.service
+lib/systemd/system/coda-auth2.service
 lib/systemd/system/coda-server.service
 usr/bin/getvolinfo
 usr/bin/reinit
