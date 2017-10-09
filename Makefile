@@ -1,18 +1,18 @@
 SOURCE_URL = http://coda.cs.cmu.edu/coda/source/coda-VERSION.tar.xz
 
 OUTDIR = output
-DEB_DISTS_DEBIAN = jessie
-DEB_DISTS_UBUNTU = trusty xenial yakkety zesty
+DEB_DISTS_DEBIAN = jessie stretch
+DEB_DISTS_UBUNTU = trusty xenial zesty
 DEB_DISTS = $(DEB_DISTS_DEBIAN) $(DEB_DISTS_UBUNTU)
 DEB_ARCHES = amd64 i386
-RPM_ROOTS_FEDORA := $(foreach dist,24 25,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
+RPM_ROOTS_FEDORA := $(foreach dist,25 26,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
 RPM_ROOTS_EL := epel-6-x86_64 epel-7-coda-x86_64
 RPM_ROOTS := $(RPM_ROOTS_FEDORA) $(RPM_ROOTS_EL)
 
 jessie_DISTVER = debian8.0
+stretch_DISTVER = debian9.0
 trusty_DISTVER = ubuntu14.04
 xenial_DISTVER = ubuntu16.04
-yakkety_DISTVER = ubuntu16.10
 zesty_DISTVER = ubuntu17.04
 
 trusty_INSTALL_SED = "/\\\(systemd\\\|modules-load\\\.d\\\)/\ d"
