@@ -15,6 +15,7 @@ trusty_DISTVER = ubuntu14.04
 xenial_DISTVER = ubuntu16.04
 zesty_DISTVER = ubuntu17.04
 
+jessie_OTHER = "|deb http://debian.lcs.mit.edu/ DISTRO-backports main"
 trusty_INSTALL_SED = "/\\\(systemd\\\|modules-load\\\.d\\\)/\ d"
 
 DEB_CHROOT_BASE = chroots
@@ -83,7 +84,7 @@ clean:
 debroots:
 	[ `id -u` = 0 ]
 	@$(foreach dist,$(DEB_DISTS_DEBIAN),$(foreach arch,$(DEB_ARCHES), \
-		$(call builddebroot,$(dist),$(arch),$(DEBIAN_MIRROR),$(DEBIAN_SOURCES),$(DEBIAN_KEYRING),$(DEBIAN_COMPONENTS)) && )) :
+		$(call builddebroot,$(dist),$(arch),$(DEBIAN_MIRROR),$(DEBIAN_SOURCES)$($(dist)_OTHER),$(DEBIAN_KEYRING),$(DEBIAN_COMPONENTS)) && )) :
 	@$(foreach dist,$(DEB_DISTS_UBUNTU),$(foreach arch,$(DEB_ARCHES), \
 		$(call builddebroot,$(dist),$(arch),$(UBUNTU_MIRROR),$(UBUNTU_SOURCES),$(UBUNTU_KEYRING),$(UBUNTU_COMPONENTS)) && )) :
 
