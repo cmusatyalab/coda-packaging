@@ -15,7 +15,7 @@ trusty_DISTVER = ubuntu14.04
 xenial_DISTVER = ubuntu16.04
 zesty_DISTVER = ubuntu17.04
 
-jessie_OTHER = "|deb http://debian.lcs.mit.edu/ DISTRO-backports main"
+jessie_OTHER = |deb http://mirrors.kernel.org/debian/ DISTRO-backports main
 trusty_INSTALL_SED = "/\\\(systemd\\\|modules-load\\\.d\\\)/\ d"
 
 DEB_CHROOT_BASE = chroots
