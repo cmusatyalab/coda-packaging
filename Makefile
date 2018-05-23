@@ -2,7 +2,7 @@ SOURCE_URL = http://coda.cs.cmu.edu/coda/source/coda-VERSION.tar.xz
 
 OUTDIR = output
 DEB_DISTS_DEBIAN = jessie stretch
-DEB_DISTS_UBUNTU = trusty xenial bionic
+DEB_DISTS_UBUNTU = trusty xenial artful bionic
 DEB_DISTS = $(DEB_DISTS_DEBIAN) $(DEB_DISTS_UBUNTU)
 DEB_ARCHES = amd64 i386
 RPM_ROOTS_FEDORA := $(foreach dist,26 27 28,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
@@ -13,6 +13,7 @@ jessie_DISTVER = debian8.0
 stretch_DISTVER = debian9.0
 trusty_DISTVER = ubuntu14.04
 xenial_DISTVER = ubuntu16.04
+artful_DISTVER = ubuntu17.10
 bionic_DISTVER = ubuntu18.04
 
 jessie_OTHER = |deb http://mirrors.kernel.org/debian/ DISTRO-backports main
