@@ -327,10 +327,10 @@ fi
 
 
 %changelog
-* Wed Jun 05 2018 Jan Harkes <jaharkes@cs.cmu.edu> - 6.13.2-1
+* Tue Jun 05 2018 Jan Harkes <jaharkes@cs.cmu.edu> - 6.13.2-1
 - New upstream release.
 
-* Wed Jun 05 2018 Jan Harkes <jaharkes@cs.cmu.edu> - 6.13.1-1
+* Tue Jun 05 2018 Jan Harkes <jaharkes@cs.cmu.edu> - 6.13.1-1
 - New upstream release.
 
 * Wed May 23 2018 Jan Harkes <jaharkes@cs.cmu.edu> - 6.13.0-1
