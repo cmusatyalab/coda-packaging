@@ -29,6 +29,8 @@ UBUNTU_MIRROR = http://ubuntu.media.mit.edu/ubuntu
 UBUNTU_SOURCES = deb http://security.ubuntu.com/ubuntu DISTRO-security main
 UBUNTU_COMPONENTS = main universe
 
+DOCKER_REGISTRY = registry.cmusatyalab.org/coda/coda-packaging
+
 # Build or update a pbuilder chroot for building Debian packages
 # $1 = distribution
 # $2 = architecture
@@ -163,3 +165,9 @@ distribute:
 		$(SIGNING_SERVER) ssh "$(CODA_DISTRIBUTE_HOST)" \
 		-R 5280:localhost:5280 \
 		"cd $(CODA_DISTRIBUTE_DIR) && SIGNING_SERVER_ADDRESS=localhost:5280 ./distribute.pl"
+
+.PHONY: docker-image
+docker-image:
+	( cd docker-coda-build && \
+		docker build -t $(DOCKER_REGISTRY)/coda-build . && \
+		docker push $(DOCKER_REGISTRY)/coda-build )
