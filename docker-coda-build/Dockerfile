@@ -20,4 +20,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libtool-bin \
     libuv1-dev \
     systemd \
+    clang-format-4.0 \
+    libllvm4.0 \
  && rm -rf /var/lib/apt/lists/*
