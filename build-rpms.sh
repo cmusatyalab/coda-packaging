@@ -3,8 +3,10 @@
 # Fedora/RHEL/CentOS
 #
 
+set -e
+
 DIST=${1:-${CI_JOB_NAME#build:}}
-RPMROOTS=fedora-{28,29,30}-{i386,x86_64} epel-6-x86_64 epel-7-coda-x86_64
+RPMROOTS="fedora-{28,29,30}-{i386,x86_64} epel-6-x86_64 epel-7-coda-x86_64"
 
 sourcedir=$(pwd)
 

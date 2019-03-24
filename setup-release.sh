@@ -21,7 +21,10 @@ sed -e "s/%%VERSION%%/$RPM_VERSION/" \
     -e "s/%%DATE%%/$RPM_DATE/" \
     < rpm/coda.spec.in > rpm/coda.spec
 
-cp coda-$VERSION.tar.xz coda-$RPM_VERSION.tar.xz
+tar -xJf coda-$VERSION.tar.xz
+mv coda-$VERSION coda-$RPM_VERSION
+tar -cJf coda-$RPM_VERSION.tar.xz coda-$RPM_VERSION
+rm -r coda-$RPM_VERSION
 
 rpmbuild -bs --define "_sourcedir ." --define "_srcrpmdir ." rpm/coda.spec
 

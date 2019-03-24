@@ -3,9 +3,11 @@
 # Debian/Ubuntu
 #
 
+set -e
+
 DIST=${1:-${CI_JOB_NAME#build:}}
 
-DEB_DISTS={jessie,stretch,trusty,xenial,bionic,cosmic}-{amd64,i386}
+DEB_DISTS="{jessie,stretch,trusty,xenial,bionic,cosmic}-{amd64,i386}"
 
 declare -A DISTVER
 DISTVER["jessie"]="debian8.0"
@@ -76,9 +78,9 @@ do
             --debootstrapopts --keyring=$DEB_KEYRING \
             --components "$DEB_COMPONENTS" \
             --extrapackages "$extra_pkgs"
-    else
-        pbuilder --update --basetgz $chroot_tgz \
-            --extrapackages "$extra_pkgs"
+    #else
+    #    pbuilder --update --basetgz $chroot_tgz \
+    #        --extrapackages "$extra_pkgs"
     fi
 
 
