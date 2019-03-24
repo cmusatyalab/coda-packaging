@@ -171,3 +171,9 @@ docker-image:
 	( cd docker-coda-build && \
 		docker build --no-cache -t $(DOCKER_REGISTRY)/coda-build . && \
 		docker push $(DOCKER_REGISTRY)/coda-build )
+	( cd coda-deb-build && \
+		docker build --no-cache -t $(DOCKER_REGISTRY)/coda-deb-build . && \
+		docker push $(DOCKER_REGISTRY)/coda-deb-build )
+	( cd coda-rpm-build && \
+		docker build --no-cache -t $(DOCKER_REGISTRY)/coda-rpm-build . && \
+		docker push $(DOCKER_REGISTRY)/coda-rpm-build )

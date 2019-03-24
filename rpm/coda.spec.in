@@ -1,0 +1,331 @@
+Name:           coda
+Version:        %%VERSION%%
+Release:        1%{?dist}
+Summary:        Coda distributed file system
+Group:          System Environment/Daemons
+License:        GPLv2
+URL:            http://coda.cs.cmu.edu/
+Source0:        http://coda.cs.cmu.edu/coda/source/%{name}-%{version}.tar.xz
+
+BuildRequires:  readline-devel
+BuildRequires:  flex bison python perl
+BuildRequires:  e2fsprogs-devel
+# For /etc/rc.d/init.d so that configure can detect we have RH style init
+BuildRequires:  chkconfig
+Requires:       readline
+
+# Avoid systemd dependency on RHEL6
+%if ! 0%{?el6}
+BuildRequires:  systemd
+%{?systemd_requires}
+%endif
+
+# Hardened build for long running and/or running as root programs
+%global _hardened_build 1
+
+
+%description
+Source package for the Coda file system. Four packages are provided by
+this rpm: the client, server, and common components. Separately
+you must install a kernel module, or have a Coda enabled kernel, and
+you should get the Coda documentation package.
+
+
+%package client
+Summary:        Client for the Coda distributed file system
+Group:          System Environment/Daemons
+Requires:       coda-common = %{version}-%{release}
+Requires(post): chkconfig
+Requires(preun): chkconfig
+
+%description client
+This package contains the main client program, the cachemanager Venus.
+Also included are the binaries for the cfs, utilities for logging, ACL
+manipulation etc, the hoarding tools for use with laptops and repair
+tools for fixing conflicts. Finally there is the cmon and codacon
+console utilities to monitor Coda's activities. You need a Coda
+kernel-module for your kernel version, or Coda in your kernel, to have
+a complete coda client.
+
+
+%package server
+Summary:        Server for the Coda distributed file system
+Group:          System Environment/Daemons
+Requires:       coda-common = %{version}-%{release}
+Requires(post): chkconfig
+Requires(preun): chkconfig
+
+%description server
+This package contains the fileserver for the Coda file system, as well
+as the volume utilities.
+
+
+%package gcodacon
+Summary:	Graphical tray monitor for the Coda distributed file system
+Group:          System Environment/Daemons
+Requires:       coda-client = %{version}-%{release}
+Requires:	pygtk2 notify-python
+
+%description gcodacon
+This package contains gcodacon, a graphical tray monitor for the Coda
+distributed file system client.
+
+
+%package common
+Summary:        LWP, RPC2 and RVM libraries for the Coda distributed file system
+Group:          System Environment/Daemons
+
+%description common
+This package contains LWP, RPC2 and RVM libraries used by the Coda file system
+client and server binaries.
+
+
+%prep
+%setup -q
+
+# Avoid rerunning autotools
+touch -r aclocal.m4 configure configure.ac configs/*.m4
+
+%build
+export PKG_CONFIG_PATH="$(pwd)/lib-src/lwp:$(pwd)/lib-src/rpc2:$(pwd)/lib-src/rvm:$PKG_CONFIG_PATH"
+%configure --libdir="%{_libdir}/coda" --disable-static
+make %{?_smp_mflags}
+
+
+%install
+rm -rf $RPM_BUILD_ROOT
+make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
+
+%if 0%{?el6}
+# install init scripts
+install -d $RPM_BUILD_ROOT/%{_initddir}/
+install -p tools/coda-client.init $RPM_BUILD_ROOT/%{_initddir}/coda-client
+install -p tools/coda-server.init $RPM_BUILD_ROOT/%{_initddir}/coda-server
+install -p tools/coda-update.init $RPM_BUILD_ROOT/%{_initddir}/coda-update
+%endif
+
+# coda mount point for the client
+mkdir -p $RPM_BUILD_ROOT/coda
+touch $RPM_BUILD_ROOT/coda/NOT_REALLY_CODA
+
+# coda cache/log dirs for the client
+mkdir -p $RPM_BUILD_ROOT/%{_var}/lib/coda
+mkdir -p $RPM_BUILD_ROOT/%{_var}/lib/coda/cache
+mkdir -p $RPM_BUILD_ROOT/%{_var}/lib/coda/spool
+mkdir -p $RPM_BUILD_ROOT/%{_var}/log/coda
+
+# for %%ghost
+touch $RPM_BUILD_ROOT%{_sysconfdir}/coda/{venus,server}.conf
+
+#remove parser, it conflicts with grib_api
+rm -f $RPM_BUILD_ROOT%{_bindir}/parser
+
+# remove build/development files we don't care to package
+find $RPM_BUILD_ROOT -name '*.h' -exec rm -f {} ';'
+find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
+find $RPM_BUILD_ROOT -name '*.pc' -exec rm -f {} ';'
+find $RPM_BUILD_ROOT -name '*.so' -exec rm -f {} ';'
+rm -f $RPM_BUILD_ROOT/%{_bindir}/rp2gen
+
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+
+%post client
+# not pretty, but we cannot simply put /coda in our files-list because then
+# rpm will fail when updating coda-client when coda is mounted
+if [ ! -e /coda ]; then
+    mkdir /coda
+    touch /coda/NOT_REALLY_CODA
+fi
+%if ! 0%{?el6}
+%systemd_post coda-client.service
+%else
+/sbin/chkconfig --add coda-client
+%endif
+
+%preun client
+%if ! 0%{?el6}
+%systemd_preun coda-client.service
+%else
+/sbin/chkconfig --del coda-client
+%endif
+
+%if ! 0%{?el6}
+%postun client
+%systemd_postun
+%endif
+
+%files client
+%defattr(-,root,root,-)
+%doc AUTHORS ChangeLog LICENSE NEWS
+%dir %{_sysconfdir}/coda
+%ghost %config(noreplace) %{_sysconfdir}/coda/venus.conf
+%config(noreplace) %{_sysconfdir}/coda/venus.conf.ex
+%config(noreplace) %{_sysconfdir}/coda/realms
+%if %{defined _unitdir}
+%{_unitdir}/coda-client.service
+/usr/lib/modules-load.d/coda.conf
+%else
+%{_initddir}/coda-client
+%endif
+%{_sbindir}/asrlauncher
+%{_sbindir}/venus
+%{_sbindir}/coda-client-setup
+%{_sbindir}/volmunge
+%{_sbindir}/vutil
+%{_bindir}/au
+%{_bindir}/cfs
+%{_bindir}/clog
+%{_bindir}/cmon
+%{_bindir}/codacon
+%{_bindir}/cpasswd
+%{_bindir}/ctokens
+%{_bindir}/cunlog
+%{_bindir}/filerepair
+%{_bindir}/hoard
+%{_bindir}/mkcodabf
+%{_bindir}/mklka
+%{_bindir}/removeinc
+%{_bindir}/repair
+%{_bindir}/coda_replay
+%{_bindir}/spy
+%{_bindir}/xaskuser
+%{_bindir}/xfrepair
+%{_mandir}/man1/au.1.gz
+%{_mandir}/man1/cfs.1.gz
+%{_mandir}/man1/clog.1.gz
+%{_mandir}/man1/cmon.1.gz
+%{_mandir}/man1/coda_replay.1.gz
+%{_mandir}/man1/cpasswd.1.gz
+%{_mandir}/man1/ctokens.1.gz
+%{_mandir}/man1/cunlog.1.gz
+%{_mandir}/man1/hoard.1.gz
+%{_mandir}/man1/mkcodabf.1.gz
+%{_mandir}/man1/repair.1.gz
+%{_mandir}/man1/spy.1.gz
+%{_mandir}/man8/venus.8.gz
+%{_mandir}/man8/coda-client-setup.8.gz
+%{_mandir}/man8/volmunge.8.gz
+%{_mandir}/man8/vutil.8.gz
+%ghost %dir /coda
+%ghost /coda/NOT_REALLY_CODA
+%dir %{_var}/lib/coda
+%dir %{_var}/lib/coda/cache
+%dir %{_var}/lib/coda/spool
+%dir %{_var}/log/coda
+
+
+%post server
+%if ! 0%{?el6}
+%systemd_post coda-server.service coda-auth2.service coda-update-master.service coda-update-slave.service
+%else
+/sbin/chkconfig --add coda-update
+/sbin/chkconfig --add coda-server
+%endif
+
+%preun server
+%if ! 0%{?el6}
+%systemd_preun coda-server.service coda-auth2.service coda-update-master.service coda-update-slave.service
+%else
+/sbin/chkconfig --del coda-update
+/sbin/chkconfig --del coda-server
+%endif
+
+%if ! 0%{?el6}
+%postun server
+%systemd_postun_with_restart coda-server.service coda-auth2.service coda-update-master.service coda-update-slave.service
+%endif
+
+%files server
+%defattr(-,root,root,-)
+%doc AUTHORS ChangeLog LICENSE NEWS
+%dir %{_sysconfdir}/coda
+%ghost %config(noreplace) %{_sysconfdir}/coda/server.conf
+%config(noreplace) %{_sysconfdir}/coda/server.conf.ex
+%if %{defined _unitdir}
+%{_unitdir}/coda-server.service
+%{_unitdir}/coda-auth2.service
+%{_unitdir}/coda-update-master.service
+%{_unitdir}/coda-update-slave.service
+%else
+%{_initddir}/coda-server
+%{_initddir}/coda-update
+%endif
+%{_sbindir}/auth2
+%{_sbindir}/bldvldb.sh
+%{_sbindir}/coda-server-logrotate
+%{_sbindir}/codadump2tar
+%{_sbindir}/codamergedump
+%{_sbindir}/codareaddump
+%{_sbindir}/codasrv
+%{_sbindir}/codastart
+%{_sbindir}/createvol_rep
+%{_sbindir}/initpw
+%{_sbindir}/inoder
+%{_sbindir}/norton
+%{_sbindir}/norton-reinit
+%{_sbindir}/partial-reinit.sh
+%{_sbindir}/pdbtool
+%{_sbindir}/printvrdb
+%{_sbindir}/purgevol_rep
+%{_sbindir}/rdsinit
+%{_sbindir}/rvmutl
+%{_sbindir}/startserver
+%{_sbindir}/tokentool
+%{_sbindir}/updatesrv
+%{_sbindir}/updateclnt
+%{_sbindir}/updatefetch
+%{_sbindir}/vice-killvolumes
+%{_sbindir}/vice-setup
+%{_sbindir}/vice-setup-rvm
+%{_sbindir}/vice-setup-srvdir
+%{_sbindir}/vice-setup-user
+%{_sbindir}/vice-setup-scm
+%{_sbindir}/volutil
+%{_bindir}/getvolinfo
+%{_bindir}/reinit
+%{_bindir}/rpc2ping
+%{_bindir}/rvmsizer
+%{_bindir}/smon2
+%{_mandir}/man1/rdsinit.1.gz
+%{_mandir}/man1/rvmutl.1.gz
+%{_mandir}/man5/codadumpfile.5.gz
+%{_mandir}/man5/maxgroupid.5.gz
+%{_mandir}/man5/passwd.coda.5.gz
+%{_mandir}/man5/servers.5.gz
+%{_mandir}/man5/vicetab.5.gz
+%{_mandir}/man5/volumelist.5.gz
+%{_mandir}/man5/vrdb.5.gz
+%{_mandir}/man8/auth2.8.gz
+%{_mandir}/man8/bldvldb.sh.8.gz
+%{_mandir}/man8/codamergedump.8.gz
+%{_mandir}/man8/codareaddump.8.gz
+%{_mandir}/man8/codasrv.8.gz
+%{_mandir}/man8/createvol_rep.8.gz
+%{_mandir}/man8/initpw.8.gz
+%{_mandir}/man8/norton.8.gz
+%{_mandir}/man8/pdbtool.8.gz
+%{_mandir}/man8/purgevol_rep.8.gz
+%{_mandir}/man8/startserver.8.gz
+%{_mandir}/man8/updateclnt.8.gz
+%{_mandir}/man8/updatesrv.8.gz
+%{_mandir}/man8/vice-setup.8.gz
+%{_mandir}/man8/volutil.8.gz
+
+
+%files gcodacon
+%defattr(-,root,root,-)
+%{_bindir}/gcodacon
+
+
+%files common
+%defattr(-,root,root,-)
+%{_sbindir}/codaconfedit
+%{_libdir}/coda/*.so.*
+
+
+%changelog
+* %%DATE%% %%AUTHOR%% - %%VERSION%%-1
+- Automatic package build.

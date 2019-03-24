@@ -1,0 +1,122 @@
+image: registry.cmusatyalab.org/coda/coda-packaging/coda-deb-build:latest
+
+stages:
+ - fetch
+ - setup
+ - build
+ - deploy
+
+fetch_source:
+  stage: fetch
+  variables:
+    TOKEN:
+    REF: master
+  script: ./fetch-artifacts.sh  
+  artifacts:
+    paths:
+      - coda-*.tar.?z
+    expire_in: 1 week
+  when: manual
+
+setup:
+  stage: setup
+  script: ./setup-release.sh
+  artifacts:
+    paths:
+      - debian/
+      - "*.src.rpm"
+    expire_in: 1 week
+
+.build:deb: &build_deb
+  stage: build
+  image: repository.cmusatyalab.org:coda/coda-packaging/coda-deb-build:latest
+  script: ./build_debs.sh
+  cache:
+    key: ${CI_JOB_NAME}
+    paths:
+      - cache/
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
+
+.build:rpm: &build_rpm
+  stage: build
+  image: repository.cmusatyalab.org:coda/coda-packaging/coda-rpm-build:latest
+  script: ./build_rpms.sh
+  cache:
+    key: ${CI_JOB_NAME}
+    paths:
+      - cache/
+  artifacts:
+    paths:
+      - dist/*.rpm
+    expire_in: 1 week
+
+deploy:
+  stage: deploy
+  script:
+    - echo "copy artifacts to coda repos"
+  when: manual
+
+
+build:jessie-amd64:
+  <<: *build_deb
+
+build:jessie-i386:
+  <<: *build_deb
+
+build:stretch-amd64:
+  <<: *build_deb
+
+build:stretch-i386:
+  <<: *build_deb
+
+build:trusty-amd64:
+  <<: *build_deb
+
+build:trusty-i386:
+  <<: *build_deb
+
+build:xenial-amd64:
+  <<: *build_deb
+
+build:xenial-i386:
+  <<: *build_deb
+
+build:bionic-amd64:
+  <<: *build_deb
+
+build:bionic-i386:
+  <<: *build_deb
+
+build:cosmic-amd64:
+  <<: *build_deb
+
+build:cosmic-i386:
+  <<: *build_deb
+
+build:fedora-28-x86_64:
+  <<: *build_rpm
+
+build:fedora-28-i386:
+  <<: *build_rpm
+
+build:fedora-29-x86_64:
+  <<: *build_rpm
+
+build:fedora-29-i386:
+  <<: *build_rpm
+
+build:fedora-30-x86_64:
+  <<: *build_rpm
+
+build:fedora-30-i386:
+  <<: *build_rpm
+
+build:epel-6-x86_64:
+  <<: *build_rpm
+
+build:epel-7-coda-x86_64:
+  <<: *build_rpm
+

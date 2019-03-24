@@ -1,2 +1,8 @@
 /chroots
 /output
+artifacts.zip
+cache/
+coda-*.tar.?z
+debian/changelog
+dist/
+rpm/coda.spec
