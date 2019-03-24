@@ -15,7 +15,6 @@ fetch_source:
     paths:
       - coda-*.tar.?z
     expire_in: 1 week
-  when: manual
 
 setup:
   stage: setup
