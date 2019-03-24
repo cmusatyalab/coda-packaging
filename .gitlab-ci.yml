@@ -7,7 +7,7 @@ stages:
 
 # (re)build docker build containers
 .prepare:docker_template: &docker_template
-  stage: setup
+  stage: prepare
   image: docker:latest
   services:
     - docker:dind
