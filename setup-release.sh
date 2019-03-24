@@ -1,5 +1,14 @@
 #!/bin/sh
 
+TOKEN=${TOKEN:?missing gitlab API token}
+REF=${REF:-master}
+
+curl --output artifacts.zip --header "PRIVATE-TOKEN: $TOKEN" \
+    https://git.cmusatyalab.org/api/v4/projects/24/jobs/artifacts/$REF/download?job=build_source
+
+unzip artifacts.zip
+
+
 VERSION=${1:-$(ls coda-*.tar.?z 2>/dev/null | head -1 | sed -ne 's/^coda-\(.*\)\.tar\..z/\1/p')}
 VERSION=${VERSION:?usage: $0 <version>}
 DEB_DATE="$(date -R)"
@@ -28,5 +37,7 @@ rm -r coda-$RPM_VERSION
 
 rpmbuild -bs --define "_sourcedir ." --define "_srcrpmdir ." rpm/coda.spec
 
-# artifacts: debian/ *.src.rpm
+rm -r coda-$RPM_VERSION.tar.xz
+
+# artifacts: coda-*.tar.?z debian/ *.src.rpm
 

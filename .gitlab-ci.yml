@@ -1,27 +1,20 @@
 image: registry.cmusatyalab.org/coda/coda-packaging/coda-deb-build:latest
 
 stages:
- - fetch
- - setup
+ - prepare
  - build
  - deploy
 
 
-fetch_source:
-  stage: fetch
+# build Coda binary packages
+setup:
+  stage: prepare
   variables:
     REF: master
-  script: ./fetch-artifacts.sh  
-  artifacts:
-    paths:
-      - coda-*.tar.?z
-    expire_in: 1 week
-
-setup:
-  stage: setup
   script: ./setup-release.sh
   artifacts:
     paths:
+      - coda-*.tar.?z
       - debian/
       - "*.src.rpm"
     expire_in: 1 week
