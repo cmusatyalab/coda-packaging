@@ -27,7 +27,7 @@ setup:
 
 .build:deb: &build_deb
   stage: build
-  image: registry.cmusatyalab.org:coda/coda-packaging/coda-deb-build:latest
+  image: registry.cmusatyalab.org/coda/coda-packaging/coda-deb-build:latest
   script: ./build_debs.sh
   cache:
     key: ${CI_JOB_NAME}
@@ -40,7 +40,7 @@ setup:
 
 .build:rpm: &build_rpm
   stage: build
-  image: registry.cmusatyalab.org:coda/coda-packaging/coda-rpm-build:latest
+  image: registry.cmusatyalab.org/coda/coda-packaging/coda-rpm-build:latest
   script: ./build_rpms.sh
   cache:
     key: ${CI_JOB_NAME}
