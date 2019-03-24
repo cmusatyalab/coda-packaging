@@ -168,7 +168,7 @@ distribute:
 
 .PHONY: docker-image
 docker-image:
-	( cd docker-coda-build && \
+	( cd coda-build && \
 		docker build --no-cache -t $(DOCKER_REGISTRY)/coda-build . && \
 		docker push $(DOCKER_REGISTRY)/coda-build )
 	( cd coda-deb-build && \
