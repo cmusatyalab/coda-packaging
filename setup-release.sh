@@ -14,11 +14,14 @@ coda ($VERSION-1+DISTVER) UNRELEASED; urgency=medium
  -- $AUTHOR  $DEB_DATE
 EOF
 
-sed -e "s/%%VERSION%%/$VERSION/" \
+RPM_VERSION=$(echo $VERSION | tr - _)
+
+sed -e "s/%%VERSION%%/$RPM_VERSION/" \
     -e "s/%%AUTHOR%%/$AUTHOR/" \
     -e "s/%%DATE%%/$RPM_DATE/" \
     < rpm/coda.spec.in > rpm/coda.spec
 
+cp coda-$VERSION.tar.xz coda-$RPM_VERSION.tar.xz
 
 rpmbuild -bs --define "_sourcedir ." --define "_srcrpmdir ." rpm/coda.spec
 
