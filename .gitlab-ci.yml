@@ -5,6 +5,41 @@ stages:
  - build
  - deploy
 
+# (re)build docker build containers
+.prepare:docker_template: &docker_template
+  stage: setup
+  image: docker:latest
+  services:
+    - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay
+    DOCKER_HOST: "tcp://localhost:2375"
+  script:
+    - docker info
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - cd $IMAGE
+    - docker pull $CI_REGISTRY_IMAGE:$IMAGE || true
+    - docker build --pull --cache-from $CI_REGISTRY_IMAGE:$IMAGE -t $CI_REGISTRY_IMAGE:$IMAGE .
+    - docker push $CI_REGISTRY_IMAGE:$IMAGE
+  only:
+    changes:
+      - $IMAGE/Dockerfile
+
+prepare:docker_build:
+  <<: *docker_template
+  variables:
+    IMAGE: coda-build
+
+prepare:docker_deb_build:
+  <<: *docker_template
+  variables:
+    IMAGE: coda-deb-build
+
+prepare:docker_rpm_build:
+  <<: *docker_template
+  variables:
+    IMAGE: coda-rpm-build
+
 
 # build Coda binary packages
 setup:
@@ -18,6 +53,7 @@ setup:
       - debian/
       - "*.src.rpm"
     expire_in: 1 week
+
 
 .build:deb: &build_deb
   stage: build
