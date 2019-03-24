@@ -9,7 +9,6 @@ stages:
 fetch_source:
   stage: fetch
   variables:
-    TOKEN:
     REF: master
   script: ./fetch-artifacts.sh  
   artifacts:
