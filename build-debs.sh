@@ -60,7 +60,7 @@ do
             DEB_COMPONENTS="main"
             ;;
         ubuntu*)
-            DEB_MIRROR="http://us.archive.ubuntu.com/pub/ubuntu"
+            DEB_MIRROR="http://us.archive.ubuntu.com/ubuntu"
             DEB_SOURCES="deb http://security.ubuntu.com/ubuntu DISTRO-security main"
             DEB_KEYRING="/usr/share/keyrings/ubuntu-archive-keyring.gpg"
             DEB_COMPONENTS="main universe"
