@@ -16,7 +16,7 @@ DISTVER["bionic"]="ubuntu18.04"
 DISTVER["cosmic"]="ubuntu18.10"
 
 declare -A OTHER
-OTHER["jessie"]="|deb http://mirrors.kernel.org/debian/ DISTRO-backports main"
+OTHER["jessie"]="|deb http://deb.debian.org/debian/ DISTRO-backports main"
 
 declare -A INSTALL_SED
 INSTALL_SED["trusty"]="/\(systemd\|modules-load\.d\)/ d"
@@ -52,13 +52,13 @@ do
     then
         case ${DISTVER[$release]} in
         debian*)
-            DEB_MIRROR="http://debian.lcs.mit.edu/debian"
-            DEB_SOURCES="deb http://security.debian.org/ DISTRO/updates main"
+            DEB_MIRROR="http://deb.debian.org/debian"
+            DEB_SOURCES="deb http://security.debian.org/debian-security DISTRO/updates main"
             DEB_KEYRING="/usr/share/keyrings/debian-archive-keyring.gpg"
             DEB_COMPONENTS="main"
             ;;
         ubuntu*)
-            DEB_MIRROR="http://ubuntu.media.mit.edu/ubuntu"
+            DEB_MIRROR="http://www.club.cc.cmu.edu/pub/ubuntu"
             DEB_SOURCES="deb http://security.ubuntu.com/ubuntu DISTRO-security main"
             DEB_KEYRING="/usr/share/keyrings/ubuntu-archive-keyring.gpg"
             DEB_COMPONENTS="main universe"

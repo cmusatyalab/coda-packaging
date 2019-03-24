@@ -3,7 +3,9 @@
 FROM gcc
 
 # Install Coda's build dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN echo "deb http://deb.debian.org/debian/ stretch-backports main" > /etc/apt/sources.list.d/backports.list \
+ && apt-get update \
+ && apt-get install -y --no-install-recommends \
     automake \
     bison \
     ccache \
@@ -21,4 +23,5 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libuv1-dev \
     systemd \
     clang-format-6.0 \
+ && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
