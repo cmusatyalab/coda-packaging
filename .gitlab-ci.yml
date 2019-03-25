@@ -29,17 +29,17 @@ stages:
       - build-deb-chroots.sh
       - coda-deb-build/*
 
-chroots:jessie:debian8.0:
+.chroots:jessie:debian8.0:
     <<: *chroots_template
 chroots:stretch:debian9.0:
     <<: *chroots_template
-chroots:trusty:ubuntu14.04:
+.chroots:trusty:ubuntu14.04:
     <<: *chroots_template
-chroots:xenial:ubuntu16.04:
+.chroots:xenial:ubuntu16.04:
     <<: *chroots_template
-chroots:bionic:ubuntu18.04:
+.chroots:bionic:ubuntu18.04:
     <<: *chroots_template
-chroots:cosmic:ubuntu18.10:
+.chroots:cosmic:ubuntu18.10:
     <<: *chroots_template
 
 
@@ -60,7 +60,7 @@ chroots:cosmic:ubuntu18.10:
     - docker push $CI_REGISTRY_IMAGE/$IMAGE
   dependencies: []
 
-prepare:docker_build:
+.prepare:docker_build:
   <<: *docker_template
   variables:
     <<: *docker_variables
@@ -69,7 +69,7 @@ prepare:docker_build:
     changes:
       - coda-build/*
 
-prepare:docker_deb_build:
+.prepare:docker_deb_build:
   <<: *docker_template
   variables:
     <<: *docker_variables
@@ -86,7 +86,7 @@ prepare:docker_deb_build:
       - build-deb-chroots.sh
       - coda-deb-build/*
 
-prepare:docker_rpm_build:
+.prepare:docker_rpm_build:
   <<: *docker_template
   variables:
     <<: *docker_variables

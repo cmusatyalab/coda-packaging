@@ -4,7 +4,7 @@
 #
 # rebuild iteration: 1
 #
-set -e
+set -ex
 
 # assume something like "jessie:debian8.0" optionally prefixed with "chroot:"
 DIST=${1#chroot:}
