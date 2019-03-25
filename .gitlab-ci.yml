@@ -2,14 +2,14 @@ image: registry.cmusatyalab.org/coda/coda-packaging/coda-deb-build:latest
 
 stages:
  - pbuilder
- - early
- - prepare
+ - chroots
+ - dockers
  - build
  - deploy
 
 # (re)build docker build container template
-.prepare:docker_template: &docker_template
-  stage: prepare
+.docker_template: &docker_template
+  stage: dockers
   image: docker:latest
   services:
     - docker:dind
@@ -38,19 +38,18 @@ pbuilder:
       - ubuntu-pbuilder/*
 
 .chroots_template: &chroots_template
-  stage: early
+  stage: chroots
   image: $CI_REGISTRY_IMAGE/ubuntu-pbuilder
   cache:
-    key: debian_chroots
+    key: "$CI_JOB_NAME"
     paths:
       - coda-deb-build/chroots/
+  script: ./build-deb-chroots.sh $CI_JOB_NAME
+  dependencies: []
   artifacts:
     paths:
       - coda-deb-build/chroots/
     expire_in: 1 day
-  script:
-    - apt-get update && apt-get install -y debian-archive-keyring pbuilder sudo && apt-get clean
-    - ./build-deb-chroots.sh $CI_JOB_NAME
   only:
     changes:
       - build-deb-chroots.sh
@@ -70,24 +69,7 @@ chroots:cosmic:ubuntu18.10:
     <<: *chroots_template
 
 
-# (re)build docker build containers
-.prepare:docker_template: &docker_template
-  stage: prepare
-  image: docker:latest
-  services:
-    - docker:dind
-  variables: &docker_variables
-    DOCKER_DRIVER: overlay
-    DOCKER_HOST: "tcp://localhost:2375"
-  script:
-    - docker info
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - docker pull $CI_REGISTRY_IMAGE/$IMAGE || true
-    - docker build --pull --cache-from $CI_REGISTRY_IMAGE/$IMAGE -t $CI_REGISTRY_IMAGE/$IMAGE $IMAGE
-    - docker push $CI_REGISTRY_IMAGE/$IMAGE
-  dependencies: []
-
-.prepare:docker_build:
+dockers:coda-build:
   <<: *docker_template
   variables:
     <<: *docker_variables
@@ -96,7 +78,7 @@ chroots:cosmic:ubuntu18.10:
     changes:
       - coda-build/*
 
-.prepare:docker_deb_build:
+dockers:coda-deb-build:
   <<: *docker_template
   variables:
     <<: *docker_variables
@@ -113,7 +95,7 @@ chroots:cosmic:ubuntu18.10:
       - build-deb-chroots.sh
       - coda-deb-build/*
 
-.prepare:docker_rpm_build:
+dockers:coda-rpm-build:
   <<: *docker_template
   variables:
     <<: *docker_variables

@@ -2,7 +2,7 @@
 #
 # Build Debian/Ubuntu pbuilder chroots
 #
-# rebuild iteration: 1
+# rebuild iteration: 2
 #
 set -e
 
