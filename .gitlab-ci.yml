@@ -11,39 +11,36 @@ stages:
   image: docker:latest
   services:
     - docker:dind
-  variables:
-    DOCKER_DRIVER: overlay
-    DOCKER_HOST: "tcp://localhost:2375"
   script:
     - docker info
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker pull $CI_REGISTRY_IMAGE:$IMAGE || true
     - docker build --pull --cache-from $CI_REGISTRY_IMAGE:$IMAGE -t $CI_REGISTRY_IMAGE:$IMAGE $IMAGE
     - docker push $CI_REGISTRY_IMAGE:$IMAGE
+  only:
+    changes:
+      - $IMAGE/*
 
 prepare:docker_build:
   <<: *docker_template
   variables:
+    DOCKER_DRIVER: overlay
+    DOCKER_HOST: "tcp://localhost:2375"
     IMAGE: coda-build
-  only:
-    changes:
-      - coda-build/*
 
 prepare:docker_deb_build:
   <<: *docker_template
   variables:
+    DOCKER_DRIVER: overlay
+    DOCKER_HOST: "tcp://localhost:2375"
     IMAGE: coda-deb-build
-  only:
-    changes:
-      - coda-deb-build/*
 
 prepare:docker_rpm_build:
   <<: *docker_template
   variables:
+    DOCKER_DRIVER: overlay
+    DOCKER_HOST: "tcp://localhost:2375"
     IMAGE: coda-rpm-build
-  only:
-    changes:
-      - coda-rpm-build/*
 
 
 # build Coda binary packages
