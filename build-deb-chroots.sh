@@ -14,7 +14,7 @@ ALL_DISTS="jessie:debian8.0 stretch:debian9.0 trusty:ubuntu14.04 xenial:ubuntu16
 
 ## enable backports to get more up-to-date versions
 declare -A OTHER
-OTHER["jessie"]="|deb http://deb.debian.org/debian/ DISTRO-backports main"
+#OTHER["jessie"]="|deb http://deb.debian.org/debian/ DISTRO-backports main"
 #OTHER["stretch"]="|deb http://deb.debian.org/debian/ DISTRO-backports main"
 
 # really want this everywhere for codatunnel, but at least trusty (and jessie?)
