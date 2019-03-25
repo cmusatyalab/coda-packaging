@@ -5,8 +5,9 @@
 
 set -e
 
-DIST=${1:-${CI_JOB_NAME#build:}}
-RPMROOTS="fedora-{28,29,30}-{i386,x86_64} epel-6-x86_64 epel-7-coda-x86_64"
+DIST=${1#build:}
+
+RPMROOTS="$(echo fedora-{28,29,30}-{i386,x86_64}) epel-6-x86_64 epel-7-coda-x86_64"
 
 sourcedir=$(pwd)
 

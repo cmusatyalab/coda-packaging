@@ -5,17 +5,9 @@
 
 set -e
 
-DIST=${1:-${CI_JOB_NAME#build:}}
+DIST=${1#build:}
 
-DEB_DISTS=$(echo {jessie,stretch,trusty,xenial,bionic,cosmic}-{amd64,i386})
-
-declare -A DISTVER
-DISTVER["jessie"]="debian8.0"
-DISTVER["stretch"]="debian9.0"
-DISTVER["trusty"]="ubuntu14.04"
-DISTVER["xenial"]="ubuntu16.04"
-DISTVER["bionic"]="ubuntu18.04"
-DISTVER["cosmic"]="ubuntu18.10"
+ALL_DISTS="jessie:debian8.0 stretch:debian9.0 trusty:ubuntu14.04 xenial:ubuntu16.04 bionic:ubuntu18.04 cosmic:ubuntu18:10"
 
 declare -A INSTALL_SED
 INSTALL_SED["trusty"]="/\(systemd\|modules-load\.d\)/ d"
@@ -32,18 +24,19 @@ version=$(dpkg-parsechangelog | sed -ne 's/Version: \(.*\)-[^-]*/\1/p')
 tmp=$(mktemp -dt debpkg-XXXXXXXX)
 cp coda-*.tar.xz $tmp/${project}_$version.orig.tar.xz
 
-
-for dist in ${DIST:-$DEB_DISTS}
+for dist in ${DIST:-$ALL_DISTS}
 do
-    release=$(echo $DIST | cut -d- -f1)
-    arch=$(echo $DIST | cut -d- -f2)
+  for arch in amd64 i386
+  do
+    release=$(echo $dist | cut -d: -f1)
+    distver=$(echo $dist | cut -d: -f2)
 
-    chroot_tgz=$chroots/$dist.tgz
+    chroot_tgz=$chroots/$release-$arch.tgz
 
     tar xf $tmp/${project}_$version.orig.tar.xz -C $tmp
     cp -a debian $tmp/$project-$version/
 
-    sed -i -e "s/DISTVER/${DISTVER[$release]}/g" \
+    sed -i -e "s/DISTVER/$distver/g" \
            -e "s/UNRELEASED/$release/g" \
         $tmp/$project-$version/debian/changelog
 
@@ -61,8 +54,8 @@ do
             --use-pdebuild-internal -- --basetgz "$chroot_tgz"
     )
     rm -r $tmp/$project-$version/
+  done
 done
 
 rm -r $tmp
-
 
