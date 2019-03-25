@@ -3,6 +3,7 @@
 artifacts.zip
 cache/
 coda-*.tar.?z
+coda-deb-build/chroots/
 debian/changelog
 dist/
 rpm/coda.spec

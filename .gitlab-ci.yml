@@ -39,11 +39,12 @@ prepare:docker_deb_build:
     - apt-get update && apt-get install -y debian-archive-keyring pbuilder sudo && apt-get clean
     - docker info
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - cd $IMAGE
     - docker run -d --rm -it --name debuilder $CI_REGISTRY_IMAGE/$IMAGE
-    - docker cp debuilder:/src/chroots $IMAGE/chroots || true
+    - docker cp debuilder:/src/chroots . || true
     - docker stop debuilder || true
-    - ( cd $IMAGE && ./build-deb-chroot.sh )
-    - docker build --pull --cache-from $CI_REGISTRY_IMAGE/$IMAGE -t $CI_REGISTRY_IMAGE/$IMAGE $IMAGE
+    - ./build-deb-chroot.sh
+    - docker build --pull --cache-from $CI_REGISTRY_IMAGE/$IMAGE -t $CI_REGISTRY_IMAGE/$IMAGE .
     - docker push $CI_REGISTRY_IMAGE/$IMAGE
   only:
     changes:
