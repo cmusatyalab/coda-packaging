@@ -20,7 +20,7 @@ declare -A OTHER
 OTHER["jessie"]="|deb http://deb.debian.org/debian/ DISTRO-backports main"
 
 declare -A EXTRA_PKGS
-EXTRA_PKGS["jessie"]="libuv1-dev"
+#EXTRA_PKGS["jessie"]="libuv1-dev"
 EXTRA_PKGS["stretch"]="libuv1-dev"
 EXTRA_PKGS["xenial"]="libuv1-dev"
 EXTRA_PKGS["bionic"]="libuv1-dev"
