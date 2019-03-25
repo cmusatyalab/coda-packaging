@@ -6,6 +6,42 @@ stages:
  - build
  - deploy
 
+# can't run pbuilder --create inside of docker build because we need privileged
+# mode but we also can't run it in the docker:latest container because it isn't
+# based on debian so we need another stage just to build the chroots
+.chroots_template: &chroots_template
+  stage: early
+  image: ubuntu:bionic
+  cache:
+    key: debian_chroots
+    paths:
+      - coda-deb-build/chroots/
+  artifacts:
+    paths:
+      - coda-deb-build/chroots/
+    expire_in: 1 day
+  script:
+    - apt-get update && apt-get install -y debian-archive-keyring pbuilder sudo && apt-get clean
+    - ./build-deb-chroots.sh $CI_JOB_NAME
+  only:
+    changes:
+      - build-deb-chroots.sh
+      - coda-deb-build/*
+
+chroots:jessie:debian8.0:
+    <<: *chroots_template
+chroots:stretch:debian9.0:
+    <<: *chroots_template
+chroots:trusty:ubuntu14.04:
+    <<: *chroots_template
+chroots:xenial:ubuntu16.04:
+    <<: *chroots_template
+chroots:bionic:ubuntu18.04:
+    <<: *chroots_template
+chroots:cosmic:ubuntu18.10:
+    <<: *chroots_template
+
+
 # (re)build docker build containers
 .prepare:docker_template: &docker_template
   stage: prepare
@@ -21,6 +57,7 @@ stages:
     - docker pull $CI_REGISTRY_IMAGE/$IMAGE || true
     - docker build --pull --cache-from $CI_REGISTRY_IMAGE/$IMAGE -t $CI_REGISTRY_IMAGE/$IMAGE $IMAGE
     - docker push $CI_REGISTRY_IMAGE/$IMAGE
+  dependencies: []
 
 prepare:docker_build:
   <<: *docker_template
@@ -31,36 +68,21 @@ prepare:docker_build:
     changes:
       - coda-build/*
 
-# can't run pbuilder --create inside of docker build because we need privileged
-# mode but we can't run it in the docker:latest container because it isn't
-# debian so we need another stage just to build the chroots
-prepare:debian_chroots:
-  stage: early
-  image: ubuntu:bionic
-  cache:
-    key: debian_chroots
-    paths:
-      - coda-deb-build/chroots
-  script:
-    - apt-get update && apt-get install -y debian-archive-keyring pbuilder sudo && apt-get clean
-    - cd coda-deb-build
-    - ./build-deb-chroot.sh
-  only:
-    changes:
-      - coda-deb-build/*
-
 prepare:docker_deb_build:
   <<: *docker_template
   variables:
     <<: *docker_variables
     IMAGE: coda-deb-build
-  cache:
-    key: debian_chroots
-    policy: pull
-    paths:
-      - coda-deb-build/chroots
+  dependencies:
+    - chroot:jessie:debian8.0
+    - chroot:stretch:debian9.0
+    - chroot:trusty:ubuntu14.04
+    - chroot:xenial:ubuntu16.04
+    - chroot:bionic:ubuntu18.04
+    - chroot:cosmic:ubuntu18.10
   only:
     changes:
+      - build-deb-chroots.sh
       - coda-deb-build/*
 
 prepare:docker_rpm_build:
