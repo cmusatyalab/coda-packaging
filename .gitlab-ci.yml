@@ -47,7 +47,7 @@ prepare:docker_rpm_build:
 
 
 # build Coda binary packages
-setup:
+.setup:
   stage: prepare
   variables:
     REF: master
@@ -82,70 +82,70 @@ setup:
       - dist/*.rpm
     expire_in: 1 week
 
-deploy:
+.deploy:
   stage: deploy
   script:
     - echo "copy artifacts to coda repos"
   when: manual
 
 
-build:jessie-amd64:
+.build:jessie-amd64:
   <<: *build_deb
 
-build:jessie-i386:
+.build:jessie-i386:
   <<: *build_deb
 
-build:stretch-amd64:
+.build:stretch-amd64:
   <<: *build_deb
 
-build:stretch-i386:
+.build:stretch-i386:
   <<: *build_deb
 
-build:trusty-amd64:
+.build:trusty-amd64:
   <<: *build_deb
 
-build:trusty-i386:
+.build:trusty-i386:
   <<: *build_deb
 
-build:xenial-amd64:
+.build:xenial-amd64:
   <<: *build_deb
 
-build:xenial-i386:
+.build:xenial-i386:
   <<: *build_deb
 
-build:bionic-amd64:
+.build:bionic-amd64:
   <<: *build_deb
 
-build:bionic-i386:
+.build:bionic-i386:
   <<: *build_deb
 
-build:cosmic-amd64:
+.build:cosmic-amd64:
   <<: *build_deb
 
-build:cosmic-i386:
+.build:cosmic-i386:
   <<: *build_deb
 
-build:fedora-28-x86_64:
+.build:fedora-28-x86_64:
   <<: *build_rpm
 
-build:fedora-28-i386:
+.build:fedora-28-i386:
   <<: *build_rpm
 
-build:fedora-29-x86_64:
+.build:fedora-29-x86_64:
   <<: *build_rpm
 
-build:fedora-29-i386:
+.build:fedora-29-i386:
   <<: *build_rpm
 
-build:fedora-30-x86_64:
+.build:fedora-30-x86_64:
   <<: *build_rpm
 
-build:fedora-30-i386:
+.build:fedora-30-i386:
   <<: *build_rpm
 
-build:epel-6-x86_64:
+.build:epel-6-x86_64:
   <<: *build_rpm
 
-build:epel-7-coda-x86_64:
+.build:epel-7-coda-x86_64:
   <<: *build_rpm
 

@@ -8,5 +8,6 @@ VOLUME [ "/src" ]
 WORKDIR /src
 
 COPY build-deb-chroot.sh .
+
 RUN ./build-deb-chroot.sh
 
