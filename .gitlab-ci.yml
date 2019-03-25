@@ -1,6 +1,7 @@
 image: registry.cmusatyalab.org/coda/coda-packaging/coda-deb-build:latest
 
 stages:
+ - early
  - prepare
  - build
  - deploy
@@ -30,22 +31,34 @@ prepare:docker_build:
     changes:
       - coda-build/*
 
+# can't run pbuilder --create inside of docker build because we need privileged
+# mode but we can't run it in the docker:latest container because it isn't
+# debian so we need another stage just to build the chroots
+prepare:debian_chroots:
+  stage: early
+  image: ubuntu:bionic
+  cache:
+    key: debian_chroots
+    paths:
+      - coda-deb-build/chroots
+  script:
+    - apt-get update && apt-get install -y debian-archive-keyring pbuilder sudo && apt-get clean
+    - cd coda-deb-build
+    - ./build-deb-chroot.sh
+  only:
+    changes:
+      - coda-deb-build/*
+
 prepare:docker_deb_build:
   <<: *docker_template
   variables:
     <<: *docker_variables
     IMAGE: coda-deb-build
-  script:
-    - apt-get update && apt-get install -y debian-archive-keyring pbuilder sudo && apt-get clean
-    - docker info
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - cd $IMAGE
-    - docker run -d --rm -it --name debuilder $CI_REGISTRY_IMAGE/$IMAGE
-    - docker cp debuilder:/src/chroots . || true
-    - docker stop debuilder || true
-    - ./build-deb-chroot.sh
-    - docker build --pull --cache-from $CI_REGISTRY_IMAGE/$IMAGE -t $CI_REGISTRY_IMAGE/$IMAGE .
-    - docker push $CI_REGISTRY_IMAGE/$IMAGE
+  cache:
+    key: debian_chroots
+    policy: pull
+    paths:
+      - coda-deb-build/chroots
   only:
     changes:
       - coda-deb-build/*
