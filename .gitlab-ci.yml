@@ -6,6 +6,7 @@ stages:
  - build
  - deploy
 
+
 # can't run pbuilder --create inside of docker build because we need privileged
 # mode but we also can't run it in the docker:latest container because it isn't
 # based on debian so we need another stage just to build the chroots
@@ -74,12 +75,12 @@ prepare:docker_deb_build:
     <<: *docker_variables
     IMAGE: coda-deb-build
   dependencies:
-    - chroot:jessie:debian8.0
-    - chroot:stretch:debian9.0
-    - chroot:trusty:ubuntu14.04
-    - chroot:xenial:ubuntu16.04
-    - chroot:bionic:ubuntu18.04
-    - chroot:cosmic:ubuntu18.10
+    - chroots:jessie:debian8.0
+    - chroots:stretch:debian9.0
+    - chroots:trusty:ubuntu14.04
+    - chroots:xenial:ubuntu16.04
+    - chroots:bionic:ubuntu18.04
+    - chroots:cosmic:ubuntu18.10
   only:
     changes:
       - build-deb-chroots.sh
@@ -107,6 +108,7 @@ prepare:docker_rpm_build:
       - debian/
       - "*.src.rpm"
     expire_in: 1 week
+  dependencies: []
 
 
 .build:deb: &build_deb
@@ -117,6 +119,22 @@ prepare:docker_rpm_build:
     paths:
       - dist/
     expire_in: 1 week
+  dependencies:
+    - setup
+
+.build:jessie:debian8.0:
+  <<: *build_deb
+.build:stretch:debian9.0:
+  <<: *build_deb
+.build:trusty:ubuntu14.04:
+  <<: *build_deb
+.build:xenial:ubuntu16.04:
+  <<: *build_deb
+.build:bionic:ubuntu18.04:
+  <<: *build_deb
+.build:cosmic:ubuntu18:10:
+  <<: *build_deb
+
 
 .build:rpm: &build_rpm
   stage: build
@@ -130,71 +148,45 @@ prepare:docker_rpm_build:
     paths:
       - dist/*.rpm
     expire_in: 1 week
+  dependencies:
+    - setup
+
+.build:fedora-28-x86_64:
+  <<: *build_rpm
+.build:fedora-28-i386:
+  <<: *build_rpm
+.build:fedora-29-x86_64:
+  <<: *build_rpm
+.build:fedora-29-i386:
+  <<: *build_rpm
+.build:fedora-30-x86_64:
+  <<: *build_rpm
+.build:fedora-30-i386:
+  <<: *build_rpm
+.build:epel-6-x86_64:
+  <<: *build_rpm
+.build:epel-7-coda-x86_64:
+  <<: *build_rpm
+
 
 .deploy:
   stage: deploy
   script:
     - echo "copy artifacts to coda repos"
+  dependencies:
+    - build:jessie:debian8.0
+    - build:stretch:debian9.0
+    - build:trusty:ubuntu14.04
+    - build:xenial:ubuntu16.04
+    - build:bionic:ubuntu18.04
+    - build:cosmic:ubuntu18.10
+    - build:fedora-28-x86_64
+    - build:fedora-28-i386
+    - build:fedora-29-x86_64
+    - build:fedora-29-i386
+    - build:fedora-30-x86_64
+    - build:fedora-30-i386
+    - build:epel-6-x86_64
+    - build:epel-7-coda-x86_64
   when: manual
-
-
-.build:jessie-amd64:
-  <<: *build_deb
-
-.build:jessie-i386:
-  <<: *build_deb
-
-.build:stretch-amd64:
-  <<: *build_deb
-
-.build:stretch-i386:
-  <<: *build_deb
-
-.build:trusty-amd64:
-  <<: *build_deb
-
-.build:trusty-i386:
-  <<: *build_deb
-
-.build:xenial-amd64:
-  <<: *build_deb
-
-.build:xenial-i386:
-  <<: *build_deb
-
-.build:bionic-amd64:
-  <<: *build_deb
-
-.build:bionic-i386:
-  <<: *build_deb
-
-.build:cosmic-amd64:
-  <<: *build_deb
-
-.build:cosmic-i386:
-  <<: *build_deb
-
-.build:fedora-28-x86_64:
-  <<: *build_rpm
-
-.build:fedora-28-i386:
-  <<: *build_rpm
-
-.build:fedora-29-x86_64:
-  <<: *build_rpm
-
-.build:fedora-29-i386:
-  <<: *build_rpm
-
-.build:fedora-30-x86_64:
-  <<: *build_rpm
-
-.build:fedora-30-i386:
-  <<: *build_rpm
-
-.build:epel-6-x86_64:
-  <<: *build_rpm
-
-.build:epel-7-coda-x86_64:
-  <<: *build_rpm
 
