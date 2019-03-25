@@ -7,7 +7,7 @@ set -e
 
 DIST=${1:-${CI_JOB_NAME#build:}}
 
-DEB_DISTS="{jessie,stretch,trusty,xenial,bionic,cosmic}-{amd64,i386}"
+DEB_DISTS=$(echo {jessie,stretch,trusty,xenial,bionic,cosmic}-{amd64,i386})
 
 declare -A DISTVER
 DISTVER["jessie"]="debian8.0"
@@ -39,7 +39,6 @@ do
     arch=$(echo $DIST | cut -d- -f2)
 
     chroot_tgz=$chroots/$dist.tgz
-    extra_pkgs="debootstrap fakeroot pbuilder wget debhelper dh-python dh-systemd libreadline-dev libncurses5-dev liblua5.1-0-dev flex bison pkg-config python automake systemd netcat ${EXTRA_PKGS[$release]}"
 
     tar xf $tmp/${project}_$version.orig.tar.xz -C $tmp
     cp -a debian $tmp/$project-$version/
