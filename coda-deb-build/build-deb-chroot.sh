@@ -2,6 +2,8 @@
 #
 # Build Debian/Ubuntu pbuilder chroots
 #
+# rebuild iteration: 0
+#
 set -e
 
 DIST=$1
