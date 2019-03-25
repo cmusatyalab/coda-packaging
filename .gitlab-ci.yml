@@ -36,13 +36,13 @@ prepare:docker_deb_build:
     <<: *docker_variables
     IMAGE: coda-deb-build
   script:
+    - apt-get update && apt-get install -y debian-archive-keyring pbuilder sudo && apt-get clean
     - docker info
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - apt-get update && apt-get install -y debian-archive-keyring pbuilder sudo && apt-get clean
     - docker run -d --rm -it --name debuilder $CI_REGISTRY_IMAGE/$IMAGE
     - docker cp debuilder:/src/chroots $IMAGE/chroots || true
     - docker stop debuilder || true
-    - ( cd $IMAGE && ./build-deb-chroots.sh )
+    - ( cd $IMAGE && ./build-deb-chroot.sh )
     - docker build --pull --cache-from $CI_REGISTRY_IMAGE/$IMAGE -t $CI_REGISTRY_IMAGE/$IMAGE $IMAGE
     - docker push $CI_REGISTRY_IMAGE/$IMAGE
   only:
