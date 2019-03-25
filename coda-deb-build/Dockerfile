@@ -11,3 +11,5 @@ COPY build-deb-chroot.sh .
 
 RUN ./build-deb-chroot.sh
 
+RUN echo "updating chroots, iteration 0" \
+ && ./build-deb-chroot.sh
