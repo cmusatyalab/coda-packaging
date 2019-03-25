@@ -1,18 +1,45 @@
 image: registry.cmusatyalab.org/coda/coda-packaging/coda-deb-build:latest
 
 stages:
+ - pbuilder
  - early
  - prepare
  - build
  - deploy
 
+# (re)build docker build container template
+.prepare:docker_template: &docker_template
+  stage: prepare
+  image: docker:latest
+  services:
+    - docker:dind
+  variables: &docker_variables
+    DOCKER_DRIVER: overlay
+    DOCKER_HOST: "tcp://localhost:2375"
+  script:
+    - docker info
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker pull $CI_REGISTRY_IMAGE/$IMAGE || true
+    - docker build --pull --cache-from $CI_REGISTRY_IMAGE/$IMAGE -t $CI_REGISTRY_IMAGE/$IMAGE $IMAGE
+    - docker push $CI_REGISTRY_IMAGE/$IMAGE
+  dependencies: []
 
 # can't run pbuilder --create inside of docker build because we need privileged
 # mode but we also can't run it in the docker:latest container because it isn't
-# based on debian so we need another stage just to build the chroots
+# based on debian so we need extra stages just to build the chroots
+pbuilder:
+  <<: *docker_template
+  stage: pbuilder
+  variables:
+    <<: *docker_variables
+    IMAGE: ubuntu-pbuilder
+  only:
+    changes:
+      - ubuntu-pbuilder/*
+
 .chroots_template: &chroots_template
   stage: early
-  image: ubuntu:bionic
+  image: $CI_REGISTRY_IMAGE/ubuntu-pbuilder
   cache:
     key: debian_chroots
     paths:
@@ -29,17 +56,17 @@ stages:
       - build-deb-chroots.sh
       - coda-deb-build/*
 
-.chroots:jessie:debian8.0:
+chroots:jessie:debian8.0:
     <<: *chroots_template
 chroots:stretch:debian9.0:
     <<: *chroots_template
-.chroots:trusty:ubuntu14.04:
+chroots:trusty:ubuntu14.04:
     <<: *chroots_template
-.chroots:xenial:ubuntu16.04:
+chroots:xenial:ubuntu16.04:
     <<: *chroots_template
-.chroots:bionic:ubuntu18.04:
+chroots:bionic:ubuntu18.04:
     <<: *chroots_template
-.chroots:cosmic:ubuntu18.10:
+chroots:cosmic:ubuntu18.10:
     <<: *chroots_template
 
 

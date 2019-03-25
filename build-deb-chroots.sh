@@ -4,10 +4,10 @@
 #
 # rebuild iteration: 1
 #
-set -ex
+set -e
 
 # assume something like "jessie:debian8.0" optionally prefixed with "chroot:"
-DIST=${1#chroot:}
+DIST=${1#chroots:}
 
 # if a specific release wasn't given, build all releases (will take a while.....)
 ALL_DISTS="jessie:debian8.0 stretch:debian9.0 trusty:ubuntu14.04 xenial:ubuntu16.04 bionic:ubuntu18.04 cosmic:ubuntu18:10"
