@@ -12,7 +12,7 @@ ALL_DISTS="jessie:debian8.0 stretch:debian9.0 trusty:ubuntu14.04 xenial:ubuntu16
 declare -A INSTALL_SED
 INSTALL_SED["trusty"]="/\(systemd\|modules-load\.d\)/ d"
 
-chroots=$(pwd)/chroots
+chroots=/src/chroots
 mkdir -p "$chroots"
 
 distdir=$(pwd)/dist

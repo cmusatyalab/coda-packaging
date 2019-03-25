@@ -14,3 +14,4 @@ RUN useradd -u 1000 -G mock builder \
 
 VOLUME [ "/src" ]
 WORKDIR /src
+

@@ -25,3 +25,4 @@ RUN echo "deb http://deb.debian.org/debian/ stretch-backports main" > /etc/apt/s
     clang-format-6.0 \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
+

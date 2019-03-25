@@ -32,10 +32,11 @@
     changes:
       - build-deb-chroots.sh
       - coda-deb-build/*
+      - ubuntu-pbuilder/*
 
 .build_deb:
   stage: build
-  image: registry.cmusatyalab.org/coda/coda-packaging/coda-deb-build:latest
+  image: $CI_REGISTRY_IMAGE/coda-deb-build:latest
   script: ./build-debs.sh $CI_JOB_NAME
   artifacts:
     paths:
@@ -46,7 +47,7 @@
 
 .build_rpm:
   stage: build
-  image: registry.cmusatyalab.org/coda/coda-packaging/coda-rpm-build:latest
+  image: $CI_REGISTRY_IMAGE/coda-rpm-build:latest
   cache:
     key: "$CI_JOB_NAME"
     paths:

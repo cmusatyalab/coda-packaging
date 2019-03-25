@@ -1,4 +1,4 @@
-image: registry.cmusatyalab.org/coda/coda-packaging/coda-deb-build:latest
+image: $CI_REGISTRY_IMAGE/ubuntu-pbuilder:latest
 
 stages:
  - dockers
@@ -80,11 +80,13 @@ dockers:coda-deb-build:
     changes:
       - build-deb-chroots.sh
       - coda-deb-build/*
+      - ubuntu-pbuilder/*
 
 fetch-coda-source:
   stage: prepare
+  image: $CI_REGISTRY_IMAGE/ubuntu-pbuilder:latest
   variables:
-    REF: master
+    CODA_REF: master
   script: ./setup-release.sh
   artifacts:
     paths:
