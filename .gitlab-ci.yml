@@ -95,44 +95,50 @@ fetch-coda-source:
       - "*.src.rpm"
     expire_in: 1 week
   dependencies: []
+  only:
+    refs:
+      - api
+      - pipelines
+      - triggers
+      - web
 
 
 ### STEP 4 - build Coda binary packages
 
 build:jessie:debian8.0:
   extends: .build_deb
-.build:stretch:debian9.0:
+build:stretch:debian9.0:
   extends: .build_deb
-.build:trusty:ubuntu14.04:
+build:trusty:ubuntu14.04:
   extends: .build_deb
-.build:xenial:ubuntu16.04:
+build:xenial:ubuntu16.04:
   extends: .build_deb
-.build:bionic:ubuntu18.04:
+build:bionic:ubuntu18.04:
   extends: .build_deb
-.build:cosmic:ubuntu18:10:
+build:cosmic:ubuntu18:10:
   extends: .build_deb
 
 build:fedora-28-x86_64:
   extends: .build_rpm
-.build:fedora-28-i386:
+build:fedora-28-i386:
   extends: .build_rpm
-.build:fedora-29-x86_64:
+build:fedora-29-x86_64:
   extends: .build_rpm
-.build:fedora-29-i386:
+build:fedora-29-i386:
   extends: .build_rpm
-.build:fedora-30-x86_64:
+build:fedora-30-x86_64:
   extends: .build_rpm
-.build:fedora-30-i386:
+build:fedora-30-i386:
   extends: .build_rpm
-.build:epel-6-x86_64:
+build:epel-6-x86_64:
   extends: .build_rpm
-.build:epel-7-coda-x86_64:
+build:epel-7-coda-x86_64:
   extends: .build_rpm
 
 
 # STEP 5 - collect built binaries and push to repos@coda
 
-.deploy:
+deploy:
   stage: deploy
   script:
     - echo "copy artifacts to coda repos"
