@@ -95,12 +95,6 @@ fetch-coda-source:
       - "*.src.rpm"
     expire_in: 1 week
   dependencies: []
-  only:
-    refs:
-      - api
-      - pipelines
-      - triggers
-      - web
 
 
 ### STEP 4 - build Coda binary packages
