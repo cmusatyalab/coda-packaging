@@ -115,7 +115,7 @@ build:xenial:ubuntu16.04:
   extends: .build_deb
 build:bionic:ubuntu18.04:
   extends: .build_deb
-build:cosmic:ubuntu18:10:
+build:cosmic:ubuntu18.10:
   extends: .build_deb
 
 build:fedora-28-x86_64:
