@@ -1,156 +1,24 @@
-image: $CI_REGISTRY_IMAGE/ubuntu-pbuilder:latest
+image: docker:latest
+services:
+  - docker:dind
 
 stages:
- - dockers
- - chroots
- - prepare
  - build
- - deploy
 
-include:
-  - local: "/.gitlab-ci-templates.yml"
-
-### STEP 1 - build Ubuntu based docker image with pbuilder
-# ubuntu-pbuilder   used to build pbuilder chroots
-# coda-build        used by coda.git's source archive build
-# coda-rpm-build    used to build .rpm binary packages
-
-# can't run pbuilder --create inside of docker build because we need privileged
-# mode but we also can't run it in the docker:latest container because it isn't
-# based on debian so we need extra stages to build the chroots for .deb builds
-dockers:ubuntu-pbuilder:
-  extends: .docker_template
+coda_build_image:
+  stage: build
   variables:
-    IMAGE: ubuntu-pbuilder
-  only:
-    changes:
-      - ubuntu-pbuilder/*
-
-dockers:coda-build:
-  extends: .docker_template
-  variables:
+    DOCKER_DRIVER: overlay
+    DOCKER_HOST: "tcp://localhost:2375"
     IMAGE: coda-build
-  only:
-    changes:
-      - coda-build/*
-
-dockers:coda-rpm-build:
-  extends: .docker_template
-  variables:
-    IMAGE: coda-rpm-build
-  only:
-    changes:
-      - coda-rpm-build/*
-
-
-### STEP 2 - build chroots for supported Debian and Ubuntu releases
-
-chroots:jessie:debian8.0:
-  extends: .chroots_template
-chroots:stretch:debian9.0:
-  extends: .chroots_template
-chroots:trusty:ubuntu14.04:
-  extends: .chroots_template
-chroots:xenial:ubuntu16.04:
-  extends: .chroots_template
-chroots:bionic:ubuntu18.04:
-  extends: .chroots_template
-chroots:cosmic:ubuntu18.10:
-  extends: .chroots_template
-
-
-### STEP 3 - final preparations for actual binary package build
-# coda-deb-build    container used to build .deb binary packages
-# fetch-coda-source grab source artifacts from coda.git build
-
-dockers:coda-deb-build:
-  extends: .docker_template
-  stage: prepare
-  variables:
-    IMAGE: coda-deb-build
-  # need to pull in the previously built chroots
-  dependencies:
-    - chroots:jessie:debian8.0
-    - chroots:stretch:debian9.0
-    - chroots:trusty:ubuntu14.04
-    - chroots:xenial:ubuntu16.04
-    - chroots:bionic:ubuntu18.04
-    - chroots:cosmic:ubuntu18.10
-  only:
-    changes:
-      - build-deb-chroots.sh
-      - coda-deb-build/*
-      - ubuntu-pbuilder/*
-
-fetch-coda-source:
-  stage: prepare
-  image: $CI_REGISTRY_IMAGE/ubuntu-pbuilder:latest
-  variables:
-    CODA_REF: master
-  script: ./setup-release.sh
-  artifacts:
-    paths:
-      - coda-*.tar.?z
-      - debian/
-      - "*.src.rpm"
-    expire_in: 1 week
-  dependencies: []
-
-
-### STEP 4 - build Coda binary packages
-
-build:jessie:debian8.0:
-  extends: .build_deb
-build:stretch:debian9.0:
-  extends: .build_deb
-build:trusty:ubuntu14.04:
-  extends: .build_deb
-build:xenial:ubuntu16.04:
-  extends: .build_deb
-build:bionic:ubuntu18.04:
-  extends: .build_deb
-build:cosmic:ubuntu18.10:
-  extends: .build_deb
-
-build:fedora-28-x86_64:
-  extends: .build_rpm
-build:fedora-28-i386:
-  extends: .build_rpm
-build:fedora-29-x86_64:
-  extends: .build_rpm
-build:fedora-29-i386:
-  extends: .build_rpm
-build:fedora-30-x86_64:
-  extends: .build_rpm
-build:fedora-30-i386:
-  extends: .build_rpm
-build:epel-6-x86_64:
-  extends: .build_rpm
-build:epel-7-coda-x86_64:
-  extends: .build_rpm
-
-
-# STEP 5 - collect built binaries and push to repos@coda
-
-deploy:
-  stage: deploy
   script:
-    - echo "copy artifacts to coda repos"
-  dependencies:
-    - fetch-coda-source
-    - build:jessie:debian8.0
-    - build:stretch:debian9.0
-    - build:trusty:ubuntu14.04
-    - build:xenial:ubuntu16.04
-    - build:bionic:ubuntu18.04
-    - build:cosmic:ubuntu18.10
-    - build:fedora-28-x86_64
-    - build:fedora-28-i386
-    - build:fedora-29-x86_64
-    - build:fedora-29-i386
-    - build:fedora-30-x86_64
-    - build:fedora-30-i386
-    - build:epel-6-x86_64
-    - build:epel-7-coda-x86_64
-  when: manual
+    - docker info
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker pull $CI_REGISTRY_IMAGE/$IMAGE || true
+    - docker build --pull --cache-from $CI_REGISTRY_IMAGE/$IMAGE -t $CI_REGISTRY_IMAGE/$IMAGE $IMAGE
+    - docker push $CI_REGISTRY_IMAGE/$IMAGE
+  only:
+    changes:
+      - .gitlab-ci.yml
+      - coda-build/*
 
