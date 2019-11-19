@@ -1,10 +1,10 @@
 #
 # see also:  https://github.com/mmornati/docker-mock-rpmbuilder
 #
-FROM fedora:29
+FROM fedora:latest
 
 RUN yum install -y --setopt="tsflag=nodocs" \
-    make mock rpmdevtools rpm-build \
+    make mock pv rpmdevtools rpm-build \
  && yum clean all \
  && rm -rf /var/cache/yum
 

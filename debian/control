@@ -3,8 +3,8 @@ Section: net
 Priority: extra
 Maintainer: Jan Harkes <jaharkes@cs.cmu.edu>
 Standards-Version: 3.9.5
-Build-Depends: debhelper (>= 9), dh-python, dh-systemd (>= 1.5),
- libreadline-dev, libncurses5-dev, liblua5.1-0-dev, libuv1-dev | netcat,
+Build-Depends: debhelper (>= 10), dh-python, dh-systemd (>= 1.5),
+ libreadline-dev, libncurses5-dev, liblua5.1-0-dev, libuv1-dev,
  flex, bison, pkg-config, python, automake, systemd | netcat
 
 Package: coda-common
@@ -22,7 +22,7 @@ Description: Common libraries for the Coda distributed file system
 Package: coda-client
 Architecture: linux-any
 Depends: coda-common (= ${binary:Version}), ${shlibs:Depends}, ${python:Depends}, ${perl:Depends}, ${misc:Depends}
-Suggests: python-gtk2
+Suggests: python3-gi
 Pre-Depends: debconf (>= 0.2.17)
 Homepage: http://coda.cs.cmu.edu/
 Description: Client for the Coda distributed file system

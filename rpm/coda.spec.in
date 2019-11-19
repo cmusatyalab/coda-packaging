@@ -1,6 +1,6 @@
 Name:           coda
 Version:        %%VERSION%%
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Coda distributed file system
 Group:          System Environment/Daemons
 License:        GPLv2
@@ -64,7 +64,7 @@ as the volume utilities.
 Summary:	Graphical tray monitor for the Coda distributed file system
 Group:          System Environment/Daemons
 Requires:       coda-client = %{version}-%{release}
-Requires:	pygtk2 notify-python
+Requires:	pygobject3 python3-gobject
 
 %description gcodacon
 This package contains gcodacon, a graphical tray monitor for the Coda
@@ -154,7 +154,7 @@ fi
 
 %if ! 0%{?el6}
 %postun client
-%systemd_postun
+%systemd_postun coda-client.service
 %endif
 
 %files client
