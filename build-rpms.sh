@@ -19,7 +19,7 @@ if [ "$1" = "--update" ] ; then
     shift
 fi
 
-DIST=${1}
+DIST="$@"
 
 RPMROOTS="$(echo fedora-{29,30,31}-{x86_64,i386}) epel-6-x86_64 epel-7-coda-x86_64"
 
@@ -27,7 +27,7 @@ if [ -n "${DIST}" ] ; then
     for dist in ${DIST} ; do
         known=0
         for root in ${RPMROOTS} ; do
-            [ "${DIST}" = "$root" ] && known=1
+            [ "$dist" = "$root" ] && known=1
         done
         if [ $known -eq 0 ] ; then
             echo "Unknown Fedora/RHEL/CentOS release: $dist"

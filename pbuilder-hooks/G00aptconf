@@ -1,0 +1,8 @@
+#!/bin/sh
+
+. /etc/os-release
+
+# disable verification on Jessie (archives.debian.org/jessie-backports)
+if [ "$VERSION_ID" -eq 8 ] ; then
+    echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/10-nocheckvalid
+fi

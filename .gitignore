@@ -2,6 +2,8 @@
 /output
 artifacts.zip
 cache/
+chroots-deb/
+chroots-rpm/
 coda-*.tar.?z
 coda-deb-build/chroots/
 debian/changelog

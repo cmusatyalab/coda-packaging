@@ -1,5 +1,8 @@
 #!/bin/sh
 
+DEB_RELEASES="jessie stretch buster trusty xenial bionic disco eoan"
+RPM_RELEASES="$(echo fedora-{29,30,31}-{x86_64,i386}) epel-6-x86_64 epel-7-coda-x86_64"
+
 ( cd build-container-ubuntu &&
   docker build -t build-container-ubuntu:latest . )
 
@@ -7,15 +10,49 @@
   docker build -t build-container-fedora:latest . )
 
 ## $1 can be 'update' to update existing chroots
+UPDATE=""
+if [ "$1" = "--update" ] ; then
+    UPDATE="--update"
+    shift
+fi
 
-docker run --rm -it \
-    -v $(pwd):/src \
-    --privileged \
-    --entrypoint ./build-debs.sh \
-    build-container-ubuntu:latest --in-docker $@
+ALL_RELEASES="$DEB_RELEASES $RPM_RELEASES"
+DIST="${@:-$ALL_RELEASES}"
 
-docker run --rm -it \
-    -v $(pwd):/src \
-    --privileged \
-    --entrypoint ./build-rpms.sh \
-    build-container-fedora:latest --in-docker $@
+DEB_DIST=
+RPM_DIST=
+for dist in ${DIST} ; do
+    known=0
+    for release in ${DEB_RELEASES} ; do
+        if [ "$dist" = "$release" ] ; then
+            DEB_DIST="$DEB_DIST $dist"
+            known=1
+        fi
+    done
+    for release in ${RPM_RELEASES} ; do
+        if [ "$dist" = "$release" ] ; then
+            RPM_DIST="$RPM_DIST $dist"
+            known=1
+        fi
+    done
+    if [ "$known" -eq 0 ] ; then
+        echo "Unknown release $dist"
+        exit 0
+    fi
+done
+
+if [ -n "$DEB_DIST" ] ; then
+    docker run --rm -it \
+        -v $(pwd):/src \
+        --privileged \
+        --entrypoint ./build-debs.sh \
+        build-container-ubuntu:latest --in-docker $UPDATE $DEB_DIST
+fi
+
+if [ -n "$RPM_DIST" ] ; then
+    docker run --rm -it \
+        -v $(pwd):/src \
+        --privileged \
+        --entrypoint ./build-rpms.sh \
+        build-container-fedora:latest --in-docker $RPM_DIST
+fi
