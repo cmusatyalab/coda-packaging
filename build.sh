@@ -1,7 +1,7 @@
 #!/bin/sh
 
 DEB_RELEASES="jessie stretch buster trusty xenial bionic disco eoan"
-RPM_RELEASES="$(echo fedora-{29,30,31}-{x86_64,i386}) epel-6-x86_64 epel-7-coda-x86_64"
+RPM_RELEASES="$(/bin/bash -c 'echo fedora-{29,30,31}-{x86_64,i386}') epel-6-x86_64 epel-7-coda-x86_64"
 
 ( cd build-container-ubuntu &&
   docker build -t build-container-ubuntu:latest . )
