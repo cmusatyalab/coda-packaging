@@ -21,11 +21,11 @@ usr/bin/removeinc
 usr/bin/repair
 usr/bin/coda_replay
 usr/bin/spy
+usr/bin/volmunge
 usr/bin/xaskuser
 usr/bin/xfrepair
 usr/sbin/venus
 usr/sbin/coda-client-setup
-usr/sbin/volmunge
 usr/sbin/vutil
 usr/share/man/man1/au.1
 usr/share/man/man1/cfs.1
@@ -39,7 +39,7 @@ usr/share/man/man1/hoard.1
 usr/share/man/man1/mkcodabf.1
 usr/share/man/man1/repair.1
 usr/share/man/man1/spy.1
+usr/share/man/man1/volmunge.1
 usr/share/man/man8/venus.8
 usr/share/man/man8/coda-client-setup.8
-usr/share/man/man8/volmunge.8
 usr/share/man/man8/vutil.8

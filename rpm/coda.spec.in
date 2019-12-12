@@ -173,7 +173,6 @@ fi
 %{_sbindir}/asrlauncher
 %{_sbindir}/venus
 %{_sbindir}/coda-client-setup
-%{_sbindir}/volmunge
 %{_sbindir}/vutil
 %{_bindir}/au
 %{_bindir}/cfs
@@ -191,6 +190,7 @@ fi
 %{_bindir}/repair
 %{_bindir}/coda_replay
 %{_bindir}/spy
+%{_bindir}/volmunge
 %{_bindir}/xaskuser
 %{_bindir}/xfrepair
 %{_mandir}/man1/au.1.gz
@@ -205,9 +205,9 @@ fi
 %{_mandir}/man1/mkcodabf.1.gz
 %{_mandir}/man1/repair.1.gz
 %{_mandir}/man1/spy.1.gz
+%{_mandir}/man1/volmunge.1.gz
 %{_mandir}/man8/venus.8.gz
 %{_mandir}/man8/coda-client-setup.8.gz
-%{_mandir}/man8/volmunge.8.gz
 %{_mandir}/man8/vutil.8.gz
 %ghost %dir /coda
 %ghost /coda/NOT_REALLY_CODA
