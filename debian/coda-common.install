@@ -1,3 +1,4 @@
+etc/coda/ssl/Coda_CA.crt
 usr/lib/coda/liblwp*.so.*
 usr/lib/coda/librpc2*.so.*
 usr/lib/coda/libse*.so.*

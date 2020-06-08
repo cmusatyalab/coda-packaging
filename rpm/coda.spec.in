@@ -16,6 +16,7 @@ Requires:       readline
 
 # Avoid systemd dependency on RHEL6
 %if ! 0%{?el6}
+BuildRequires:  libuv-devel gnutls-devel
 BuildRequires:  systemd
 %{?systemd_requires}
 %endif
@@ -284,6 +285,7 @@ fi
 %{_sbindir}/vice-setup-user
 %{_sbindir}/vice-setup-scm
 %{_sbindir}/volutil
+%{_bindir}/coda_make_realm_certs
 %{_bindir}/getvolinfo
 %{_bindir}/reinit
 %{_bindir}/rpc2ping
@@ -322,6 +324,7 @@ fi
 
 %files common
 %defattr(-,root,root,-)
+%{_sysconfdir}/coda/ssl/Coda_CA.crt
 %{_sbindir}/codaconfedit
 %{_libdir}/coda/*.so.*
 

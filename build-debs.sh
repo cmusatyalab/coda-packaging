@@ -24,7 +24,7 @@ fi
 DIST="$@"
 
 # if a specific release wasn't given, build all releases (will take a while.....)
-ALL_DISTS="jessie stretch buster trusty xenial bionic disco eoan"
+ALL_DISTS="jessie stretch buster trusty xenial bionic disco eoan" # focal
 
 declare -A RELEASES
 RELEASES["jessie"]="debian8.0"
@@ -35,9 +35,9 @@ RELEASES["sid"]="debian.unstable"
 RELEASES["trusty"]="ubuntu14.04"
 RELEASES["xenial"]="ubuntu16.04"
 RELEASES["bionic"]="ubuntu18.04"
-#RELEASES["cosmic"]="ubuntu18.10"
 RELEASES["disco"]="ubuntu19.04"
 RELEASES["eoan"]="ubuntu19.10"
+RELEASES["focal"]="ubuntu20.04"
 
 if [ -n "${DIST}" ] ; then
     for dist in ${DIST} ; do
@@ -56,19 +56,21 @@ fi
 declare -A OTHER_REPOS
 OTHER_REPOS["jessie"]='|deb http://archive.debian.org/debian/ DISTRO-backports main'
 #OTHER_REPOS["stretch"]="|deb http://deb.debian.org/debian/ DISTRO-backports main"
+#OTHER_REPOS["trusty"]="|deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse"
 
 # really want this everywhere for codatunnel, but at least trusty (and jessie?)
 # don't have a current version
 declare -A EXTRA_PKGS
-EXTRA_PKGS["jessie"]="libuv1-dev"      # seems to have gone from jessie-backports
-EXTRA_PKGS["stretch"]="libuv1-dev"
-EXTRA_PKGS["buster"]="libuv1-dev"
-EXTRA_PKGS["bullseye"]="libuv1-dev"
-#EXTRA_PKGS["trusty"]="libuv1-dev"
-EXTRA_PKGS["xenial"]="libuv1-dev"
-EXTRA_PKGS["bionic"]="libuv1-dev"
-EXTRA_PKGS["disco"]="libuv1-dev"
-EXTRA_PKGS["eoan"]="libuv1-dev"
+EXTRA_PKGS["jessie"]="libuv1-dev libgnutls28-dev"
+EXTRA_PKGS["stretch"]="libuv1-dev libgnutls28-dev"
+EXTRA_PKGS["buster"]="libuv1-dev libgnutls28-dev"
+EXTRA_PKGS["bullseye"]="libuv1-dev libgnutls28-dev"
+#EXTRA_PKGS["trusty"]="libuv1-dev libgnutls28-dev"
+EXTRA_PKGS["xenial"]="libuv1-dev libgnutls28-dev"
+EXTRA_PKGS["bionic"]="libuv1-dev libgnutls28-dev"
+EXTRA_PKGS["disco"]="libuv1-dev libgnutls28-dev"
+EXTRA_PKGS["eoan"]="libuv1-dev libgnutls28-dev"
+EXTRA_PKGS["focal"]="libuv1-dev libgnutls28-dev"
 
 chroots=$(pwd)/chroots-deb
 mkdir -p "$chroots"
