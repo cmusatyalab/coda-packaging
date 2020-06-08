@@ -13,11 +13,11 @@ Description: Amount of diskspace used for caching:
  allows the Coda client to provide cached files when there is no network
  connectivity available.
  .
- This value is specified in the number of 1 kilobyte diskblocks, the suggested
- default "100000" would allow Coda to cache 100 Megabytes of data. The files
- are stored in /var/cache/coda. The smallest useable cachesize is probably
- around 10-20MB. With large cachesizes (300MB+) the Coda client is sometimes a
- bit slow when it scans through the cache.
+ This value is specified in kilobytes, the suggested default "100000" would
+ allow Coda to cache 100 Megabytes of data. The files are stored in
+ /var/cache/coda. The smallest useable cachesize is probably around 10-20MB.
+ With large cachesizes (300MB+) the Coda client is sometimes a bit slow when
+ it scans through the cache.
  .
  This limit is a `soft-limit', Coda can use more space because it makes backup
  copies of modified files before reintegration, and the kernel protocol allows

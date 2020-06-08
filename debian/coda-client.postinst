@@ -14,7 +14,7 @@ if [ ! -f /etc/coda/venus.conf ] ; then
     db_get coda/realm
     codaconfedit venus.conf realm "$RET" >&2
     db_get coda/cachesize
-    codaconfedit venus.conf cacheblocks "$RET" >&2
+    codaconfedit venus.conf cachesize "${RET}KB" >&2
 fi
 
 #DEBHELPER#
