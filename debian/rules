@@ -8,9 +8,6 @@ override_dh_auto_configure:
 override_dh_auto_install:
 	dh_auto_install
 
-	mkdir -p "`pwd`/debian/tmp/coda"
-	touch "`pwd`/debian/tmp/coda/NOT_REALLY_CODA"
-
 	# Change coda-client-setup to run dpkg-reconfigure
 	/bin/echo -e '#!/bin/sh\nset -e\necho "Starting \"dpkg-reconfigure coda-client\""\ndpkg-reconfigure coda-client' > "`pwd`/debian/tmp/usr/sbin/coda-client-setup"
 	chmod 755 "`pwd`/debian/tmp/usr/sbin/coda-client-setup"
@@ -20,3 +17,14 @@ override_dh_strip:
 
 override_dh_installdocs:
 	dh_installdocs --link-doc=coda-common
+
+override_dh_installinit:
+	dh_installinit --no-restart-on-upgrade
+
+# debhelper <= 10 (dh-systemd)
+override_dh_systemd_start:
+	dh_systemd_start --no-restart-on-upgrade
+
+# debhelper >= 11
+override_dh_installsystemd:
+	dh_installsystemd --no-restart-on-upgrade

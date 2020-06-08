@@ -12,10 +12,20 @@ if [ "$1" = "purge" ] ; then
 fi
 
 case "$1" in
-    remove|abort-install|disappear)
+    purge|remove|abort-install|disappear)
+        # pre-8.1.0 /coda was provided by the package, now it is
+        # created by postinst and removed in postrm so we can upgrade
+        # without having to stop the client and unmount /coda.
+
+        if [ -d /coda ] ; then
+            # we should be unmounted already, but just in case...
+            ( umount /coda || umount -l /coda || true ) >/dev/null 2>&1
+            rm -f /coda/NOT_REALLY_CODA
+            rmdir /coda
+        fi
     ;;
 
-    purge|upgrade|failed-upgrade|abort-upgrade)
+    upgrade|failed-upgrade|abort-upgrade)
     ;;
 
     *)

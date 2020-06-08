@@ -6,11 +6,19 @@ case "$1" in
     install)
     ;;
 
-    upgrade|abort-upgrade)
-	umount /coda >/dev/null 2>&1 || true
+    upgrade)
+        # previously /coda was provided by the package, now it is
+        # created by postinst and removed in postrm so we can upgrade
+        # without having to stop the client and unmount /coda.
+        if dpkg --compare-versions "$2" lt 8.0.3 ; then
+            ( umount /coda || umount -l /coda || true ) >/dev/null 2>&1
+        fi
 
         # clean up old diversion for codaconfedit which is now in coda-common
         dpkg-divert --quiet --package coda-client --rename --remove /usr/sbin/codaconfedit
+    ;;
+
+    abort-upgrade)
     ;;
 
     *)

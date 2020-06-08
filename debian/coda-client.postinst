@@ -17,6 +17,14 @@ if [ ! -f /etc/coda/venus.conf ] ; then
     codaconfedit venus.conf cachesize "${RET}KB" >&2
 fi
 
+# previously /coda was provided by the package, now it is
+# created by postinst and removed in postrm so we can upgrade
+# without having to stop the client and unmount /coda.
+if [ ! -d /coda ] ; then
+    mkdir -p /coda
+    touch /coda/NOT_REALLY_CODA
+fi
+
 #DEBHELPER#
 
 exit 0

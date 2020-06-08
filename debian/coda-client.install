@@ -1,4 +1,3 @@
-coda/NOT_REALLY_CODA
 etc/coda/realms
 etc/coda/venus.conf.ex
 lib/systemd/system/coda-client.service
