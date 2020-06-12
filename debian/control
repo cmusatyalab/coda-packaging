@@ -5,7 +5,7 @@ Maintainer: Jan Harkes <jaharkes@cs.cmu.edu>
 Standards-Version: 3.9.5
 Build-Depends: debhelper (>= 10), dh-python, dh-systemd (>= 1.5),
  libreadline-dev, libncurses5-dev, liblua5.1-0-dev, libuv1-dev,
- libgnutls28-dev, flex, bison, pkg-config, python, automake, systemd | netcat
+ libgnutls28-dev, flex, bison, pkg-config, python3, automake, systemd | netcat
 
 Package: coda-common
 Architecture: amd64 i386 m68k powerpc sparc
@@ -21,7 +21,7 @@ Description: Common libraries for the Coda distributed file system
 
 Package: coda-client
 Architecture: linux-any
-Depends: coda-common (= ${binary:Version}), ${shlibs:Depends}, ${python:Depends}, ${perl:Depends}, ${misc:Depends}
+Depends: coda-common (= ${binary:Version}), ${shlibs:Depends}, ${python3:Depends}, ${perl:Depends}, ${misc:Depends}
 Suggests: python3-gi
 Pre-Depends: debconf (>= 0.2.17)
 Homepage: http://coda.cs.cmu.edu/

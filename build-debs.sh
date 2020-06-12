@@ -24,7 +24,7 @@ fi
 DIST="$@"
 
 # if a specific release wasn't given, build all releases (will take a while.....)
-ALL_DISTS="jessie stretch buster trusty xenial bionic disco eoan" # focal
+ALL_DISTS="jessie stretch buster trusty xenial bionic disco eoan focal"
 
 declare -A RELEASES
 RELEASES["jessie"]="debian8.0"
@@ -90,8 +90,10 @@ do
 
   for arch in amd64 i386
   do
+    [ "$release-$arch" = "focal-i386" ] && break
+
     chroot_tgz=$chroots/$release-$arch.tgz
-    extra_pkgs="debootstrap fakeroot pbuilder wget debhelper dh-python dh-systemd libreadline-dev libncurses5-dev liblua5.1-0-dev flex bison pkg-config python automake systemd netcat eatmydata ${EXTRA_PKGS[$release]}"
+    extra_pkgs="debootstrap fakeroot pbuilder wget debhelper dh-python dh-systemd libreadline-dev libncurses5-dev liblua5.1-0-dev flex bison pkg-config python3 automake systemd netcat eatmydata ${EXTRA_PKGS[$release]}"
 
     ##
     ## Create/update chroot
@@ -107,7 +109,7 @@ do
             ;;
         ubuntu*)
             DEB_MIRROR="http://us.archive.ubuntu.com/ubuntu"
-            DEB_SECURITY="deb http://security.ubuntu.com/ubuntu DISTRO-security main"
+            DEB_SECURITY="deb http://security.ubuntu.com/ubuntu DISTRO-security main universe"
             DEB_KEYRING="/usr/share/keyrings/ubuntu-archive-keyring.gpg"
             DEB_COMPONENTS="main universe"
             ;;
@@ -140,6 +142,8 @@ do
 
   for arch in amd64 i386
   do
+    [ "$release-$arch" = "focal-i386" ] && break
+
     chroot_tgz=$chroots/$release-$arch.tgz
 
     ##
