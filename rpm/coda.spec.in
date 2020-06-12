@@ -8,17 +8,19 @@ URL:            http://coda.cs.cmu.edu/
 Source0:        http://coda.cs.cmu.edu/coda/source/%{name}-%{version}.tar.xz
 
 BuildRequires:  readline-devel
-BuildRequires:  flex bison python perl
+BuildRequires:  flex bison perl
 BuildRequires:  e2fsprogs-devel
 # For /etc/rc.d/init.d so that configure can detect we have RH style init
 BuildRequires:  chkconfig
 Requires:       readline
 
-# Avoid systemd dependency on RHEL6
+# Build without codatunnel, avoid systemd dependency
+# and install python34 from EPEL on RHEL6
 %if ! 0%{?el6}
-BuildRequires:  libuv-devel gnutls-devel
-BuildRequires:  systemd
+BuildRequires:  gnutls-devel libuv-devel python3 systemd
 %{?systemd_requires}
+%else
+BuildRequires:  python34
 %endif
 
 # Hardened build for long running and/or running as root programs

@@ -46,25 +46,34 @@ mkdir -p "$distdir"
 
 chown -R builder:mock "$cachedir" "$distdir"
 
-echo "config_opts['use_nspawn'] = False" >> /etc/mock/site-defaults.cfg 
-echo "config_opts['cache_topdir'] = '$cachedir'" >> /etc/mock/site-defaults.cfg 
+echo "config_opts['cache_topdir'] = '$cachedir'" >> /etc/mock/site-defaults.cfg
+#echo "config_opts['docker_unshare_warning'] = False" >> /etc/mock/site-defaults.cfg
+echo "config_opts['use_nspawn'] = False" >> /etc/mock/site-defaults.cfg
+
+declare -A MOCKOPTS
+MOCKOPTS["epel-8-x86_64"]="--enablerepo Devel"
 
 ## Build .src.rpm
 cd /var/tmp
 RPM_VERSION=$(sed -ne 's/^Version: *\(.*\)$/\1/p' $sourcedir/rpm/coda.spec)
 VERSION=$(echo $RPM_VERSION | tr _ -)
 
-tar -xJf $sourcedir/coda-$VERSION.tar.xz
-[ "$VERSION" != "$RPM_VERSION" ] && mv coda-$VERSION coda-$RPM_VERSION
-tar -cJf coda-$RPM_VERSION.tar.xz coda-$RPM_VERSION
-rm -r coda-$RPM_VERSION
+if [ "$VERSION" != "$RPM_VERSION" ]
+then
+    tar -xJf $sourcedir/coda-$VERSION.tar.xz
+    mv coda-$VERSION coda-$RPM_VERSION
+    tar -cJf coda-$RPM_VERSION.tar.xz coda-$RPM_VERSION
+    rm -r coda-$RPM_VERSION
+else
+    cp $sourcedir/coda-$VERSION.tar.xz coda-$RPM_VERSION.tar.xz
+fi
 
 rpmbuild -bs --define "_sourcedir ." --define "_srcrpmdir ." $sourcedir/rpm/coda.spec
-[ "$VERSION" != "$RPM_VERSION" ] && rm coda-$RPM_VERSION.tar.xz
+rm coda-$RPM_VERSION.tar.xz
 
 for root in ${DIST:-$RPMROOTS}
 do
-    runuser -l builder -c "mock -r $root -v --rebuild /var/tmp/coda-$RPM_VERSION-*.src.rpm --resultdir=$distdir" 2>&1 | \
+    runuser -l builder -c "mock -r $root -v ${MOCKOPTS[$root]} --rebuild /var/tmp/coda-$RPM_VERSION-*.src.rpm --resultdir=$distdir" 2>&1 | \
         pv -l -s $BUILD_LINES -N "coda-${root}" > $distdir/build-${root}.log
 done
 
