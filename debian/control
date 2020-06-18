@@ -22,7 +22,7 @@ Description: Common libraries for the Coda distributed file system
 Package: coda-client
 Architecture: linux-any
 Depends: coda-common (= ${binary:Version}), ${shlibs:Depends}, ${python3:Depends}, ${perl:Depends}, ${misc:Depends}
-Suggests: python3-gi
+Suggests: python3-gi, needrestart
 Pre-Depends: debconf (>= 0.2.17)
 Homepage: http://coda.cs.cmu.edu/
 Description: Client for the Coda distributed file system
