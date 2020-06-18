@@ -2,7 +2,7 @@ DEB_DISTS_DEBIAN := jessie stretch buster # bullseye
 DEB_DISTS_UBUNTU := xenial bionic eoan focal
 DEB_DISTS := $(DEB_DISTS_DEBIAN) $(DEB_DISTS_UBUNTU)
 
-RPM_ROOTS_FEDORA := $(foreach dist,30 31,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
+RPM_ROOTS_FEDORA := $(foreach dist,30 31 32,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
 RPM_ROOTS_EL := epel-6-x86_64 epel-7-coda-x86_64 epel-8-x86_64
 RPM_ROOTS := $(RPM_ROOTS_FEDORA) $(RPM_ROOTS_EL)
 
