@@ -21,7 +21,7 @@ fi
 
 DIST="$@"
 
-RPMROOTS="$(echo fedora-{30,31,32}-{x86_64,i386}) epel-6-x86_64 epel-7-coda-x86_64 epel-8-x86_64"
+RPMROOTS="$(echo fedora-{31,32}-{x86_64,i386}) epel-6-x86_64 epel-7-coda-x86_64 epel-8-x86_64"
 
 if [ -n "${DIST}" ] ; then
     for dist in ${DIST} ; do
