@@ -287,7 +287,7 @@ fi
 %{_sbindir}/vice-setup-user
 %{_sbindir}/vice-setup-scm
 %{_sbindir}/volutil
-%{_bindir}/coda_make_realm_certs
+%{_bindir}/coda-make-certs
 %{_bindir}/getvolinfo
 %{_bindir}/reinit
 %{_bindir}/rpc2ping
