@@ -24,7 +24,7 @@ fi
 DIST="$@"
 
 # if a specific release wasn't given, build all releases (will take a while.....)
-ALL_DISTS="jessie stretch buster trusty xenial bionic disco eoan focal"
+ALL_DISTS="jessie stretch buster trusty xenial bionic disco focal"
 
 declare -A RELEASES
 RELEASES["jessie"]="debian8.0"
@@ -36,7 +36,6 @@ RELEASES["trusty"]="ubuntu14.04"
 RELEASES["xenial"]="ubuntu16.04"
 RELEASES["bionic"]="ubuntu18.04"
 RELEASES["disco"]="ubuntu19.04"
-RELEASES["eoan"]="ubuntu19.10"
 RELEASES["focal"]="ubuntu20.04"
 
 if [ -n "${DIST}" ] ; then
@@ -69,7 +68,6 @@ EXTRA_PKGS["bullseye"]="libuv1-dev libgnutls28-dev"
 EXTRA_PKGS["xenial"]="libuv1-dev libgnutls28-dev"
 EXTRA_PKGS["bionic"]="libuv1-dev libgnutls28-dev"
 EXTRA_PKGS["disco"]="libuv1-dev libgnutls28-dev"
-EXTRA_PKGS["eoan"]="libuv1-dev libgnutls28-dev"
 EXTRA_PKGS["focal"]="libuv1-dev libgnutls28-dev"
 
 chroots=$(pwd)/chroots-deb
