@@ -1,7 +1,7 @@
 #!/bin/sh
 
 DEB_RELEASES="jessie stretch buster xenial bionic focal"
-RPM_RELEASES="$(/bin/bash -c 'echo fedora-{32}-{x86_64,i386}') epel-7-coda-x86_64 epel-8-x86_64"
+RPM_RELEASES="$(/bin/bash -c 'echo fedora-{32,33}-{x86_64,i386}') epel-7-coda-x86_64 epel-8-x86_64"
 
 ( cd build-container-ubuntu &&
   docker build -t build-container-ubuntu:latest . )

@@ -24,7 +24,7 @@ fi
 DIST="$@"
 
 # if a specific release wasn't given, build all releases (will take a while.....)
-ALL_DISTS="jessie stretch buster trusty xenial bionic disco focal"
+ALL_DISTS="jessie stretch buster trusty xenial bionic disco focal groovy"
 
 declare -A RELEASES
 RELEASES["jessie"]="debian8.0"
@@ -37,6 +37,7 @@ RELEASES["xenial"]="ubuntu16.04"
 RELEASES["bionic"]="ubuntu18.04"
 RELEASES["disco"]="ubuntu19.04"
 RELEASES["focal"]="ubuntu20.04"
+RELEASES["groovy"]="ubuntu20.10"
 
 if [ -n "${DIST}" ] ; then
     for dist in ${DIST} ; do
@@ -69,6 +70,7 @@ EXTRA_PKGS["xenial"]="libuv1-dev libgnutls28-dev"
 EXTRA_PKGS["bionic"]="libuv1-dev libgnutls28-dev"
 EXTRA_PKGS["disco"]="libuv1-dev libgnutls28-dev"
 EXTRA_PKGS["focal"]="libuv1-dev libgnutls28-dev"
+EXTRA_PKGS["groovy"]="libuv1-dev libgnutls28-dev"
 
 chroots=$(pwd)/chroots-deb
 mkdir -p "$chroots"
@@ -89,6 +91,7 @@ do
   for arch in amd64 i386
   do
     [ "$release-$arch" = "focal-i386" ] && break
+    [ "$release-$arch" = "groovy-i386" ] && break
 
     chroot_tgz=$chroots/$release-$arch.tgz
     extra_pkgs="debootstrap fakeroot pbuilder wget debhelper dh-python dh-systemd libreadline-dev libncurses5-dev liblua5.1-0-dev flex bison pkg-config python3 automake systemd netcat eatmydata ${EXTRA_PKGS[$release]}"
@@ -141,6 +144,7 @@ do
   for arch in amd64 i386
   do
     [ "$release-$arch" = "focal-i386" ] && break
+    [ "$release-$arch" = "groovy-i386" ] && break
 
     chroot_tgz=$chroots/$release-$arch.tgz
 
