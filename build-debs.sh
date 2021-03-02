@@ -178,6 +178,12 @@ do
         sed -i -e 's/debhelper (>= 10)/debhelper (>= 9)/g' \
             $tmp/$project-$version/debian/control
     fi
+    # groovy has modules-load.d in /lib instead of /usr/lib
+    if [ "$release" = "groovy" ]
+    then
+        sed -i -e 's_usr/\(lib/modules-load\.d/.*\)_\1_' \
+            $tmp/$project-$version/debian/coda-client.install
+    fi
 
     (
         binary_only=""
