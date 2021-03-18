@@ -64,19 +64,12 @@ upload:
 .PHONY: distribute
 distribute:
 	[ -n "$(CODA_DISTRIBUTE_HOST)" -a -n "$(CODA_DISTRIBUTE_DIR)" ]
-	[ -n "$(SIGNING_SERVER)" ]
-	@SIGNING_SERVER_ADDRESS=localhost:5280 \
-		SIGNING_SERVER_KEYID=$$(git config user.signingkey) \
-		$(SIGNING_SERVER) ssh "$(CODA_DISTRIBUTE_HOST)" \
-		-R 5280:localhost:5280 \
-		"cd $(CODA_DISTRIBUTE_DIR) && SIGNING_SERVER_ADDRESS=localhost:5280 ./distribute.pl"
+	@ssh -o"RemoteForward $$(ssh $(CODA_DISTRIBUTE_HOST) gpgconf --list-dir agent-socket) $$(gpgconf --list-dir agent-extra-socket)" \
+		-t $(CODA_DISTRIBUTE_HOST) "cd $(CODA_DISTRIBUTE_DIR) && SIGNING_KEYID=$$(git config user.signingkey) ./distribute.py"
 
 fix-debrepo:
-	@SIGNING_SERVER_ADDRESS=localhost:5280 \
-		SIGNING_SERVER_KEYID=$$(git config user.signingkey) \
-		$(SIGNING_SERVER) ssh "$(CODA_DISTRIBUTE_HOST)" \
-		-R 5280:localhost:5280 \
-		"cd $(CODA_DISTRIBUTE_DIR) && SIGNING_SERVER_ADDRESS=localhost:5280 reprepro --confdir=conf export"
+	@ssh -o"RemoteForward $$(ssh $(CODA_DISTRIBUTE_HOST) gpgconf --list-dir agent-socket) $$(gpgconf --list-dir agent-extra-socket)" \
+		-t $(CODA_DISTRIBUTE_HOST) "cd $(CODA_DISTRIBUTE_DIR) && SIGNING_KEYID=$$(git config user.signingkey) reprepro --confdir=conf export"
 
 .PHONY: docker-image
 docker-image:
