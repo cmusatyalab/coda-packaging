@@ -181,6 +181,7 @@ fi
 %{_bindir}/cfs
 %{_bindir}/clog
 %{_bindir}/cmon
+%{_bindir}/coda-sync-acls
 %{_bindir}/codacon
 %{_bindir}/cpasswd
 %{_bindir}/ctokens

@@ -6,6 +6,7 @@ usr/bin/au
 usr/bin/cfs
 usr/bin/clog
 usr/bin/cmon
+usr/bin/coda-sync-acls
 usr/bin/codacon
 usr/bin/cpasswd
 usr/bin/ctokens
