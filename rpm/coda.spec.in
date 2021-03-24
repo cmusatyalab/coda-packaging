@@ -11,17 +11,10 @@ BuildRequires:  readline-devel
 BuildRequires:  flex bison perl
 BuildRequires:  e2fsprogs-devel
 # For /etc/rc.d/init.d so that configure can detect we have RH style init
-BuildRequires:  chkconfig
 Requires:       readline
 
-# Build without codatunnel, avoid systemd dependency
-# and install python34 from EPEL on RHEL6
-%if ! 0%{?el6}
 BuildRequires:  gnutls-devel libuv-devel python3 systemd
 %{?systemd_requires}
-%else
-BuildRequires:  python34
-%endif
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
 
@@ -40,8 +33,6 @@ you should get the Coda documentation package.
 Summary:        Client for the Coda distributed file system
 Group:          System Environment/Daemons
 Requires:       coda-common = %{version}-%{release}
-Requires(post): chkconfig
-Requires(preun): chkconfig
 
 %description client
 This package contains the main client program, the cachemanager Venus.
@@ -57,8 +48,6 @@ a complete coda client.
 Summary:        Server for the Coda distributed file system
 Group:          System Environment/Daemons
 Requires:       coda-common = %{version}-%{release}
-Requires(post): chkconfig
-Requires(preun): chkconfig
 
 %description server
 This package contains the fileserver for the Coda file system, as well
@@ -101,14 +90,6 @@ make %{?_smp_mflags}
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
 
-%if 0%{?el6}
-# install init scripts
-install -d $RPM_BUILD_ROOT/%{_initddir}/
-install -p tools/coda-client.init $RPM_BUILD_ROOT/%{_initddir}/coda-client
-install -p tools/coda-server.init $RPM_BUILD_ROOT/%{_initddir}/coda-server
-install -p tools/coda-update.init $RPM_BUILD_ROOT/%{_initddir}/coda-update
-%endif
-
 # coda mount point for the client
 mkdir -p $RPM_BUILD_ROOT/coda
 touch $RPM_BUILD_ROOT/coda/NOT_REALLY_CODA
@@ -146,23 +127,13 @@ if [ ! -e /coda ]; then
     mkdir /coda
     touch /coda/NOT_REALLY_CODA
 fi
-%if ! 0%{?el6}
 %systemd_post coda-client.service
-%else
-/sbin/chkconfig --add coda-client
-%endif
 
 %preun client
-%if ! 0%{?el6}
 %systemd_preun coda-client.service
-%else
-/sbin/chkconfig --del coda-client
-%endif
 
-%if ! 0%{?el6}
 %postun client
 %systemd_postun coda-client.service
-%endif
 
 %files client
 %defattr(-,root,root,-)
@@ -226,25 +197,13 @@ fi
 
 
 %post server
-%if ! 0%{?el6}
 %systemd_post coda-server.service coda-auth2.service coda-update-master.service coda-update-slave.service
-%else
-/sbin/chkconfig --add coda-update
-/sbin/chkconfig --add coda-server
-%endif
 
 %preun server
-%if ! 0%{?el6}
 %systemd_preun coda-server.service coda-auth2.service coda-update-master.service coda-update-slave.service
-%else
-/sbin/chkconfig --del coda-update
-/sbin/chkconfig --del coda-server
-%endif
 
-%if ! 0%{?el6}
 %postun server
 %systemd_postun_with_restart coda-server.service coda-auth2.service coda-update-master.service coda-update-slave.service
-%endif
 
 %files server
 %defattr(-,root,root,-)
