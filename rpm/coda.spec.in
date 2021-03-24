@@ -22,6 +22,8 @@ BuildRequires:  gnutls-devel libuv-devel python3 systemd
 %else
 BuildRequires:  python34
 %endif
+BuildRequires:  python3-devel
+BuildRequires:  python3-setuptools
 
 # Hardened build for long running and/or running as root programs
 %global _hardened_build 1
@@ -130,6 +132,8 @@ find $RPM_BUILD_ROOT -name '*.pc' -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -name '*.so' -exec rm -f {} ';'
 rm -f $RPM_BUILD_ROOT/%{_bindir}/rp2gen
 
+# remove record of installed python files (used by 'make uninstall')
+rm $RPM_BUILD_ROOT/%{python3_sitelib}/codafs/installed_files.txt
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -330,6 +334,8 @@ fi
 %{_sysconfdir}/coda/ssl/Coda_CA.crt
 %{_sbindir}/codaconfedit
 %{_libdir}/coda/*.so.*
+%{python3_sitelib}/codafs-*.egg-info/
+%{python3_sitelib}/codafs/
 
 
 %changelog

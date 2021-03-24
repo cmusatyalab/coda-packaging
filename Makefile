@@ -69,7 +69,7 @@ distribute:
 
 fix-debrepo:
 	@ssh -o"RemoteForward $$(ssh $(CODA_DISTRIBUTE_HOST) gpgconf --list-dir agent-socket) $$(gpgconf --list-dir agent-extra-socket)" \
-		-t $(CODA_DISTRIBUTE_HOST) "cd $(CODA_DISTRIBUTE_DIR) && SIGNING_KEYID=$$(git config user.signingkey) reprepro --confdir=conf export"
+		-t $(CODA_DISTRIBUTE_HOST) "cd $(CODA_DISTRIBUTE_DIR) && reprepro --confdir=/home/repos/conf export"
 
 .PHONY: docker-image
 docker-image:

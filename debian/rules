@@ -8,6 +8,9 @@ override_dh_auto_configure:
 override_dh_auto_install:
 	dh_auto_install
 
+	# clean up 'make uninstall' helper file
+	rm `pwd`/debian/tmp/usr/lib/python3/dist-packages/codafs/installed_files.txt
+
 	# Change coda-client-setup to run dpkg-reconfigure
 	/bin/echo -e '#!/bin/sh\nset -e\necho "Starting \"dpkg-reconfigure coda-client\""\ndpkg-reconfigure coda-client' > "`pwd`/debian/tmp/usr/sbin/coda-client-setup"
 	chmod 755 "`pwd`/debian/tmp/usr/sbin/coda-client-setup"

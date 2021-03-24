@@ -5,7 +5,8 @@ Maintainer: Jan Harkes <jaharkes@cs.cmu.edu>
 Standards-Version: 3.9.5
 Build-Depends: debhelper (>= 10), dh-python, dh-systemd (>= 1.5),
  libreadline-dev, libncurses5-dev, liblua5.1-0-dev, libuv1-dev,
- libgnutls28-dev, flex, bison, pkg-config, python3, automake, systemd | netcat
+ libgnutls28-dev, flex, bison, pkg-config, python3, automake, systemd | netcat,
+ python3-setuptools
 
 Package: coda-common
 Architecture: amd64 i386 m68k powerpc sparc
