@@ -24,7 +24,7 @@ fi
 DIST="$@"
 
 # if a specific release wasn't given, build all releases (will take a while.....)
-ALL_DISTS="jessie stretch buster trusty xenial bionic disco focal groovy"
+ALL_DISTS="jessie stretch buster xenial bionic focal groovy"
 
 declare -A RELEASES
 RELEASES["jessie"]="debian8.0"
@@ -32,10 +32,8 @@ RELEASES["stretch"]="debian9.0"
 RELEASES["buster"]="debian10.0"
 RELEASES["bullseye"]="debian.testing"
 RELEASES["sid"]="debian.unstable"
-RELEASES["trusty"]="ubuntu14.04"
 RELEASES["xenial"]="ubuntu16.04"
 RELEASES["bionic"]="ubuntu18.04"
-RELEASES["disco"]="ubuntu19.04"
 RELEASES["focal"]="ubuntu20.04"
 RELEASES["groovy"]="ubuntu20.10"
 
@@ -56,21 +54,17 @@ fi
 declare -A OTHER_REPOS
 OTHER_REPOS["jessie"]='|deb http://archive.debian.org/debian/ DISTRO-backports main'
 #OTHER_REPOS["stretch"]="|deb http://deb.debian.org/debian/ DISTRO-backports main"
-#OTHER_REPOS["trusty"]="|deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse"
 
-# really want this everywhere for codatunnel, but at least trusty (and jessie?)
-# don't have a current version
 declare -A EXTRA_PKGS
-EXTRA_PKGS["jessie"]="libuv1-dev libgnutls28-dev"
-EXTRA_PKGS["stretch"]="libuv1-dev libgnutls28-dev"
-EXTRA_PKGS["buster"]="libuv1-dev libgnutls28-dev"
-EXTRA_PKGS["bullseye"]="libuv1-dev libgnutls28-dev"
-#EXTRA_PKGS["trusty"]="libuv1-dev libgnutls28-dev"
-EXTRA_PKGS["xenial"]="libuv1-dev libgnutls28-dev"
-EXTRA_PKGS["bionic"]="libuv1-dev libgnutls28-dev"
-EXTRA_PKGS["disco"]="libuv1-dev libgnutls28-dev"
-EXTRA_PKGS["focal"]="libuv1-dev libgnutls28-dev"
-EXTRA_PKGS["groovy"]="libuv1-dev libgnutls28-dev"
+EXTRA_PKGS["jessie"]=""
+EXTRA_PKGS["stretch"]=""
+EXTRA_PKGS["buster"]=""
+EXTRA_PKGS["bullseye"]=""
+EXTRA_PKGS["sid"]=""
+EXTRA_PKGS["xenial"]=""
+EXTRA_PKGS["bionic"]=""
+EXTRA_PKGS["focal"]=""
+EXTRA_PKGS["groovy"]=""
 
 chroots=$(pwd)/chroots-deb
 mkdir -p "$chroots"
@@ -94,7 +88,7 @@ do
     [ "$release-$arch" = "groovy-i386" ] && break
 
     chroot_tgz=$chroots/$release-$arch.tgz
-    extra_pkgs="debootstrap fakeroot pbuilder wget debhelper dh-python dh-systemd libreadline-dev libncurses5-dev liblua5.1-0-dev flex bison pkg-config python3 automake systemd netcat eatmydata ${EXTRA_PKGS[$release]}"
+    extra_pkgs="debootstrap fakeroot pbuilder wget debhelper dh-python dh-systemd libreadline-dev libncurses5-dev liblua5.1-0-dev flex bison pkg-config python3 python3-attr python3-setuptools automake systemd netcat eatmydata libuv1-dev libgnutls28-dev ${EXTRA_PKGS[$release]}"
 
     ##
     ## Create/update chroot
@@ -143,6 +137,7 @@ do
 
   for arch in amd64 i386
   do
+    # Ubuntu dropped 32-bit distributions
     [ "$release-$arch" = "focal-i386" ] && break
     [ "$release-$arch" = "groovy-i386" ] && break
 
@@ -158,22 +153,14 @@ do
            -e "s/UNRELEASED/$release/g" \
         $tmp/$project-$version/debian/changelog
 
-    # trusty does not have systemd
-    if [ "$release" = "trusty" ]
-    then
-        sed -i -e "/\(systemd\|modules-load\.d\)/ d" \
-            $tmp/$project-$version/debian/coda-client.install \
-            $tmp/$project-$version/debian/coda-server.install \
-            $tmp/$project-$version/debian/coda-update.install
-    fi
-    # jessie and trusty do not have libuv1
-    if [ "$release" = "jessie" -o "$release" = "trusty" ]
-    then
-        sed -i -e "s/ libuv1-dev,//g" \
-            $tmp/$project-$version/debian/control
-    fi
-    # jessie, trusty and xenial do not have debhelper >= 10
-    if [ "$release" = "jessie" -o "$release" = "trusty" -o "$release" = "xenial" ] ; then
+    # jessie does not have libuv1
+    #if [ "$release" = "jessie" ]
+    #then
+    #    sed -i -e "s/ libuv1-dev,//g" \
+    #        $tmp/$project-$version/debian/control
+    #fi
+    # jessie and xenial do not have debhelper >= 10
+    if [ "$release" = "jessie" -o "$release" = "xenial" ] ; then
         echo 9 > $tmp/$project-$version/debian/compat
         sed -i -e 's/debhelper (>= 10)/debhelper (>= 9)/g' \
             $tmp/$project-$version/debian/control
