@@ -15,8 +15,15 @@ Requires:       readline
 
 BuildRequires:  gnutls-devel libuv-devel python3 systemd
 %{?systemd_requires}
-BuildRequires:  python3-devel
-BuildRequires:  python3-setuptools
+BuildRequires:  python3-devel python3-setuptools
+
+# It seems EL7 has python36-attrs
+%if ! 0%{?el7}
+BuildRequires:  python3-attrs
+%else
+BuildRequires:  python36-attrs
+%endif
+
 
 # Hardened build for long running and/or running as root programs
 %global _hardened_build 1
