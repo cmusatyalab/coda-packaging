@@ -34,4 +34,3 @@ sed -e "s/%%VERSION%%/$RPM_VERSION/" \
     < rpm/coda.spec.in > rpm/coda.spec
 
 # artifacts: coda-*.tar.?z debian/ rpm/coda.spec
-

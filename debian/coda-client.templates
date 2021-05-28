@@ -2,7 +2,7 @@ Template: coda/realm
 Type: string
 Description: Default realm for authentication:
  This options tells the Coda client what the default realm is. This is
- really only used for convenience by 'clog' and allows a user to type 
+ really only used for convenience by 'clog' and allows a user to type
  'clog <username>' instead of 'clog <username>@<realmname>'.
 
 Template: coda/cachesize
@@ -29,4 +29,3 @@ Type: note
 Description: /dev/cfs0 missing
  You do not yet have /dev/cfs0. Trying to create it for you. If this
  fails use 'mknod /dev/cfs0 c 67 0' to create the device by hand.
-

@@ -80,4 +80,3 @@ done
 #rm coda-$RPM_VERSION-*.src.rpm
 
 # artifacts = "$distdir/*.rpm"
-
