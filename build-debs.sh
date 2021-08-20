@@ -30,12 +30,14 @@ declare -A RELEASES
 RELEASES["jessie"]="debian8.0"
 RELEASES["stretch"]="debian9.0"
 RELEASES["buster"]="debian10.0"
+RELEASES["bookworm"]="debian11.0"
 RELEASES["bullseye"]="debian.testing"
 RELEASES["sid"]="debian.unstable"
 RELEASES["xenial"]="ubuntu16.04"
 RELEASES["bionic"]="ubuntu18.04"
 RELEASES["focal"]="ubuntu20.04"
 RELEASES["groovy"]="ubuntu20.10"
+RELEASES["hirsute"]="ubuntu21.04"
 
 if [ -n "${DIST}" ] ; then
     for dist in ${DIST} ; do
@@ -56,15 +58,17 @@ OTHER_REPOS["jessie"]='|deb http://archive.debian.org/debian/ DISTRO-backports m
 #OTHER_REPOS["stretch"]="|deb http://deb.debian.org/debian/ DISTRO-backports main"
 
 declare -A EXTRA_PKGS
-EXTRA_PKGS["jessie"]=""
-EXTRA_PKGS["stretch"]=""
-EXTRA_PKGS["buster"]=""
-EXTRA_PKGS["bullseye"]=""
-EXTRA_PKGS["sid"]=""
-EXTRA_PKGS["xenial"]=""
-EXTRA_PKGS["bionic"]=""
-EXTRA_PKGS["focal"]=""
-EXTRA_PKGS["groovy"]=""
+EXTRA_PKGS["jessie"]="dh-systemd"
+EXTRA_PKGS["stretch"]="dh-systemd"
+EXTRA_PKGS["buster"]="dh-systemd"
+EXTRA_PKGS["bullseye"]="dh-systemd"
+EXTRA_PKGS["bookworm"]=""
+EXTRA_PKGS["sid"]="dh-systemd"
+EXTRA_PKGS["xenial"]="dh-systemd"
+EXTRA_PKGS["bionic"]="dh-systemd"
+EXTRA_PKGS["focal"]="dh-systemd"
+EXTRA_PKGS["groovy"]="dh-systemd"
+EXTRA_PKGS["hirsute"]=""
 
 chroots=$(pwd)/chroots-deb
 mkdir -p "$chroots"
@@ -86,9 +90,10 @@ do
   do
     [ "$release-$arch" = "focal-i386" ] && break
     [ "$release-$arch" = "groovy-i386" ] && break
+    [ "$release-$arch" = "hirsute-i386" ] && break
 
     chroot_tgz=$chroots/$release-$arch.tgz
-    extra_pkgs="debootstrap fakeroot pbuilder wget debhelper dh-python dh-systemd libreadline-dev libncurses5-dev liblua5.1-0-dev flex bison pkg-config python3 python3-attr python3-setuptools automake systemd netcat eatmydata libuv1-dev libgnutls28-dev ${EXTRA_PKGS[$release]}"
+    extra_pkgs="debootstrap fakeroot pbuilder wget debhelper dh-python libreadline-dev libncurses5-dev liblua5.1-0-dev flex bison pkg-config python3 python3-attr python3-setuptools automake systemd netcat eatmydata libuv1-dev libgnutls28-dev ${EXTRA_PKGS[$release]}"
 
     ##
     ## Create/update chroot
@@ -109,6 +114,7 @@ do
             DEB_COMPONENTS="main universe"
             ;;
         esac
+        [ "$release" = "bookworm" ] && DEB_SECURITY=
         OTHER_MIRRORS=$(echo ${DEB_SECURITY}${OTHER_REPOS[$release]} | sed -e "s/DISTRO/$release/g")
 
         pbuilder --create \
@@ -140,6 +146,7 @@ do
     # Ubuntu dropped 32-bit distributions
     [ "$release-$arch" = "focal-i386" ] && break
     [ "$release-$arch" = "groovy-i386" ] && break
+    [ "$release-$arch" = "hirsute-i386" ] && break
 
     chroot_tgz=$chroots/$release-$arch.tgz
 

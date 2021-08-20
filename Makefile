@@ -1,8 +1,8 @@
-DEB_DISTS_DEBIAN := jessie stretch buster # bullseye
-DEB_DISTS_UBUNTU := xenial bionic focal groovy
+DEB_DISTS_DEBIAN := jessie stretch buster bookworm # bullseye
+DEB_DISTS_UBUNTU := xenial bionic focal groovy hirsute
 DEB_DISTS := $(DEB_DISTS_DEBIAN) $(DEB_DISTS_UBUNTU)
 
-RPM_ROOTS_FEDORA := $(foreach dist,32 33,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
+RPM_ROOTS_FEDORA := $(foreach dist,33 34,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
 RPM_ROOTS_EL := epel-7-coda-x86_64 epel-8-x86_64
 RPM_ROOTS := $(RPM_ROOTS_FEDORA) $(RPM_ROOTS_EL)
 
@@ -74,15 +74,16 @@ fix-debrepo:
 .PHONY: docker-image
 docker-image:
 	( cd coda-build && \
-	  docker build --no-cache -t $(DOCKER_REGISTRY)coda-build . ) \
+	  docker build --no-cache -t $(DOCKER_REGISTRY)coda-build . )
 	( cd build-container-ubuntu && \
-	  docker build --no-cache -t $(DOCKER_REGISTRY)build-container-ubuntu .) \
+	  docker build --no-cache -t $(DOCKER_REGISTRY)build-container-ubuntu .)
 	( cd build-container-fedora && \
-	  docker build --no-cache -t $(DOCKER_REGISTRY)build-container-fedora . ) \
-	[ -z "$(DOCKER_REGISTRY)" ] && true || \
+	  docker build --no-cache -t $(DOCKER_REGISTRY)build-container-fedora . )
+	if [ -n "$(DOCKER_REGISTRY)" ] ; then \
 	  docker push $(DOCKER_REGISTRY)coda-build && \
 	  docker push $(DOCKER_REGISTRY)build-container-ubuntu && \
-	  docker push $(DOCKER_REGISTRY)build-container-fedora
+	  docker push $(DOCKER_REGISTRY)build-container-fedora \
+	fi
 
 debian/changelog rpm/coda.spec: coda-*.tar.xz
 	rm -rf $(OUTDIR)

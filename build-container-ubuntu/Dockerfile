@@ -1,4 +1,4 @@
-FROM ubuntu:focal
+FROM ubuntu:groovy
 
 RUN apt-get update \
  && DEBIAN_FRONTEND=noninteractive \
