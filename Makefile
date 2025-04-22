@@ -73,16 +73,13 @@ fix-debrepo:
 
 .PHONY: docker-image
 docker-image:
-	( cd coda-build && \
-	  docker build --no-cache -t $(DOCKER_REGISTRY)coda-build . ) \
-	( cd build-container-ubuntu && \
-	  docker build --no-cache -t $(DOCKER_REGISTRY)build-container-ubuntu .) \
-	( cd build-container-fedora && \
-	  docker build --no-cache -t $(DOCKER_REGISTRY)build-container-fedora . ) \
+	docker build --no-cache -t $(DOCKER_REGISTRY)coda-build coda-build && \
+	docker build --no-cache -t $(DOCKER_REGISTRY)build-container-ubuntu build-container-ubuntu && \
 	[ -z "$(DOCKER_REGISTRY)" ] && true || \
 	  docker push $(DOCKER_REGISTRY)coda-build && \
-	  docker push $(DOCKER_REGISTRY)build-container-ubuntu && \
-	  docker push $(DOCKER_REGISTRY)build-container-fedora
+	  docker push $(DOCKER_REGISTRY)build-container-ubuntu
+	#docker build --no-cache -t $(DOCKER_REGISTRY)build-container-fedora build-container-fedora && \
+	#  docker push $(DOCKER_REGISTRY)build-container-fedora
 
 debian/changelog rpm/coda.spec: coda-*.tar.xz
 	rm -rf $(OUTDIR)
