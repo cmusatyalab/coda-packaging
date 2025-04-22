@@ -15,14 +15,6 @@ Requires:       readline
 
 BuildRequires:  gnutls-devel libuv-devel python3 systemd
 %{?systemd_requires}
-BuildRequires:  python3-devel python3-setuptools
-
-# It seems EL7 has python36-attrs
-%if ! 0%{?el7}
-BuildRequires:  python3-attrs
-%else
-BuildRequires:  python36-attrs
-%endif
 
 
 # Hardened build for long running and/or running as root programs
@@ -163,7 +155,6 @@ fi
 %{_bindir}/cfs
 %{_bindir}/clog
 %{_bindir}/cmon
-%{_bindir}/coda-sync-acls
 %{_bindir}/codacon
 %{_bindir}/cpasswd
 %{_bindir}/ctokens
@@ -176,7 +167,6 @@ fi
 %{_bindir}/repair
 %{_bindir}/coda_replay
 %{_bindir}/spy
-%{_bindir}/volmunge
 %{_bindir}/xaskuser
 %{_bindir}/xfrepair
 %{_mandir}/man1/au.1.gz
@@ -191,7 +181,6 @@ fi
 %{_mandir}/man1/mkcodabf.1.gz
 %{_mandir}/man1/repair.1.gz
 %{_mandir}/man1/spy.1.gz
-%{_mandir}/man1/volmunge.1.gz
 %{_mandir}/man8/venus.8.gz
 %{_mandir}/man8/coda-client-setup.8.gz
 %{_mandir}/man8/vutil.8.gz
@@ -258,7 +247,6 @@ fi
 %{_sbindir}/vice-setup-user
 %{_sbindir}/vice-setup-scm
 %{_sbindir}/volutil
-%{_bindir}/coda-make-certs
 %{_bindir}/getvolinfo
 %{_bindir}/reinit
 %{_bindir}/rpc2ping

@@ -6,7 +6,6 @@ usr/bin/au
 usr/bin/cfs
 usr/bin/clog
 usr/bin/cmon
-usr/bin/coda-sync-acls
 usr/bin/codacon
 usr/bin/cpasswd
 usr/bin/ctokens
@@ -21,7 +20,6 @@ usr/bin/removeinc
 usr/bin/repair
 usr/bin/coda_replay
 usr/bin/spy
-usr/bin/volmunge
 usr/bin/xaskuser
 usr/bin/xfrepair
 usr/sbin/venus
@@ -39,7 +37,6 @@ usr/share/man/man1/hoard.1
 usr/share/man/man1/mkcodabf.1
 usr/share/man/man1/repair.1
 usr/share/man/man1/spy.1
-usr/share/man/man1/volmunge.1
 usr/share/man/man8/venus.8
 usr/share/man/man8/coda-client-setup.8
 usr/share/man/man8/vutil.8

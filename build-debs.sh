@@ -93,7 +93,7 @@ do
     [ "$release-$arch" = "hirsute-i386" ] && break
 
     chroot_tgz=$chroots/$release-$arch.tgz
-    extra_pkgs="debootstrap fakeroot pbuilder wget debhelper dh-python libreadline-dev libncurses5-dev liblua5.1-0-dev flex bison pkg-config python3 python3-attr python3-setuptools automake systemd netcat eatmydata libuv1-dev libgnutls28-dev ${EXTRA_PKGS[$release]}"
+    extra_pkgs="debootstrap fakeroot pbuilder wget debhelper dh-python libreadline-dev libncurses5-dev liblua5.1-0-dev flex bison pkg-config python3 automake systemd netcat eatmydata libuv1-dev libgnutls28-dev ${EXTRA_PKGS[$release]}"
 
     ##
     ## Create/update chroot

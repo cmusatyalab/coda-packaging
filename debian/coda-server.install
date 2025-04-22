@@ -1,7 +1,6 @@
 etc/coda/server.conf.ex
 lib/systemd/system/coda-auth2.service
 lib/systemd/system/coda-server.service
-usr/bin/coda-make-certs
 usr/bin/getvolinfo
 usr/bin/reinit
 usr/bin/rpc2ping

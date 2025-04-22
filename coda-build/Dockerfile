@@ -25,11 +25,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     pkg-config \
     python3 \
     systemd \
-    python3-attr \
-    python3-dev \
     python3-pip \
-    python3-setuptools \
-    python3-wheel \
  && pip3 install pre-commit \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
