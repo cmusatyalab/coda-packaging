@@ -1,4 +1,4 @@
-FROM ubuntu:groovy
+FROM ubuntu:noble
 
 RUN apt-get update \
  && DEBIAN_FRONTEND=noninteractive \

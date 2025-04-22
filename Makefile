@@ -1,5 +1,5 @@
-DEB_DISTS_DEBIAN := jessie stretch buster bookworm # bullseye
-DEB_DISTS_UBUNTU := xenial bionic focal groovy hirsute
+DEB_DISTS_DEBIAN := buster bullseye bookworm
+DEB_DISTS_UBUNTU := bionic focal jammy noble
 DEB_DISTS := $(DEB_DISTS_DEBIAN) $(DEB_DISTS_UBUNTU)
 
 RPM_ROOTS_FEDORA := $(foreach dist,33 34,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
@@ -16,7 +16,7 @@ none:
 
 .PHONY: clean
 clean:
-	rm -rf $(OUTDIR)
+	rm -rf $(OUTDIR) *.image
 
 .PHONY: deb
 deb: debian/changelog
@@ -71,16 +71,20 @@ fix-debrepo:
 	@ssh -o"RemoteForward $$(ssh $(CODA_DISTRIBUTE_HOST) gpgconf --list-dir agent-socket) $$(gpgconf --list-dir agent-extra-socket)" \
 		-t $(CODA_DISTRIBUTE_HOST) "cd $(CODA_DISTRIBUTE_DIR) && reprepro --confdir=/home/repos/conf export"
 
-.PHONY: docker-image
-docker-image:
-	docker build --no-cache -t $(DOCKER_REGISTRY)coda-build coda-build && \
-	docker build --no-cache -t $(DOCKER_REGISTRY)build-container-ubuntu build-container-ubuntu && \
-	if [ -n "$(DOCKER_REGISTRY)" ] ; then \
-	  docker push $(DOCKER_REGISTRY)coda-build && \
-	  docker push $(DOCKER_REGISTRY)build-container-ubuntu \
-	fi
-	#docker build --no-cache -t $(DOCKER_REGISTRY)build-container-fedora build-container-fedora && \
-	#  docker push $(DOCKER_REGISTRY)build-container-fedora \
+.SUFFIXES: .image
+
+%.image:
+	docker build --no-cache -t $* $*
+	@touch $*.image
+
+%-push: %.image
+	[ -n "$(DOCKER_REGISTRY)" ] && \
+		docker tag $* $(DOCKER_REGISTRY)$* && \
+		docker push $(DOCKER_REGISTRY)$*
+
+.PHONY: docker-image docker-push
+docker-image: coda-build.image build-container-ubuntu.image # build-container-fedora.image
+docker-push: coda-build-push build-container-ubuntu-push # build-container-fedora-push
 
 debian/changelog rpm/coda.spec: coda-*.tar.xz
 	rm -rf $(OUTDIR)
