@@ -21,7 +21,7 @@ fi
 
 DIST="$@"
 
-RPMROOTS="$(echo fedora-{32,33}-{x86_64,i386}) epel-7-coda-x86_64 epel-8-x86_64"
+RPMROOTS="$(echo fedora-{33,34}-{x86_64,i386}) epel-7-coda-x86_64 epel-8-x86_64"
 
 if [ -n "${DIST}" ] ; then
     for dist in ${DIST} ; do
@@ -80,4 +80,3 @@ done
 #rm coda-$RPM_VERSION-*.src.rpm
 
 # artifacts = "$distdir/*.rpm"
-

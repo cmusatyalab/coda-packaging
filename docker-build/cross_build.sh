@@ -41,4 +41,3 @@ done
 #docker manifest annotate ${docker_repo}:latest \
 #	${docker_repo}:arm64v8-latest --os linux --arch arm64 --variant armv8
 #docker manifest push ${docker_repo}:latest
-

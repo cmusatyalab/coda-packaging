@@ -1,4 +1,4 @@
-FROM ubuntu:focal
+FROM ubuntu:groovy
 
 RUN apt-get update \
  && DEBIAN_FRONTEND=noninteractive \
@@ -19,4 +19,3 @@ RUN echo "EATMYDATA=yes" > /root/.pbuilderrc
 
 VOLUME [ "/src" ]
 WORKDIR /src
-
