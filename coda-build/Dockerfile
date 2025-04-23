@@ -10,7 +10,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     bison \
     build-essential \
     ccache \
-    clang-format-14 \
     doxygen \
     flex \
     fonts-freefont-ttf \
@@ -27,10 +26,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     pkg-config \
     pipx \
     python3 \
-    python3-dev \
-    python3-pip \
-    python3-setuptools \
-    python3-wheel \
     systemd \
  && pipx install pre-commit \
  && apt-get clean \
