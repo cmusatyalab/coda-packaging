@@ -1,25 +1,18 @@
-image: docker:24.0.5
-services:
-  - docker:24.0.5-dind
-
-variables:
-  FF_GITLAB_REGISTRY_HELPER_IMAGE: 1
-
 stages:
  - build
 
-before_script:
-  - docker info
-  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-
 coda_build_image:
   stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:v1.23.2-debug
+    entrypoint: [""]
   variables:
     IMAGE: coda-build
   script:
-    - docker pull $CI_REGISTRY_IMAGE/$IMAGE || true
-    - docker build --pull --cache-from $CI_REGISTRY_IMAGE/$IMAGE -t $CI_REGISTRY_IMAGE/$IMAGE $IMAGE
-    - docker push $CI_REGISTRY_IMAGE/$IMAGE
+    - /kaniko/executor
+      --context $CI_PROJECT_DIR/coda-build
+      --dockerfile $CI_PROJECT_DIR/coda-build/Dockerfile
+      --destination ${CI_REGISTRY_IMAGE}/${IMAGE}
   only:
     changes:
       - .gitlab-ci.yml
