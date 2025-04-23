@@ -73,7 +73,7 @@ fix-debrepo:
 
 .SUFFIXES: .image
 
-%.image:
+%.image: %/Dockerfile
 	docker build --no-cache -t $* $*
 	@touch $*.image
 

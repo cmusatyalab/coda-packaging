@@ -2,6 +2,8 @@
 # see https://hub.docker.com/_/gcc/
 FROM gcc:14-bookworm
 
+ENV PATH="/root/.local/bin:/usr/local/bin:/usr/bin:/bin"
+
 # Install Coda's build and CI dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     automake \
@@ -30,7 +32,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-setuptools \
     python3-wheel \
     systemd \
- && pipx ensurepath \
  && pipx install pre-commit \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
