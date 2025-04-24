@@ -24,20 +24,20 @@ fi
 DIST="$@"
 
 # if a specific release wasn't given, build all releases (will take a while.....)
-ALL_DISTS="jessie stretch buster xenial bionic focal groovy"
+ALL_DISTS="buster bullseye bookworm bionic focal jammy noble"
 
 declare -A RELEASES
 RELEASES["jessie"]="debian8.0"
 RELEASES["stretch"]="debian9.0"
 RELEASES["buster"]="debian10.0"
-RELEASES["bookworm"]="debian11.0"
-RELEASES["bullseye"]="debian.testing"
+RELEASES["bullseye"]="debian11.0"
+RELEASES["bookworm"]="debian12.0"
 RELEASES["sid"]="debian.unstable"
 RELEASES["xenial"]="ubuntu16.04"
 RELEASES["bionic"]="ubuntu18.04"
 RELEASES["focal"]="ubuntu20.04"
-RELEASES["groovy"]="ubuntu20.10"
-RELEASES["hirsute"]="ubuntu21.04"
+RELEASES["jammy"]="ubuntu22.04"
+RELEASES["noble"]="ubuntu24.04"
 
 if [ -n "${DIST}" ] ; then
     for dist in ${DIST} ; do
@@ -55,20 +55,21 @@ fi
 ## enable backports to get more up-to-date versions
 declare -A OTHER_REPOS
 OTHER_REPOS["jessie"]='|deb http://archive.debian.org/debian/ DISTRO-backports main'
-#OTHER_REPOS["stretch"]="|deb http://deb.debian.org/debian/ DISTRO-backports main"
+OTHER_REPOS["stretch"]='|deb http://archive.debian.org/debian/ DISTRO-backports main'
+OTHER_REPOS["buster"]='|deb http://archive.debian.org/debian/ DISTRO-backports main'
 
 declare -A EXTRA_PKGS
-EXTRA_PKGS["jessie"]="dh-systemd"
-EXTRA_PKGS["stretch"]="dh-systemd"
-EXTRA_PKGS["buster"]="dh-systemd"
-EXTRA_PKGS["bullseye"]="dh-systemd"
-EXTRA_PKGS["bookworm"]=""
-EXTRA_PKGS["sid"]="dh-systemd"
-EXTRA_PKGS["xenial"]="dh-systemd"
-EXTRA_PKGS["bionic"]="dh-systemd"
-EXTRA_PKGS["focal"]="dh-systemd"
-EXTRA_PKGS["groovy"]="dh-systemd"
-EXTRA_PKGS["hirsute"]=""
+EXTRA_PKGS["jessie"]="dh-systemd netcat"
+EXTRA_PKGS["stretch"]="dh-systemd netcat"
+EXTRA_PKGS["buster"]="dh-systemd netcat"
+EXTRA_PKGS["bullseye"]="netcat"
+EXTRA_PKGS["bookworm"]="netcat-openbsd"
+EXTRA_PKGS["sid"]="dh-systemd netcat"
+EXTRA_PKGS["xenial"]="dh-systemd netcat"
+EXTRA_PKGS["bionic"]="dh-systemd netcat"
+EXTRA_PKGS["focal"]="dh-systemd netcat"
+EXTRA_PKGS["jammy"]="netcat"
+EXTRA_PKGS["noble"]="netcat-openbsd"
 
 chroots=$(pwd)/chroots-deb
 mkdir -p "$chroots"
@@ -89,11 +90,11 @@ do
   for arch in amd64 i386
   do
     [ "$release-$arch" = "focal-i386" ] && break
-    [ "$release-$arch" = "groovy-i386" ] && break
-    [ "$release-$arch" = "hirsute-i386" ] && break
+    [ "$release-$arch" = "jammy-i386" ] && break
+    [ "$release-$arch" = "noble-i386" ] && break
 
     chroot_tgz=$chroots/$release-$arch.tgz
-    extra_pkgs="debootstrap fakeroot pbuilder wget debhelper dh-python libreadline-dev libncurses5-dev liblua5.1-0-dev flex bison pkg-config python3 automake systemd netcat eatmydata libuv1-dev libgnutls28-dev ${EXTRA_PKGS[$release]}"
+    extra_pkgs="debootstrap fakeroot pbuilder wget debhelper dh-python libreadline-dev libncurses5-dev liblua5.1-0-dev flex bison pkg-config python3 automake systemd eatmydata libuv1-dev libgnutls28-dev ${EXTRA_PKGS[$release]}"
 
     ##
     ## Create/update chroot
@@ -114,6 +115,7 @@ do
             DEB_COMPONENTS="main universe"
             ;;
         esac
+        [ "$release" = "bullseye" ] && DEB_SECURITY=
         [ "$release" = "bookworm" ] && DEB_SECURITY=
         OTHER_MIRRORS=$(echo ${DEB_SECURITY}${OTHER_REPOS[$release]} | sed -e "s/DISTRO/$release/g")
 
@@ -145,8 +147,8 @@ do
   do
     # Ubuntu dropped 32-bit distributions
     [ "$release-$arch" = "focal-i386" ] && break
-    [ "$release-$arch" = "groovy-i386" ] && break
-    [ "$release-$arch" = "hirsute-i386" ] && break
+    [ "$release-$arch" = "jammy-i386" ] && break
+    [ "$release-$arch" = "noble-i386" ] && break
 
     chroot_tgz=$chroots/$release-$arch.tgz
 

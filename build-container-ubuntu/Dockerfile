@@ -15,7 +15,7 @@ RUN apt-get update \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
-RUN echo "EATMYDATA=yes" > /root/.pbuilderrc
+RUN printf "EATMYDATA=yes\nAPTCACHEHARDLINK=no" > /root/.pbuilderrc
 
 VOLUME [ "/src" ]
 WORKDIR /src

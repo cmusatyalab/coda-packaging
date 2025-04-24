@@ -1,22 +1,35 @@
 stages:
  - build
 
-coda_build_image:
+.build_container: &build_container
   stage: build
   image:
     name: gcr.io/kaniko-project/executor:v1.23.2-debug
     entrypoint: [""]
-  variables:
-    IMAGE: coda-build
   script:
     - /kaniko/executor
-      --context $CI_PROJECT_DIR/coda-build
-      --dockerfile $CI_PROJECT_DIR/coda-build/Dockerfile
+      --context ${CI_PROJECT_DIR}/${IMAGE}
+      --dockerfile ${CI_PROJECT_DIR}/${IMAGE}/Dockerfile
       --destination ${CI_REGISTRY_IMAGE}/${IMAGE}
       --cache=true
-      --cache-copy-layers=true
+      --cache-copy-layers
       --cache-ttl=24h
   only:
     changes:
       - .gitlab-ci.yml
-      - coda-build/*
+      - ${IMAGE}/*
+
+coda_build_image:
+  <<: *build_container
+  variables:
+    IMAGE: coda-build
+
+coda_build_ubuntu_image:
+  <<: *build_container
+  variables:
+    IMAGE: build-container-ubuntu
+
+coda_build_fedora_image:
+  <<: *build_container
+  variables:
+    IMAGE: build-container-fedora

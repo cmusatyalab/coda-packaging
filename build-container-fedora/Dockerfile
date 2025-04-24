@@ -3,9 +3,13 @@
 #
 FROM fedora:latest
 
-RUN yum install -y --setopt="tsflag=nodocs" \
+#RUN yum install -y --setopt"tsflag=nodocs" \
+#    make mock pv rpmdevtools rpm-build \
+# && yum clean all \
+# && rm -rf /var/cache/yum
+RUN dnf install -y --nodocs \
     make mock pv rpmdevtools rpm-build \
- && yum clean all \
+ && dnf clean all \
  && rm -rf /var/cache/yum
 
 COPY epel-7-coda-x86_64.cfg /etc/mock

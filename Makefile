@@ -19,23 +19,23 @@ clean:
 	rm -rf $(OUTDIR) *.image
 
 .PHONY: deb
-deb: debian/changelog
+deb: build-container-ubuntu.image debian/changelog
 	mkdir -p $(OUTDIR)
-	@docker run --rm -it \
+	docker run --rm -it \
 	    -v `pwd`:/src \
 	    --privileged \
 	    --entrypoint ./build-debs.sh \
-	    $(DOCKER_REGISTRY)build-container-ubuntu:latest \
+	    build-container-ubuntu:latest \
 	    --in-docker $(DEB_DISTS)
 
 .PHONY: rpm
-rpm: rpm/coda.spec
+rpm: build-container-fedora.image rpm/coda.spec
 	mkdir -p $(OUTDIR)
 	@docker run --rm -it \
 	    -v `pwd`:/src \
 	    --privileged \
 	    --entrypoint ./build-rpms.sh \
-	    $(DOCKER_REGISTRY)build-container-fedora:latest \
+	    build-container-fedora:latest \
 	    --in-docker $(RPM_ROOTS)
 
 #.PHONY: msi
@@ -83,8 +83,8 @@ fix-debrepo:
 		docker push $(DOCKER_REGISTRY)$*
 
 .PHONY: docker-image docker-push
-docker-image: coda-build.image build-container-ubuntu.image # build-container-fedora.image
-docker-push: coda-build-push build-container-ubuntu-push # build-container-fedora-push
+docker-image: coda-build.image build-container-ubuntu.image build-container-fedora.image
+docker-push: coda-build-push build-container-ubuntu-push build-container-fedora-push
 
 debian/changelog rpm/coda.spec: coda-*.tar.xz
 	rm -rf $(OUTDIR)
