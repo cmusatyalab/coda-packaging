@@ -13,6 +13,9 @@ coda_build_image:
       --context $CI_PROJECT_DIR/coda-build
       --dockerfile $CI_PROJECT_DIR/coda-build/Dockerfile
       --destination ${CI_REGISTRY_IMAGE}/${IMAGE}
+      --cache=true
+      --cache-copy-layers=true
+      --cache-ttl=24h
   only:
     changes:
       - .gitlab-ci.yml
