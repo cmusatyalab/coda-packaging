@@ -19,3 +19,6 @@ RUN printf "EATMYDATA=yes\nAPTCACHEHARDLINK=no" > /root/.pbuilderrc
 
 VOLUME [ "/src" ]
 WORKDIR /src
+
+COPY build-debs.sh /build-debs.sh
+ENTRYPOINT [ "/build-debs.sh" ]

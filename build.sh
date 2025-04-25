@@ -1,13 +1,12 @@
 #!/bin/sh
 
-DEB_RELEASES="jessie stretch buster bookworm xenial bionic focal groovy hirsute"
-RPM_RELEASES="$(/bin/bash -c 'echo fedora-{33,34}-{x86_64,i386}') epel-7-coda-x86_64 epel-8-x86_64"
+DEBIAN_RELEASES="bullseye-amd64 bullseye-i386 bookworm-amd64 bookworm-i386"
+UBUNTU_RELEASES="focal-amd64 jammy-amd64 noble-amd64"
+FEDORA_RELEASES="$(/bin/bash -c 'echo fedora-{40,41}-{x86_64,i386}')"
+EPEL_RELEASES="$(/bin/bash -c 'echo rocky+epel-{8,9}-x86_64')"
 
-( cd build-container-ubuntu &&
-  docker build -t build-container-ubuntu:latest . )
-
-( cd build-container-fedora &&
-  docker build -t build-container-fedora:latest . )
+docker build -t coda-build-deb:latest coda-build-deb
+docker build -t coda-build-rpm:latest coda-build-rpm
 
 ## $1 can be 'update' to update existing chroots
 UPDATE=""
@@ -16,43 +15,18 @@ if [ "$1" = "--update" ] ; then
     shift
 fi
 
-ALL_RELEASES="$DEB_RELEASES $RPM_RELEASES"
+ALL_RELEASES="$DEBIAN_RELEASES $UBUNTU_RELEASE $FEDORA_RELEASES $EPEL_RELEASES"
 DIST="${@:-$ALL_RELEASES}"
 
-DEB_DIST=
-RPM_DIST=
 for dist in ${DIST} ; do
-    known=0
-    for release in ${DEB_RELEASES} ; do
-        if [ "$dist" = "$release" ] ; then
-            DEB_DIST="$DEB_DIST $dist"
-            known=1
-        fi
-    done
-    for release in ${RPM_RELEASES} ; do
-        if [ "$dist" = "$release" ] ; then
-            RPM_DIST="$RPM_DIST $dist"
-            known=1
-        fi
-    done
-    if [ "$known" -eq 0 ] ; then
-        echo "Unknown release $dist"
-        exit 0
-    fi
+    case "$dist" in
+      fedora-*|alma*|rocky*|*epel-*)
+        docker run --rm -it -v $(pwd):/src --privileged \
+            coda-build-rpm:latest $UPDATE $dist
+        ;;
+      *)
+        docker run --rm -it -v $(pwd):/src --privileged \
+            coda-build-deb:latest $UPDATE $dist
+        ;;
+    esac
 done
-
-if [ -n "$DEB_DIST" ] ; then
-    docker run --rm -it \
-        -v $(pwd):/src \
-        --privileged \
-        --entrypoint ./build-debs.sh \
-        build-container-ubuntu:latest --in-docker $UPDATE $DEB_DIST
-fi
-
-if [ -n "$RPM_DIST" ] ; then
-    docker run --rm -it \
-        -v $(pwd):/src \
-        --privileged \
-        --entrypoint ./build-rpms.sh \
-        build-container-fedora:latest --in-docker $RPM_DIST
-fi

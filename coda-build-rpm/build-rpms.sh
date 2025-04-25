@@ -9,19 +9,13 @@ BUILD_LINES=5000
 
 set -e
 
-if [ "$1" != "--in-docker" ] ; then
-    echo "This script is expected to run inside a fedora container"
-    exit 1
-fi
-shift
-
 if [ "$1" = "--update" ] ; then
     shift
 fi
 
 DIST="$@"
 
-RPMROOTS="$(echo fedora-{33,34}-{x86_64,i386}) epel-7-coda-x86_64 epel-8-x86_64"
+RPMROOTS="$(echo fedora-{40,41}-{x86_64,i386}) $(echo rocky+epel-{8,9}-x86_64)"
 
 if [ -n "${DIST}" ] ; then
     for dist in ${DIST} ; do
@@ -44,14 +38,11 @@ install -g mock -m 2775 -d "$cachedir"
 distdir=$(pwd)/dist
 mkdir -p "$distdir"
 
-chown -R builder:mock "$cachedir" "$distdir"
+#chown -R builder:mock "$cachedir" "$distdir"
 
 echo "config_opts['cache_topdir'] = '$cachedir'" >> /etc/mock/site-defaults.cfg
 #echo "config_opts['docker_unshare_warning'] = False" >> /etc/mock/site-defaults.cfg
 echo "config_opts['use_nspawn'] = False" >> /etc/mock/site-defaults.cfg
-
-declare -A MOCKOPTS
-MOCKOPTS["epel-8-x86_64"]="--enablerepo Devel"
 
 ## Build .src.rpm
 cd /var/tmp
@@ -73,7 +64,8 @@ rm coda-$RPM_VERSION.tar.xz
 
 for root in ${DIST:-$RPMROOTS}
 do
-    runuser -l builder -c "mock -r $root -v ${MOCKOPTS[$root]} --rebuild /var/tmp/coda-$RPM_VERSION-*.src.rpm --resultdir=$distdir" 2>&1 | \
+    #runuser -l builder -c "mock -r $root -v --enablerepo Devel --rebuild /var/tmp/coda-$RPM_VERSION-*.src.rpm --resultdir=$distdir" 2>&1 | \
+    runuser -c "mock -r $root -v --rebuild /var/tmp/coda-$RPM_VERSION-*.src.rpm --resultdir=$distdir" 2>&1 | \
         pv -l -s $BUILD_LINES -N "coda-${root}" > $distdir/build-${root}.log
 done
 

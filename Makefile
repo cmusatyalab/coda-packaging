@@ -1,12 +1,11 @@
-DEB_DISTS_DEBIAN := buster bullseye bookworm
-DEB_DISTS_UBUNTU := bionic focal jammy noble
+DEB_DISTS_DEBIAN := bullseye bookworm
+DEB_DISTS_UBUNTU := focal jammy noble
 DEB_DISTS := $(DEB_DISTS_DEBIAN) $(DEB_DISTS_UBUNTU)
 
-RPM_ROOTS_FEDORA := $(foreach dist,33 34,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
-RPM_ROOTS_EL := epel-7-coda-x86_64 epel-8-x86_64
+RPM_ROOTS_FEDORA := $(foreach dist,40 41,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
+RPM_ROOTS_EL := $(foreach dist,8 9,rocky+epel-$(dist)-x86_64)
 RPM_ROOTS := $(RPM_ROOTS_FEDORA) $(RPM_ROOTS_EL)
 
-DOCKER_REGISTRY := # registry.cmusatyalab.org/coda/coda-packaging/
 OUTDIR := dist
 
 .PHONY: none
@@ -19,24 +18,22 @@ clean:
 	rm -rf $(OUTDIR) *.image
 
 .PHONY: deb
-deb: build-container-ubuntu.image debian/changelog
+deb: coda-build-deb.image debian/changelog
 	mkdir -p $(OUTDIR)
 	docker run --rm -it \
 	    -v `pwd`:/src \
 	    --privileged \
-	    --entrypoint ./build-debs.sh \
-	    build-container-ubuntu:latest \
-	    --in-docker $(DEB_DISTS)
+	    coda-build-deb:latest \
+	    $(DEB_DISTS)
 
 .PHONY: rpm
-rpm: build-container-fedora.image rpm/coda.spec
+rpm: coda-build-rpm.image rpm/coda.spec
 	mkdir -p $(OUTDIR)
 	@docker run --rm -it \
 	    -v `pwd`:/src \
 	    --privileged \
-	    --entrypoint ./build-rpms.sh \
-	    build-container-fedora:latest \
-	    --in-docker $(RPM_ROOTS)
+	    coda-build-rpm:latest \
+	    $(RPM_ROOTS)
 
 #.PHONY: msi
 #msi:
@@ -71,21 +68,17 @@ fix-debrepo:
 	@ssh -o"RemoteForward $$(ssh $(CODA_DISTRIBUTE_HOST) gpgconf --list-dir agent-socket) $$(gpgconf --list-dir agent-extra-socket)" \
 		-t $(CODA_DISTRIBUTE_HOST) "cd $(CODA_DISTRIBUTE_DIR) && reprepro --confdir=/home/repos/conf export"
 
-.SUFFIXES: .image
-
-%.image: %/Dockerfile
-	docker build --no-cache -t $* $*
-	@touch $*.image
-
-%-push: %.image
-	[ -n "$(DOCKER_REGISTRY)" ] && \
-		docker tag $* $(DOCKER_REGISTRY)$* && \
-		docker push $(DOCKER_REGISTRY)$*
-
-.PHONY: docker-image docker-push
-docker-image: coda-build.image build-container-ubuntu.image build-container-fedora.image
-docker-push: coda-build-push build-container-ubuntu-push build-container-fedora-push
-
 debian/changelog rpm/coda.spec: coda-*.tar.xz
 	rm -rf $(OUTDIR)
 	./setup-release.sh
+
+## rebuild local docker build container images
+NOCACHE = # --no-cache
+.SUFFIXES: .image
+%.image: %/*
+	docker build $(NOCACHE) -t $* $*
+	@touch $*.image
+
+.PHONY: docker-image
+docker-image: coda-build-src.image coda-build-deb.image coda-build-rpm.image
+

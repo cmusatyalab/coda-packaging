@@ -22,17 +22,17 @@ stages:
       - .gitlab-ci.yml
       - ${IMAGE}/*
 
-coda_build_image:
+coda_build_src_image:
   <<: *build_container
   variables:
-    IMAGE: coda-build
+    IMAGE: coda-build-src
 
-coda_build_ubuntu_image:
+coda_build_deb_image:
   <<: *build_container
   variables:
-    IMAGE: build-container-ubuntu
+    IMAGE: coda-build-deb
 
-coda_build_fedora_image:
+coda_build_rpm_image:
   <<: *build_container
   variables:
-    IMAGE: build-container-fedora
+    IMAGE: coda-build-rpm

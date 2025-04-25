@@ -5,5 +5,4 @@ usr/lib/coda/libse*.so.*
 usr/lib/coda/librdslwp*.so.*
 usr/lib/coda/librvmlwp*.so.*
 usr/lib/coda/libseglwp*.so.*
-usr/lib/python3/dist-packages/codafs*
 usr/sbin/codaconfedit

@@ -9,9 +9,8 @@ Build-Depends: debhelper (>= 10), dh-python, dh-systemd (>= 1.5) | netcat,
 
 Package: coda-common
 Architecture: amd64 i386 m68k powerpc sparc
-Depends: ${shlibs:Depends}, ${python3:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Conflicts: coda-server (<= 6.9.5)
-Suggests: python3-tqdm, python3-jsonschema
 Homepage: http://coda.cs.cmu.edu/
 Description: Common libraries for the Coda distributed file system
  Coda is an advanced distributed filesystem. It has been developed at CMU
@@ -22,7 +21,7 @@ Description: Common libraries for the Coda distributed file system
 
 Package: coda-client
 Architecture: linux-any
-Depends: coda-common (= ${binary:Version}), ${shlibs:Depends}, ${python3:Depends}, ${perl:Depends}, ${misc:Depends}
+Depends: coda-common (= ${binary:Version}), ${shlibs:Depends}, ${python3:Depends}, ${misc:Depends}
 Suggests: python3-gi, needrestart
 Pre-Depends: debconf (>= 0.2.17)
 Homepage: http://coda.cs.cmu.edu/
