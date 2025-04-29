@@ -1,5 +1,5 @@
-DEB_DISTS_DEBIAN := bullseye bookworm
-DEB_DISTS_UBUNTU := focal jammy noble
+DEB_DISTS_DEBIAN := bullseye-amd64 bullseye-i386 bookworm-amd64 bookworm-i386
+DEB_DISTS_UBUNTU := focal-amd64 jammy-amd64 noble-amd64
 DEB_DISTS := $(DEB_DISTS_DEBIAN) $(DEB_DISTS_UBUNTU)
 
 RPM_ROOTS_FEDORA := $(foreach dist,40 41,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))

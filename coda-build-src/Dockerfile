@@ -26,6 +26,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     pkg-config \
     pipx \
     python3 \
+    python3-build \
     systemd \
  && pipx install pre-commit \
  && apt-get clean \
