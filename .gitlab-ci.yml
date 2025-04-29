@@ -18,6 +18,7 @@ stages:
     - /kaniko/executor
       --context ${CI_PROJECT_DIR}/${IMAGE}
       --dockerfile ${CI_PROJECT_DIR}/${IMAGE}/Dockerfile
+      --destination ${CI_REGISTRY_IMAGE}/${IMAGE}:${CI_COMMIT_REF_NAME//\//-}
       --destination ${CI_REGISTRY_IMAGE}/${IMAGE}:$CI_COMMIT_SHORT_SHA $ADD_LATEST_TAG $FORMATTED_TAG_LIST
       --build-arg http_proxy=$http_proxy
       --build-arg https_proxy=$https_proxy
