@@ -7,13 +7,21 @@ stages:
     name: gcr.io/kaniko-project/executor:v1.23.2-debug
     entrypoint: [""]
   script:
+    - if [[ "$CI_COMMIT_BRANCH" == "master" ]]; then
+        ADD_LATEST_TAG="--destination ${CI_REGISTRY_IMAGE}/${IMAGE}:latest";
+      fi
+    - if [[ -n "$ADDITIONAL_TAG_LIST" ]]; then
+        for TAG in $ADDITIONAL_TAG_LIST; do
+          FORMATTED_TAG_LIST="${FORMATTED_TAG_LIST} --destination ${CI_REGISTRY_IMAGE}/${IMAGE}:$TAG";
+        done;
+      fi
     - /kaniko/executor
       --context ${CI_PROJECT_DIR}/${IMAGE}
+      --dockerfile ${CI_PROJECT_DIR}/${IMAGE}/Dockerfile
+      --destination ${CI_REGISTRY_IMAGE}/${IMAGE}/$CI_COMMIT_SHORT_SHA $ADD_LATEST_TAG $FORMATTED_TAG_LIST
       --build-arg http_proxy=$http_proxy
       --build-arg https_proxy=$https_proxy
       --build-arg no_proxy=$no_proxy
-      --dockerfile ${CI_PROJECT_DIR}/${IMAGE}/Dockerfile
-      --destination ${CI_REGISTRY_IMAGE}/${IMAGE}
       --cache=true
       --cache-copy-layers
       --cache-ttl=24h
