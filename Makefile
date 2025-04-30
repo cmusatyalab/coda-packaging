@@ -52,6 +52,20 @@ rpm: coda-build-rpm.image rpm/coda.spec
 #		mv *.zip *.msi $$output ) && \
 #	rm -rf $$tmp
 
+debian/changelog rpm/coda.spec: coda-*.tar.xz
+	rm -rf $(OUTDIR)
+	./setup-release.sh
+
+## rebuild local docker build container images
+NOCACHE = # --no-cache
+.SUFFIXES: .image
+%.image: %/*
+	docker build $(NOCACHE) -t $* $*
+	@touch $*.image
+
+.PHONY: docker-image
+docker-image: coda-build-src.image coda-build-deb.image coda-build-rpm.image
+
 .PHONY: upload
 upload:
 	[ -n "$(CODA_DISTRIBUTE_HOST)" -a -n "$(CODA_DISTRIBUTE_DIR)" ]
@@ -67,18 +81,3 @@ distribute:
 fix-debrepo:
 	@ssh -o"RemoteForward $$(ssh $(CODA_DISTRIBUTE_HOST) gpgconf --list-dir agent-socket) $$(gpgconf --list-dir agent-extra-socket)" \
 		-t $(CODA_DISTRIBUTE_HOST) "cd $(CODA_DISTRIBUTE_DIR) && reprepro --confdir=/home/repos/conf export"
-
-debian/changelog rpm/coda.spec: coda-*.tar.xz
-	rm -rf $(OUTDIR)
-	./setup-release.sh
-
-## rebuild local docker build container images
-NOCACHE = # --no-cache
-.SUFFIXES: .image
-%.image: %/*
-	docker build $(NOCACHE) -t $* $*
-	@touch $*.image
-
-.PHONY: docker-image
-docker-image: coda-build-src.image coda-build-deb.image coda-build-rpm.image
-
