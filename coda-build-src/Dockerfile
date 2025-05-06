@@ -23,11 +23,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libreadline-dev \
     libtool-bin \
     libuv1-dev \
+    pandoc \
     pkg-config \
     pipx \
     python3 \
     python3-build \
     systemd \
  && pipx install pre-commit \
+ && pipx install mkdocs \
+ && pipx inject mkdocs mkdocs-awesome-nav mkdocs-bibtex mkdocs-material mkdocs-minify-plugin \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
