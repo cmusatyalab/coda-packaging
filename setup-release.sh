@@ -11,7 +11,7 @@
 #rm artifacts.zip
 #echo
 
-VERSION=${1:-$(ls coda-*.tar.?z 2>/dev/null | head -1 | sed -ne 's/^coda-\(.*\)\.tar\..z/\1/p')}
+VERSION=${1:-$(ls coda-*.tar.?z 2>/dev/null | tail -1 | sed -ne 's/^coda-\(.*\)\.tar\..z/\1/p')}
 VERSION=${VERSION:?usage: $0 <version>}
 DEB_DATE="$(date -R)"
 RPM_DATE="$(date +'%a %b %d %Y')"

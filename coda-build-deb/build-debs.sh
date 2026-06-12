@@ -7,7 +7,7 @@
 # approximate number of lines written to stdout during build
 BUILD_LINES=5000
 
-set -e
+set -ex
 
 if [ "$1" = "--update" ] ; then
     UPDATE=1
@@ -81,7 +81,8 @@ project=$(dpkg-parsechangelog | sed -ne 's/Source: \(.*\)/\1/p')
 version=$(dpkg-parsechangelog | sed -ne 's/Version: \(.*\)-[^-]*/\1/p')
 
 tmp=$(mktemp -dt debpkg-XXXXXXXX)
-cp coda-*.tar.xz $tmp/${project}_$version.orig.tar.xz
+src=$(ls coda-*.tar.xz | tail -1)
+cp $src $tmp/${project}_$version.orig.tar.xz
 
 for dist in ${DIST:-$ALL_DISTS}
 do
@@ -146,7 +147,7 @@ do
   ## Build package
   ##
   tar xf $tmp/${project}_$version.orig.tar.xz -C $tmp
-  cp -a debian $tmp/$project-$version/
+  cp -a debian $tmp/${project}-$version
 
   sed -i -e "s/DISTVER/$distver/g" \
          -e "s/UNRELEASED/$release/g" \
