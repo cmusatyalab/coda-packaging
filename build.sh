@@ -1,8 +1,8 @@
 #!/bin/sh
 
-DEBIAN_RELEASES="bullseye-amd64 bullseye-i386 bookworm-amd64 bookworm-i386"
-UBUNTU_RELEASES="focal-amd64 jammy-amd64 noble-amd64"
-FEDORA_RELEASES="$(/bin/bash -c 'echo fedora-{40,41}-{x86_64,i386}')"
+DEBIAN_RELEASES="bullseye-amd64 bullseye-i386 bookworm-amd64 bookworm-i386 trixie-amd64 trixie-i386"
+UBUNTU_RELEASES="focal-amd64 jammy-amd64 noble-amd64 resolute-amd64"
+FEDORA_RELEASES="$(/bin/bash -c 'echo fedora-{43,44}-{x86_64,i386}')"
 EPEL_RELEASES="$(/bin/bash -c 'echo rocky+epel-{8,9}-x86_64')"
 
 docker build -t coda-build-deb:latest coda-build-deb

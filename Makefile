@@ -1,8 +1,8 @@
-DEB_DISTS_DEBIAN := bullseye-amd64 bullseye-i386 bookworm-amd64 bookworm-i386
-DEB_DISTS_UBUNTU := focal-amd64 jammy-amd64 noble-amd64
+DEB_DISTS_DEBIAN := bullseye-amd64 bullseye-i386 bookworm-amd64 bookworm-i386 trixie-amd64 trixie-i386
+DEB_DISTS_UBUNTU := focal-amd64 jammy-amd64 noble-amd64 resolute-amd64
 DEB_DISTS := $(DEB_DISTS_DEBIAN) $(DEB_DISTS_UBUNTU)
 
-RPM_ROOTS_FEDORA := $(foreach dist,40 41,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
+RPM_ROOTS_FEDORA := $(foreach dist,43 44,$(foreach arch,i386 x86_64,fedora-$(dist)-$(arch)))
 RPM_ROOTS_EL := $(foreach dist,8 9,rocky+epel-$(dist)-x86_64)
 RPM_ROOTS := $(RPM_ROOTS_FEDORA) $(RPM_ROOTS_EL)
 

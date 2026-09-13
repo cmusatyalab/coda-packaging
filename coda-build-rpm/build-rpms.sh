@@ -15,7 +15,7 @@ fi
 
 DIST="$@"
 
-RPMROOTS="$(echo fedora-{40,41}-{x86_64,i386}) $(echo rocky+epel-{8,9}-x86_64)"
+RPMROOTS="$(echo fedora-{43,44}-{x86_64,i386}) $(echo rocky+epel-{8,9}-x86_64)"
 
 if [ -n "${DIST}" ] ; then
     for dist in ${DIST} ; do

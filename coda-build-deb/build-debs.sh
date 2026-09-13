@@ -18,25 +18,24 @@ fi
 DIST="$@"
 
 # if a specific release wasn't given, build all releases (will take a while.....)
-ALL_DISTS="bullseye bookworm focal jammy noble"
+ALL_DISTS="bullseye bookworm trixie focal jammy noble"
 
 declare -A RELEASES
 #RELEASES["jessie"]="debian8.0"
 #RELEASES["stretch"]="debian9.0"
-RELEASES["buster"]="debian10.0"
+#RELEASES["buster"]="debian10.0"
 RELEASES["bullseye"]="debian11.0"
 RELEASES["bookworm"]="debian12.0"
-#RELEASES["trixie"]="debian13.0"
-#RELEASES["forky"]="debian14.0"
-#RELEASES["sid"]="debian.unstable"
+RELEASES["trixie"]="debian13.0"
+RELEASES["forky"]="debian14.0"
+RELEASES["sid"]="debian.unstable"
 
 #RELEASES["xenial"]="ubuntu16.04"
-RELEASES["bionic"]="ubuntu18.04"
+#RELEASES["bionic"]="ubuntu18.04"
 RELEASES["focal"]="ubuntu20.04"
 RELEASES["jammy"]="ubuntu22.04"
 RELEASES["noble"]="ubuntu24.04"
-RELEASES["oracular"]="ubuntu24.10"
-RELEASES["plucky"]="ubuntu25.04"
+RELEASES["resolute"]="ubuntu26.04"
 
 if [ -n "${DIST}" ] ; then
     for dist in ${DIST} ; do
@@ -57,19 +56,23 @@ declare -A OTHER_REPOS
 OTHER_REPOS["jessie"]='|deb http://archive.debian.org/debian/ DISTRO-backports main'
 OTHER_REPOS["stretch"]='|deb http://archive.debian.org/debian/ DISTRO-backports main'
 OTHER_REPOS["buster"]='|deb http://archive.debian.org/debian/ DISTRO-backports main'
+OTHER_REPOS["bullseye"]='|deb http://archive.debian.org/debian/ DISTRO-backports main'
 
 declare -A EXTRA_PKGS
-EXTRA_PKGS["jessie"]="dh-systemd netcat"
-EXTRA_PKGS["stretch"]="dh-systemd netcat"
-EXTRA_PKGS["buster"]="dh-systemd netcat"
+#EXTRA_PKGS["jessie"]="dh-systemd netcat"
+#EXTRA_PKGS["stretch"]="dh-systemd netcat"
+#EXTRA_PKGS["buster"]="dh-systemd netcat"
 EXTRA_PKGS["bullseye"]="netcat"
 EXTRA_PKGS["bookworm"]="netcat-openbsd"
-EXTRA_PKGS["sid"]="dh-systemd netcat"
+EXTRA_PKGS["trixie"]="netcat-openbsd systemd-dev"
+EXTRA_PKGS["forky"]="netcat-openbsd"
+EXTRA_PKGS["sid"]="netcat-openbsd"
 EXTRA_PKGS["xenial"]="dh-systemd netcat"
 EXTRA_PKGS["bionic"]="dh-systemd netcat"
 EXTRA_PKGS["focal"]="dh-systemd netcat"
 EXTRA_PKGS["jammy"]="netcat"
 EXTRA_PKGS["noble"]="netcat-openbsd"
+EXTRA_PKGS["resolute"]="netcat-openbsd systemd-dev"
 
 chroots=$(pwd)/chroots-deb
 mkdir -p "$chroots"
@@ -101,7 +104,7 @@ do
       case "$distver" in
       debian*)
           DEB_MIRROR="http://deb.debian.org/debian"
-          DEB_SECURITY="deb http://security.debian.org/debian-security DISTRO/updates main"
+          DEB_SECURITY="deb http://deb.debian.org/debian-security DISTRO-security main"
           DEB_KEYRING="/usr/share/keyrings/debian-archive-keyring.gpg"
           DEB_COMPONENTS="main"
           ;;
@@ -112,8 +115,9 @@ do
           DEB_COMPONENTS="main universe"
           ;;
       esac
-      [ "$release" = "bullseye" ] && DEB_SECURITY="deb http://deb.debian.org/debian-security DISTRO-security main"
-      [ "$release" = "bookworm" ] && DEB_SECURITY="deb http://deb.debian.org/debian-security DISTRO-security main"
+      [ "$release" = "jessie" ] && DEB_SECURITY="deb http://security.debian.org/debian-security DISTRO/updates main"
+      [ "$release" = "stretch" ] && DEB_SECURITY="deb http://security.debian.org/debian-security DISTRO/updates main"
+      [ "$release" = "buster" ] && DEB_SECURITY="deb http://security.debian.org/debian-security DISTRO/updates main"
       OTHER_MIRRORS=$(echo ${DEB_SECURITY}${OTHER_REPOS[$release]} | sed -e "s/DISTRO/$release/g")
 
       pbuilder --create \
@@ -171,8 +175,9 @@ do
       sed -i -e 's_usr/\(lib/modules-load\.d/.*\)_\1_' \
           $tmp/$project-$version/debian/coda-client.install
   fi
-  # noble has systemd units in /usr/lib/systemd/system instead of /lib/systemd/system
-  if [ "$release" = "noble" ]
+  # trixie, noble, and resolute have systemd units in /usr/lib/systemd/system
+  # instead of /lib/systemd/system
+  if [ "$release" = "trixie" -o "$release" = "noble" -o "$release" = "resolute" ]
   then
       sed -i -e 's_\(lib/systemd/.*\)_usr/\1_' \
           $tmp/$project-$version/debian/coda-client.install

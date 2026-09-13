@@ -1,4 +1,4 @@
-FROM ubuntu:noble
+FROM ubuntu:resolute
 
 RUN apt-get update \
  && DEBIAN_FRONTEND=noninteractive \
