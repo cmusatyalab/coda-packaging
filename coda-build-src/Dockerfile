@@ -32,6 +32,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-build \
     rsync \
     systemd \
+    valgrind \
  && pipx install uv \
  && uv tool install pre-commit \
  && uv tool install prek \

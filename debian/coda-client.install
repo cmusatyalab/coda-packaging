@@ -1,6 +1,6 @@
 etc/coda/realms
 etc/coda/venus.conf.ex
-lib/systemd/system/coda-client.service
+usr/lib/systemd/system/coda-client.service
 usr/lib/modules-load.d/coda.conf
 usr/bin/au
 usr/bin/cfs
@@ -23,6 +23,7 @@ usr/bin/spy
 usr/bin/xaskuser
 usr/bin/xfrepair
 usr/sbin/venus
+usr/sbin/asrlauncher
 usr/sbin/coda-client-setup
 usr/sbin/vutil
 usr/share/man/man1/au.1
