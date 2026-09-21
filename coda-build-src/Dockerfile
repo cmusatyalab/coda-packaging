@@ -1,6 +1,6 @@
 # Use Debian-based official GCC image
 # see https://hub.docker.com/_/gcc/
-FROM gcc:14-bookworm
+FROM gcc:16-trixie
 
 ENV PATH="/root/.local/bin:/usr/local/bin:/usr/bin:/bin"
 
@@ -23,6 +23,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libreadline-dev \
     libtool-bin \
     libuv1-dev \
+    meson \
+    ninja-build \
     pandoc \
     pkg-config \
     pipx \
@@ -30,6 +32,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-build \
     systemd \
  && pipx install pre-commit \
+ && pipx install prek \
  && pipx install mkdocs \
  && pipx inject mkdocs mkdocs-awesome-nav mkdocs-bibtex mkdocs-material mkdocs-minify-plugin \
  && apt-get clean \
