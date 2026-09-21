@@ -30,10 +30,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     pipx \
     python3 \
     python3-build \
+    rsync \
     systemd \
- && pipx install pre-commit \
- && pipx install prek \
- && pipx install mkdocs \
- && pipx inject mkdocs mkdocs-awesome-nav mkdocs-bibtex mkdocs-material mkdocs-minify-plugin \
+ && pipx install uv \
+ && uv tool install pre-commit \
+ && uv tool install prek \
+ && uv tool install mkdocs --with mkdocs-awesome-nav --with mkdocs-bibtex \
+    --with mkdocs-material --with mkdocs-minify-plugin \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
