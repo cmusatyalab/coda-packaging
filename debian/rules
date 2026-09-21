@@ -1,12 +1,28 @@
 #!/usr/bin/make -f
 %:
-	dh $@ --with python3 --with systemd
+	dh $@ --buildsystem=meson --builddir=build --with=python3
+
+# Coda requires meson >= 1.1, but bullseye, bookworm and focal ship older versions.
+# Install a current meson and ninja with pip into the user site and put that
+# directory first in the path so all meson invocations below use it.
+export PATH := $(HOME)/.local/bin:$(PATH)
 
 override_dh_auto_configure:
-	dh_auto_configure -- --with-lua --libdir=$$\{prefix\}/lib/coda
+	PIP_BREAK_SYSTEM_PACKAGES=1 python3 -m pip install --force-reinstall --user 'meson>=1.1.0' 'ninja>=1.8.2'; \
+	meson setup build . --wrap-mode=nodownload --prefix=/usr -Dlibdir=lib/coda -Drpath=true
+	# if ! meson setup --version 2>/dev/null | grep -Eq '^(1\.[1-9][0-9]*|[2-9]|[1-9][0-9]+)\.'; then \
+	# 	PIP_BREAK_SYSTEM_PACKAGES=1 python3 -m pip install --user 'meson>=1.1.0' 'ninja>=1.8.2'; \
+	# fi; \
+	# meson setup build . --wrap-mode=nodownload --prefix=/usr -Dlibdir=lib/coda -Drpath=true
+
+#override_dh_auto_build:
+#	meson compile -C build
 
 override_dh_auto_install:
-	dh_auto_install
+	# Install only runtime + man files. The devel tag (public headers,
+	# pkg-config files, static libs, unversioned .so links, rp2gen) is
+	# skipped outright rather than deleted afterwards.
+	meson install -C build --destdir=`pwd`/debian/tmp --tags runtime,man
 
 	# Change coda-client-setup to run dpkg-reconfigure
 	/bin/echo -e '#!/bin/sh\nset -e\necho "Starting \"dpkg-reconfigure coda-client\""\ndpkg-reconfigure coda-client' > "`pwd`/debian/tmp/usr/sbin/coda-client-setup"
@@ -21,10 +37,5 @@ override_dh_installdocs:
 override_dh_installinit:
 	dh_installinit --no-stop-on-upgrade
 
-# debhelper <= 10 (dh-systemd)
-override_dh_systemd_start:
-	dh_systemd_start --no-restart-on-upgrade
-
-# debhelper >= 11
 override_dh_installsystemd:
 	dh_installsystemd --no-restart-on-upgrade

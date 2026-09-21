@@ -14,15 +14,13 @@ if [ "$1" = "--update" ] ; then
     shift
 fi
 
-# expect something like "jessie-amd64"
+# expect something like "trixie-amd64"
 DIST="$@"
 
 # if a specific release wasn't given, build all releases (will take a while.....)
 ALL_DISTS="bullseye bookworm trixie focal jammy noble"
 
 declare -A RELEASES
-#RELEASES["jessie"]="debian8.0"
-#RELEASES["stretch"]="debian9.0"
 #RELEASES["buster"]="debian10.0"
 RELEASES["bullseye"]="debian11.0"
 RELEASES["bookworm"]="debian12.0"
@@ -30,7 +28,6 @@ RELEASES["trixie"]="debian13.0"
 RELEASES["forky"]="debian14.0"
 RELEASES["sid"]="debian.unstable"
 
-#RELEASES["xenial"]="ubuntu16.04"
 #RELEASES["bionic"]="ubuntu18.04"
 RELEASES["focal"]="ubuntu20.04"
 RELEASES["jammy"]="ubuntu22.04"
@@ -53,21 +50,16 @@ fi
 
 ## enable backports to get more up-to-date versions
 declare -A OTHER_REPOS
-OTHER_REPOS["jessie"]='|deb http://archive.debian.org/debian/ DISTRO-backports main'
-OTHER_REPOS["stretch"]='|deb http://archive.debian.org/debian/ DISTRO-backports main'
 OTHER_REPOS["buster"]='|deb http://archive.debian.org/debian/ DISTRO-backports main'
 OTHER_REPOS["bullseye"]='|deb http://archive.debian.org/debian/ DISTRO-backports main'
 
 declare -A EXTRA_PKGS
-#EXTRA_PKGS["jessie"]="dh-systemd netcat"
-#EXTRA_PKGS["stretch"]="dh-systemd netcat"
 #EXTRA_PKGS["buster"]="dh-systemd netcat"
 EXTRA_PKGS["bullseye"]="netcat"
 EXTRA_PKGS["bookworm"]="netcat-openbsd"
 EXTRA_PKGS["trixie"]="netcat-openbsd systemd-dev"
 EXTRA_PKGS["forky"]="netcat-openbsd"
 EXTRA_PKGS["sid"]="netcat-openbsd"
-EXTRA_PKGS["xenial"]="dh-systemd netcat"
 EXTRA_PKGS["bionic"]="dh-systemd netcat"
 EXTRA_PKGS["focal"]="dh-systemd netcat"
 EXTRA_PKGS["jammy"]="netcat"
@@ -94,7 +86,7 @@ do
   distver="${RELEASES[$release]}"
 
   chroot_tgz=$chroots/$dist.tgz
-  extra_pkgs="debootstrap fakeroot pbuilder wget debhelper dh-python libreadline-dev libncurses5-dev liblua5.1-0-dev flex bison pkg-config python3 automake systemd eatmydata libuv1-dev libgnutls28-dev ${EXTRA_PKGS[$release]}"
+  extra_pkgs="debootstrap fakeroot pbuilder wget debhelper dh-python libreadline-dev libncurses5-dev liblua5.1-0-dev flex bison pkg-config python3 python3-pip meson ninja-build valgrind systemd eatmydata libuv1-dev libgnutls28-dev ${EXTRA_PKGS[$release]}"
 
   ##
   ## Create/update chroot
@@ -115,8 +107,6 @@ do
           DEB_COMPONENTS="main universe"
           ;;
       esac
-      [ "$release" = "jessie" ] && DEB_SECURITY="deb http://security.debian.org/debian-security DISTRO/updates main"
-      [ "$release" = "stretch" ] && DEB_SECURITY="deb http://security.debian.org/debian-security DISTRO/updates main"
       [ "$release" = "buster" ] && DEB_SECURITY="deb http://security.debian.org/debian-security DISTRO/updates main"
       OTHER_MIRRORS=$(echo ${DEB_SECURITY}${OTHER_REPOS[$release]} | sed -e "s/DISTRO/$release/g")
 
@@ -157,33 +147,21 @@ do
          -e "s/UNRELEASED/$release/g" \
       $tmp/$project-$version/debian/changelog
 
-  # jessie does not have libuv1
-  #if [ "$release" = "jessie" ]
-  #then
-  #    sed -i -e "s/ libuv1-dev,//g" \
-  #        $tmp/$project-$version/debian/control
-  #fi
-  # jessie and xenial do not have debhelper >= 10
-  if [ "$release" = "jessie" -o "$release" = "xenial" ] ; then
-      echo 9 > $tmp/$project-$version/debian/compat
-      sed -i -e 's/debhelper (>= 10)/debhelper (>= 9)/g' \
-          $tmp/$project-$version/debian/control
-  fi
   # groovy has modules-load.d in /lib instead of /usr/lib
   if [ "$release" = "groovy" ]
   then
       sed -i -e 's_usr/\(lib/modules-load\.d/.*\)_\1_' \
           $tmp/$project-$version/debian/coda-client.install
   fi
-  # trixie, noble, and resolute have systemd units in /usr/lib/systemd/system
-  # instead of /lib/systemd/system
-  if [ "$release" = "trixie" -o "$release" = "noble" -o "$release" = "resolute" ]
+  # bullseye, bookworm, focal, and jammy have systemd units in /lib/systemd/system
+  # instead of /usr/lib/systemd/system
+  if [ "$release" = "bullseye" -o "$release" = "bookworm" -o "$release" = "focal" -o "$release" = "jammy" ]
   then
-      sed -i -e 's_\(lib/systemd/.*\)_usr/\1_' \
+      sed -i -e 's_usr/\(lib/systemd/.*\)_\1_' \
           $tmp/$project-$version/debian/coda-client.install
-      sed -i -e 's_\(lib/systemd/.*\)_usr/\1_' \
+      sed -i -e 's_usr/\(lib/systemd/.*\)_\1_' \
           $tmp/$project-$version/debian/coda-server.install
-      sed -i -e 's_\(lib/systemd/.*\)_usr/\1_' \
+      sed -i -e 's_usr/\(lib/systemd/.*\)_\1_' \
           $tmp/$project-$version/debian/coda-update.install
   fi
 

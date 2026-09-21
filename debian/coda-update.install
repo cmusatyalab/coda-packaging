@@ -1,5 +1,5 @@
-lib/systemd/system/coda-update-master.service
-lib/systemd/system/coda-update-slave.service
+usr/lib/systemd/system/coda-update-master.service
+usr/lib/systemd/system/coda-update-slave.service
 usr/sbin/updatesrv
 usr/sbin/updateclnt
 usr/sbin/updatefetch

@@ -1,8 +1,9 @@
 etc/coda/ssl/Coda_CA.crt
 usr/lib/coda/liblwp*.so.*
 usr/lib/coda/librpc2*.so.*
-usr/lib/coda/libse*.so.*
+usr/lib/coda/libse.so.*
 usr/lib/coda/librdslwp*.so.*
 usr/lib/coda/librvmlwp*.so.*
 usr/lib/coda/libseglwp*.so.*
+usr/share/rpc2/
 usr/sbin/codaconfedit

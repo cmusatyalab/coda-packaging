@@ -49,15 +49,19 @@ cd /var/tmp
 RPM_VERSION=$(sed -ne 's/^Version: *\(.*\)$/\1/p' $sourcedir/rpm/coda.spec)
 VERSION=$(echo $RPM_VERSION | tr _ -)
 
-if [ "$VERSION" != "$RPM_VERSION" ]
-then
-    tar -xJf $sourcedir/coda-$VERSION.tar.xz
+tar -xJf $sourcedir/coda-$VERSION.tar.xz
+if [ "$VERSION" != "$RPM_VERSION" ]; then
     mv coda-$VERSION coda-$RPM_VERSION
-    tar -cJf coda-$RPM_VERSION.tar.xz coda-$RPM_VERSION
-    rm -r coda-$RPM_VERSION
-else
-    cp $sourcedir/coda-$VERSION.tar.xz coda-$RPM_VERSION.tar.xz
 fi
+
+# bundle a current meson wheel so the mock chroot can pip-install it offline;
+# mock's %build network namespace has no reliable DNS so PyPI is unreachable
+# from there, but this container has normal networking so pip download works
+python3 -m pip download --dest coda-$RPM_VERSION/wheels --python-version 3.9 \
+    --platform manylinux2014_x86_64 --only-binary=:all: 'meson>=1.1.0'
+
+tar -cJf coda-$RPM_VERSION.tar.xz coda-$RPM_VERSION
+rm -r coda-$RPM_VERSION
 
 rpmbuild -bs --define "_sourcedir ." --define "_srcrpmdir ." $sourcedir/rpm/coda.spec
 rm coda-$RPM_VERSION.tar.xz

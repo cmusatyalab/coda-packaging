@@ -7,14 +7,30 @@ License:        GPLv2
 URL:            http://coda.cs.cmu.edu/
 Source0:        http://coda.cs.cmu.edu/coda/source/%{name}-%{version}.tar.xz
 
+BuildRequires:  gcc gcc-c++
 BuildRequires:  readline-devel
 BuildRequires:  flex bison perl
 BuildRequires:  e2fsprogs-devel
-# For /etc/rc.d/init.d so that configure can detect we have RH style init
 Requires:       readline
 
-BuildRequires:  gnutls-devel libuv-devel python3 systemd
+BuildRequires:  gnutls-devel libuv-devel lua-devel valgrind-devel
+BuildRequires:  python3 systemd
 %{?systemd_requires}
+%if 0%{?fedora}
+BuildRequires:  meson >= 1.1.0
+BuildRequires:  ninja-build
+%else
+# RHEL 8/9 do not provide meson >= 1.1; a current meson is pip-installed
+# offline in %%build from a wheel build-rpms.sh bundles into the source.
+# ninja is available as a new enough ninja-build in EPEL.
+# RHEL 8's default python3 is 3.6, too old for current meson: use python39.
+BuildRequires:  ninja-build >= 1.8.2
+%if 0%{?rhel} == 8
+BuildRequires:  python39-pip
+%else
+BuildRequires:  python3-pip
+%endif
+%endif
 
 
 # Hardened build for long running and/or running as root programs
@@ -76,18 +92,31 @@ client and server binaries.
 %prep
 %setup -q
 
-# Avoid rerunning autotools
-touch -r aclocal.m4 configure configure.ac configs/*.m4
 
 %build
-export PKG_CONFIG_PATH="$(pwd)/subprojects/lwp:$(pwd)/subprojects/rpc2:$(pwd)/subprojects/rvm:$PKG_CONFIG_PATH"
-%configure --libdir="%{_libdir}/coda" --disable-static
-make %{?_smp_mflags}
+# RHEL 8/9 do not provide meson >= 1.1; pip-install the meson wheel that
+# build-rpms.sh bundled into ./wheels, without reaching PyPI (mock's %build
+# has no DNS). ninja comes from the ninja-build BuildRequires. RHEL 8's
+# default python3 is 3.6, too old for current meson, so prefer python3.9.
+if [ -z "%{?fedora}" ]; then
+    if python3 -c 'import sys; sys.exit(0 if sys.version_info[:2] >= (3,9) else 1)' 2>/dev/null; then
+        PYBIN=python3
+    else
+        PYBIN=python3.9
+    fi
+    PIP_BREAK_SYSTEM_PACKAGES=1 $PYBIN -m pip install --user --no-index --find-links ./wheels 'meson>=1.1.0'
+    export PATH="$HOME/.local/bin:$PATH"
+fi
+# meson defaults sbindir to sbin, but merged-bin/sbin distros (fedora) use bin
+meson setup build . --wrap-mode=nodownload --prefix=%{_prefix} -Dlibdir=%{_libdir}/coda -Drpath=true -Dsbindir=$(basename %{_sbindir})
+meson compile -C build
 
 
 %install
+# each scriptlet section runs in a fresh shell, re-add the pip meson
+if [ -z "%{?fedora}" ]; then export PATH="$HOME/.local/bin:$PATH"; fi
 rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
+meson install -C build --destdir=$RPM_BUILD_ROOT --tags runtime,man
 
 # coda mount point for the client
 mkdir -p $RPM_BUILD_ROOT/coda
@@ -104,13 +133,6 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/coda/{venus,server}.conf
 
 #remove parser, it conflicts with grib_api
 rm -f $RPM_BUILD_ROOT%{_bindir}/parser
-
-# remove build/development files we don't care to package
-find $RPM_BUILD_ROOT -name '*.h' -exec rm -f {} ';'
-find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
-find $RPM_BUILD_ROOT -name '*.pc' -exec rm -f {} ';'
-find $RPM_BUILD_ROOT -name '*.so' -exec rm -f {} ';'
-rm -f $RPM_BUILD_ROOT/%{_bindir}/rp2gen
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -285,6 +307,7 @@ fi
 %{_sysconfdir}/coda/ssl/Coda_CA.crt
 %{_sbindir}/codaconfedit
 %{_libdir}/coda/*.so.*
+%{_datadir}/rpc2/*.lua
 
 
 %changelog
