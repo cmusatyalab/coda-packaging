@@ -4,7 +4,7 @@
 FROM fedora:latest
 
 RUN dnf install -y --nodocs \
-    make mock pv rpmdevtools rpm-build \
+    make mock pv rpmdevtools rpm-build python3-pip \
  && dnf clean all \
  && rm -rf /var/cache/yum
 

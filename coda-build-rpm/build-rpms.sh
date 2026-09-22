@@ -49,15 +49,17 @@ cd /var/tmp
 RPM_VERSION=$(sed -ne 's/^Version: *\(.*\)$/\1/p' $sourcedir/rpm/coda.spec)
 VERSION=$(echo $RPM_VERSION | tr _ -)
 
+tar -xJf $sourcedir/coda-$VERSION.tar.xz
 if [ "$VERSION" != "$RPM_VERSION" ]
 then
-    tar -xJf $sourcedir/coda-$VERSION.tar.xz
     mv coda-$VERSION coda-$RPM_VERSION
-    tar -cJf coda-$RPM_VERSION.tar.xz coda-$RPM_VERSION
-    rm -r coda-$RPM_VERSION
-else
-    cp $sourcedir/coda-$VERSION.tar.xz coda-$RPM_VERSION.tar.xz
 fi
+
+python3 -m pip download --dest coda-$RPM_VERSION/wheels \
+    --python-version 39 --only-binary=:all: 'meson >= 1.1.0'
+
+tar -cJf coda-$RPM_VERSION.tar.xz coda-$RPM_VERSION
+rm -r coda-$RPM_VERSION
 
 rpmbuild -bs --define "_sourcedir ." --define "_srcrpmdir ." $sourcedir/rpm/coda.spec
 rm coda-$RPM_VERSION.tar.xz

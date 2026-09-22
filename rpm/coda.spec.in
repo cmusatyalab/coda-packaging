@@ -13,7 +13,7 @@ BuildRequires:  flex bison perl
 BuildRequires:  e2fsprogs-devel
 Requires:       readline
 
-BuildRequires:  gnutls-devel libuv-devel valgrind-devel
+BuildRequires:  gnutls-devel libuv-devel lua-devel valgrind-devel
 BuildRequires:  python3 systemd
 %{?systemd_requires}
 %if 0%{?fedora}
@@ -21,6 +21,7 @@ BuildRequires:  meson >= 1.1.0
 BuildRequires:  ninja-build
 %else
 # RHEL 8/9 do not provide meson >= 1.1; install it with pip in %%build
+BuildRequires:  ninja-build >= 1.8.2
 # RHEL 8's default python3 is 3.6, too old for current meson: use python39
 %if 0%{?rhel} == 8
 BuildRequires:  python39-pip
@@ -89,6 +90,7 @@ client and server binaries.
 %prep
 %setup -q
 
+
 %build
 # RHEL 8/9 do not provide meson >= 1.1; install a current meson and ninja
 # with pip and put them first in the path. RHEL 8's default python3 is
@@ -99,11 +101,11 @@ if [ -z "%{?fedora}" ]; then
     else
         PYBIN=python3.9
     fi
-    PIP_BREAK_SYSTEM_PACKAGES=1 $PYBIN -m pip install --quiet --user meson ninja
+    PIP_BREAK_SYSTEM_PACKAGES=1 $PYBIN -m pip install --user --no-index --find-links ./wheels 'meson>=1.1.0'
     export PATH="$HOME/.local/bin:$PATH"
 fi
-# meson defaults sbindir to sbin, but merged-/usr distros (fedora) use bin
-meson setup build . -Dprefix=%{_prefix} -Dlibdir=%{_libdir}/coda -Drpath=true -Dsbindir=$(basename %{_sbindir})
+# meson defaults sbindir to sbin, but merged-bin/sbin distros (fedora) use bin
+meson setup build . --wrap-mode=nodownload --prefix=%{_prefix} -Dlibdir=%{_libdir}/coda -Drpath=true -Dsbindir=$(basename %{_sbindir})
 meson compile -C build
 
 
